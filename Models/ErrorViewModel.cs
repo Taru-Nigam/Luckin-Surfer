@@ -1,4 +1,4 @@
-namespace Web_week2.Models
+namespace GameCraft.Models
 {
     public class ErrorViewModel
     {
