@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Connect Your Account"; 
+}
+
+<section class="connect-account-section content-section">
+    <div class="container">
+        <h2 class="section-title">CONNECT YOUR ARCADE ACCOUNT</h2>
+
+        <p class="form-instruction">Enter your GameCraft Information</p>
+
+        <form class="account-connect-form">
+            <div class="form-group">
+                <label for="gamecraftCardNumber">GameCraft Card Number:</label>
+                <input type="text" id="gamecraftCardNumber" class="form-control" placeholder="E.g GC-789-XYZ-01" />
+            </div>
+
+            <div class="form-group">
+                <label for="playerID">Player ID:</label>
+                <input type="text" id="playerID" class="form-control" placeholder="E.g PLAYER-X7Z2" />
+            </div>
+
+            <button type="submit" class="connect-button">Connect Account</button>
+        </form>
+
+        <div class="trouble-connecting">
+            <h3>Having Trouble Connecting?</h3>
+            <ul>
+                <li>Make Sure you've Entered the number correctly.</li>
+                <li>New accounts might take a few minutes to sync.</li>
+                <li>Don't worry much, Contact GameCraft Support.</li>
+            </ul>
+        </div>
+    </div>
+</section>

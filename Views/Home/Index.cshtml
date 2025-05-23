@@ -1,0 +1,84 @@
+﻿@* Homepage (Index.cshtml) *@
+@{
+    ViewBag.Title = "GameCraft - Redeem Your Arcade Tickets!";
+}
+
+
+<section class="hero content-section"> 
+    <h1>TURN YOUR ARCADE TICKETS INTO AWESOME REWARDS!</h1>
+    <button class="connect-account-button" onclick="location.href='/Home/ConnectAccount'">CONNECT YOUR ACCOUNT</button>
+</section>
+
+<section class="featured-prizes content-section"> 
+    <h2>Featured Prize Section</h2>
+    <div class="prize-list">
+        <div class="prize-item">
+            <div class="prize-image">
+                <img src="~/Images/gaming console.jpg" alt="Gaming Console" />
+            </div>
+            <h3 class="prize-name">Gaming Console</h3>
+            <span class="ticket-cost">TICKET COST: 1500 Tickets</span>
+            <button class="quick-view-button" data-prize-id="1">Quick View</button>
+        </div>
+        <div class="prize-item">
+            <div class="prize-image">
+                <img src="~/Images/dragon plush toy.png" alt="Plush Toy - Dragon" />
+            </div>
+            <h3 class="prize-name">Plush Toy - Dragon</h3>
+            <span class="ticket-cost">TICKET COST: 500 tickets</span>
+            <button class="quick-view-button" data-prize-id="2">Quick View</button>
+        </div>
+        <div class="prize-item">
+            <div class="prize-image">
+                <img src="~/Images/wireless headphone.jpeg" alt="Wireless Headphone" />
+            </div>
+            <h3 class="prize-name">Wireless Headphone</h3>
+            <span class="ticket-cost">TICKET COST: 2200 Tickets</span>
+            <button class="quick-view-button" data-prize-id="3">Quick View</button>
+        </div>
+    </div>
+</section>
+
+<section class="how-it-works content-section"> 
+    <h2>How it works</h2>
+    <div class="steps">
+        <div class="step">
+            <div class="icon-image">
+                <img src="~/Images/play&earn icon.png" alt="Play & Earn Icon" />
+            </div>
+            <p><b>*Play &amp; Earn*:</b> Win Tickets playing games!</p>
+        </div>
+        <div class="step">
+            <div class="icon-image">
+                <img src="~/Images/link icon.png" alt="Connect Account Icon" />
+            </div>
+            <p><b>*Connect Account*:</b> Link your arcade ID online</p>
+        </div>
+        <div class="step">
+            <div class="icon-image">
+                <img src="~/Images/prize icon.png" alt="Browse Prizes Icon" />
+            </div>
+            <p><b>*Browse Prizes*:</b> See all cool rewards.</p>
+        </div>
+        <div class="step">
+            <div class="icon-image">
+                <img src="~/Images/redeem icon.png" alt="Redeem Icon" />
+            </div>
+            <p><b>*Redeem*:</b> Choose and claim your prize!</p>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quickViewButtons = document.querySelectorAll('.quick-view-button');
+            quickViewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const prizeId = this.getAttribute('data-prize-id');
+                    alert('Quick view for prize ID: ' + prizeId);
+                });
+            });
+        });
+    </script>
+}
