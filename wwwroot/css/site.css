@@ -1,0 +1,257 @@
+body {
+    font-family: sans-serif;
+    margin: 0; /* Remove all default body margins */
+    padding: 0; /* Remove all default body padding */
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex; 
+    flex-direction: column; 
+    min-height: 100vh;     
+}
+
+main {
+    flex-grow: 1; 
+}
+
+header.main-header .gamecraft-navbar {
+    background-color: #008080; 
+    border-bottom: none;
+    box-shadow: none;
+    padding: 15px 20px;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+/* Container for logo, nav, and auth buttons within the header */
+.top-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-left: 0px; /* Adjusted to move logo slightly to the left */
+}
+
+/* Styling for the logo and brand name (combined from .navbar-brand and .logo) */
+.header-brand {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+    .header-brand .brand-logo {
+        height: 80px; /* Adjusted logo height to match new text size */
+        margin-right: 15px; /* Space between logo and text */
+    }
+
+/* Custom Navigation links */
+.main-nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+    .main-nav-links .nav-item {
+        margin: 0 40px; /* INCREASED space between nav items to spread them out */
+    }
+
+    .main-nav-links .nav-link {
+        color: white;
+        text-decoration: none;
+        padding: 10px 15px;
+        display: block;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+
+        .main-nav-links .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+/* Login/Sign Up buttons */
+.auth-buttons {
+    flex-shrink: 0;
+}
+
+    .auth-buttons button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+    }
+
+
+/* --- Content Section Styling (Full Width with inner padding) --- */
+.content-section {
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Hero Section */
+.hero {
+    background-color: #e0f7fa;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    text-align: left;
+    margin-top: 0;
+}
+
+    .hero h1 {
+        margin-top: 0;
+        color: #008080;
+    }
+
+    .hero .connect-account-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.1em;
+        margin-top: 20px;
+    }
+
+/* Featured Prizes Section */
+.featured-prizes {
+    padding: 30px 20px;
+    text-align: center;
+    background-color: #fff;
+}
+
+    .featured-prizes h2 {
+        border: solid;
+        display: block;
+        padding: 10px 0;
+        margin: 0 auto 25px auto;
+        border-radius: 5px;
+        color: #008080;
+    }
+
+.prize-list {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 20px 0;
+    justify-content: center;
+}
+
+.prize-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    width: 200px;
+    text-align: center;
+    background-color: #f9f9f9;
+    flex-shrink: 0;
+}
+
+    .prize-item .prize-image {
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+        .prize-item .prize-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+    .prize-item .prize-name {
+        font-size: 1.1em;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .prize-item .ticket-cost {
+        display: block;
+        margin-bottom: 10px;
+        color: #008080;
+        font-weight: bold;
+    }
+
+    .prize-item .quick-view-button {
+        background-color: #333;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9em;
+    }
+
+/* How It Works Section */
+.how-it-works {
+    background-color: #f0f8ff;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+    .how-it-works h2 {
+        color: #008080;
+    }
+
+.steps {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.step {
+    text-align: center;
+    width: 20%;
+    min-width: 150px;
+    margin-bottom: 20px;
+}
+
+    .step .icon-image {
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+        .step .icon-image img {
+            max-width: 88%;
+            max-height: 88%;
+            object-fit: contain;
+        }
+
+    .step p {
+        font-size: 0.9em;
+    }
+
+/* Footer */
+.site-footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #333;
+    color: white;
+    font-size: 0.9em;
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+    .site-footer .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
