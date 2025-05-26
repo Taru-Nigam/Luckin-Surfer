@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Login";
+}
+
+<section class="login-section content-section">
+    <div class="container">
+        <h2 class="section-title">LOGIN TO YOUR ACCOUNT</h2>
+
+        <p class="form-instruction">Enter your credentials</p>
+
+        <form asp-action="Login" method="post" class="login-form">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" class="form-control" required placeholder="Enter your username" />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" class="form-control" required placeholder="Enter your password" />
+            </div>
+
+            <button type="submit" class="login-button">Login</button>
+        </form>
+
+        <div class="register-link">
+            <p>Don't have an account? <a asp-action="Register">Register here</a></p>
+        </div>
+    </div>
+</section>
