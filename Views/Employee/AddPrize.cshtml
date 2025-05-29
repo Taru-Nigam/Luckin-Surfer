@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Add New Prize";
+    Layout = "_EmployeeLayout";
+}
+
+<section class="employee-add-prize-section">
+    <div class="container">
+        <h2 class="employee-section-title">Add New Prize</h2>
+
+        <form asp-action="AddPrize" asp-controller="Employee" method="post" class="employee-form">
+            <div class="form-group">
+                <label for="prizeName">Prize Name:</label>
+                <input type="text" id="prizeName" name="prizeName" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" class="form-control" required min="1" />
+            </div>
+            <div class="form-group">
+                <label for="ticketCost">Ticket Cost:</label>
+                <input type="number" id="ticketCost" name="ticketCost" class="form-control" required min="1" />
+            </div>
+            <div class="form-group">
+                <label for="imageUrl">Image URL:</label>
+                <input type="text" id="imageUrl" name="imageUrl" class="form-control" placeholder="/images/new_prize.png" />
+            </div>
+
+            @if (ViewBag.Message != null)
+            {
+                <p class="success-message">@ViewBag.Message</p>
+            }
+
+            <button type="submit" class="submit-button">Add Prize</button>
+        </form>
+    </div>
+</section>

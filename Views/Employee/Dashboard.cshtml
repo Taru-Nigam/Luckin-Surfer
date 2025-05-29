@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Employee Dashboard";
+    Layout = "_EmployeeLayout";
+}
+
+<section class="employee-dashboard-section">
+    <div class="container">
+        <h2 class="employee-section-title">Dashboard Overview</h2>
+
+        <div class="dashboard-grid">
+            <div class="employee-card metric-card">
+                <h3 class="employee-card-title">Tickets Collected Today</h3>
+                <p class="value">12,345</p>
+                <p class="label">Total tickets from all machines</p>
+            </div>
+            <div class="employee-card metric-card">
+                <h3 class="employee-card-title">Prizes Redeemed Today</h3>
+                <p class="value">87</p>
+                <p class="label">Prizes given out</p>
+            </div>
+            <div class="employee-card metric-card">
+                <h3 class="employee-card-title">Current Stock Level</h3>
+                <p class="value">HIGH</p>
+                <p class="label">Overall inventory status</p>
+            </div>
+            <div class="employee-card quick-links">
+                <h3 class="employee-card-title">Quick Links</h3>
+                <ul>
+                    <li><a href="@Url.Action("AddPrize", "Employee")">Add New Prize</a></li>
+                    <li><a href="@Url.Action("PrizeStock", "Employee")">View Prize Stock</a></li>
+                    <li><a href="@Url.Action("RedeemedPrizes", "Employee")">See Redeemed Prizes</a></li>
+                    <li><a href="@Url.Action("AuditLog", "Employee")">Access Audit Log</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>

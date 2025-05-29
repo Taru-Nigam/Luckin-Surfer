@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Redeemed Prizes";
+    Layout = "_EmployeeLayout";
+
+    // Example data for demonstration (replace with actual data from a model in a real app)
+    var redeemedPrizes = new List<dynamic>
+    {
+        new { Id = 101, PrizeName = "Large Teddy Bear", PlayerID = "PLAYER-X7Z2", TicketsSpent = 1000, Timestamp = DateTime.Parse("2025-05-27 10:30 AM") },
+        new { Id = 102, PrizeName = "RC Car", PlayerID = "PLAYER-A9B1", TicketsSpent = 1500, Timestamp = DateTime.Parse("2025-05-27 11:15 AM") },
+        new { Id = 103, PrizeName = "Bluetooth Speaker", PlayerID = "PLAYER-Y3C5", TicketsSpent = 800, Timestamp = DateTime.Parse("2025-05-26 03:00 PM") },
+        new { Id = 104, PrizeName = "Mini Drone", PlayerID = "PLAYER-D6F8", TicketsSpent = 2500, Timestamp = DateTime.Parse("2025-05-26 01:45 PM") }
+    };
+}
+
+<section class="employee-redeemed-prizes-section">
+    <div class="container">
+        <h2 class="employee-section-title">Recently Redeemed Prizes</h2>
+
+        <div class="employee-table-container">
+            <table class="employee-table">
+                <thead>
+                    <tr>
+                        <th>Redemption ID</th>
+                        <th>Prize Name</th>
+                        <th>Player ID</th>
+                        <th>Tickets Spent</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var redemption in redeemedPrizes)
+                    {
+                        <tr>
+                            <td>@redemption.Id</td>
+                            <td>@redemption.PrizeName</td>
+                            <td>@redemption.PlayerID</td>
+                            <td>@redemption.TicketsSpent Tickets</td>
+                            <td>@redemption.Timestamp.ToString("yyyy-MM-dd hh:mm tt")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

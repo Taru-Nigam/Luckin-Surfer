@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Audit Log";
+    Layout = "_EmployeeLayout";
+
+    
+    var auditLogs = new List<dynamic>
+    {
+        new { Id = 1, Action = "Logged in", Employee = "John Doe", Timestamp = DateTime.Parse("2025-05-27 10:28 AM") },
+        new { Id = 2, Action = "Added new prize: 'Giant Gummy Bear'", Employee = "Jane Smith", Timestamp = DateTime.Parse("2025-05-27 09:55 AM") },
+        new { Id = 3, Action = "Updated stock for 'RC Car'", Employee = "John Doe", Timestamp = DateTime.Parse("2025-05-27 09:30 AM") },
+        new { Id = 4, Action = "Viewed redeemed prizes", Employee = "Jane Smith", Timestamp = DateTime.Parse("2025-05-26 04:00 PM") },
+        new { Id = 5, Action = "Logged out", Employee = "John Doe", Timestamp = DateTime.Parse("2025-05-26 03:50 PM") }
+    };
+}
+
+<section class="employee-audit-log-section">
+    <div class="container">
+        <h2 class="employee-section-title">Employee Audit Log</h2>
+
+        <div class="employee-table-container">
+            <table class="employee-table">
+                <thead>
+                    <tr>
+                        <th>Log ID</th>
+                        <th>Action</th>
+                        <th>Employee</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in auditLogs)
+                    {
+                        <tr>
+                            <td>@log.Id</td>
+                            <td>@log.Action</td>
+                            <td>@log.Employee</td>
+                            <td>@log.Timestamp.ToString("yyyy-MM-dd hh:mm tt")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

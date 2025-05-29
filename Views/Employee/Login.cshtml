@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Employee Login";
+    Layout = "_EmployeeLayout"; // Use the employee-specific layout
+}
+
+<section class="employee-login-section">
+    <div class="container">
+        <h2 class="employee-section-title">Employee Login</h2>
+
+        <form asp-action="Login" asp-controller="Employee" method="post" class="employee-form">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" class="form-control" required />
+            </div>
+
+            @if (ViewData["Message"] != null)
+            {
+                <p class="error-message">@ViewData["Message"]</p>
+            }
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-message">
+                    @Html.ValidationSummary(false)
+                </div>
+            }
+
+            <button type="submit" class="submit-button">Login</button>
+        </form>
+    </div>
+</section>

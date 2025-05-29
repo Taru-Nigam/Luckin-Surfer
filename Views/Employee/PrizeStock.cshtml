@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Prize Stock";
+    Layout = "_EmployeeLayout";
+
+    // Example data for demonstration (replace with actual data from a model in a real app)
+    var prizes = new List<dynamic>
+    {
+        new { Id = 1, Name = "dragon plush toy", Quantity = 15, TicketCost = 1000, ImageUrl = "/images/dragon plush toy.png" },
+        new { Id = 2, Name = "wireless headphone", Quantity = 8, TicketCost = 1500, ImageUrl = "/images/wireless headphone.jpeg" },
+        new { Id = 3, Name = "Bluetooth Speaker", Quantity = 22, TicketCost = 800, ImageUrl = "/images/bluetoothSpeaker.jpg" },
+        new { Id = 4, Name = "Gaming Mouse", Quantity = 3, TicketCost = 2500, ImageUrl = "/images/Mouse.png" },
+        new { Id = 5, Name = "spotify giftcard", Quantity = 10, TicketCost = 1200, ImageUrl = "/images/spotify giftcard.jpg" }
+    };
+}
+
+<section class="employee-prize-stock-section">
+    <div class="container">
+        <h2 class="employee-section-title">Prize Stock Inventory</h2>
+
+        <div class="employee-table-container">
+            <table class="employee-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Prize Name</th>
+                        <th>Quantity</th>
+                        <th>Ticket Cost</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var prize in prizes)
+                    {
+                        <tr>
+                            <td>@prize.Id</td>
+                            <td><img src="@prize.ImageUrl" alt="@prize.Name" class="prize-stock-image-thumb" /></td>
+                            <td>@prize.Name</td>
+                            <td>@prize.Quantity</td>
+                            <td>@prize.TicketCost Tickets</td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-info">Edit</a>
+                                <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
