@@ -38,14 +38,32 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Prizes">Prizes</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="MyAccount">My Account</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated) // Check if the user is authenticated
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyAccount">My Account</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Account/Login">My Account</a> <!-- Redirect to login if not authenticated -->
+                            </li>
+                        }
                     </ul>
 
                     <div class="auth-buttons">
                         <button class="login-button" onclick="location.href='/Account/Login'">Login</button>
                         <button class="signup-button" onclick="location.href='/Account/Register'">Sign Up</button>
+                    </div>
+                    <div class="cart-icon" id="cart-icon">
+                        <a class="nav-link" href="/Cart/Cart">
+                            <img src="~/Images/cart icon.png" alt="Cart Icon" style="width: 50px; height: 50px;" />
+                            <span class="cart-count" id="cartCount">0</span>
+                        </a>
+                        <div class="cart-preview" style="display: none;">
+                            <p>Your cart is empty.</p>
+                        </div>
                     </div>
                 </div>
             </div>
