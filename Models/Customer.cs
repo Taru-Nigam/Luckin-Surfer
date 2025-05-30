@@ -26,6 +26,9 @@ namespace GameCraft.Models
         [StringLength(20)]
         public string PostCode { get; set; }
 
+        [StringLength(100)]
+        public int UserType { get; set; }
+        
         [Required]
         public string HashedPassword { get; set; }
 
