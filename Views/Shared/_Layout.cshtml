@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GameCraft.styles.css" asp-append-version="true" />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="main-header">
@@ -38,33 +37,15 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Prizes">Prizes</a>
                         </li>
-                        @if (User.Identity.IsAuthenticated) // Check if the user is authenticated
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyAccount">My Account</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" href="/Account/Login">My Account</a> <!-- Redirect to login if not authenticated -->
-                            </li>
-                        }
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="MyAccount">My Account</a>
+                        </li>
                     </ul>
 
                     <div class="auth-buttons">
-                        <button class="login-button" onclick="location.href='/Account/Login'">Login</button>
-                        <button class="signup-button" onclick="location.href='/Account/Register'">Sign Up</button>
+                        <button class="login-button">Login</button>
+                        <button class="signup-button">Sign Up</button>
                         <button onclick="location.href='@Url.Action("Login", "Employee")'">Employee Login</button>
-                    </div>
-                    <div class="cart-icon" id="cart-icon">
-                        <a class="nav-link" href="/Cart/Cart">
-                            <img src="~/Images/cart icon.png" alt="Cart Icon" style="width: 50px; height: 50px;" />
-                            <span class="cart-count" id="cartCount">0</span>
-                        </a>
-                        <div class="cart-preview" style="display: none;">
-                            <p>Your cart is empty.</p>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -89,22 +70,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script>
-        document.querySelector('.cart-icon').addEventListener('mouseenter', function() {
-            document.querySelector('.cart-preview').style.display = 'block';
-        });
-        document.querySelector('.cart-icon').addEventListener('mouseleave', function() {
-            document.querySelector('.cart-preview').style.display = 'none';
-        });
-        // Example function to update cart count
-        function updateCartCount(count) {
-            const cartCount = document.getElementById('cartCount');
-            cartCount.innerText = count;
-            cartCount.style.display = count > 0 ? 'block' : 'none'; // Show or hide based on count
-        }
-        // Call this function whenever an item is added to the cart
-        // updateCartCount(3); // Example: Update to 3 items
-    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
