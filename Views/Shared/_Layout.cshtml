@@ -88,6 +88,22 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        document.querySelector('.cart-icon').addEventListener('mouseenter', function() {
+            document.querySelector('.cart-preview').style.display = 'block';
+        });
+        document.querySelector('.cart-icon').addEventListener('mouseleave', function() {
+            document.querySelector('.cart-preview').style.display = 'none';
+        });
+        // Example function to update cart count
+        function updateCartCount(count) {
+            const cartCount = document.getElementById('cartCount');
+            cartCount.innerText = count;
+            cartCount.style.display = count > 0 ? 'block' : 'none'; // Show or hide based on count
+        }
+        // Call this function whenever an item is added to the cart
+        // updateCartCount(3); // Example: Update to 3 items
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
