@@ -46,3 +46,45 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+/* Cart icon container */
+.cart-icon {
+    position: relative;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+/* Number badge on cart icon */
+.cart-count {
+    position: absolute;
+    top: -5px; /* Adjust this value to position the badge */
+    right: -10px; /* Adjust this value to position the badge */
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    display: none; /* Initially hidden */
+}
+
+/* Cart preview popup */
+.cart-preview {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 35px;
+    width: 300px;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 10px;
+    z-index: 1000;
+    color: #333;
+    border-radius: 5px;
+}
+
+    .cart-preview p {
+        margin: 0;
+    }
+
