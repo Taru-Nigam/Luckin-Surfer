@@ -237,6 +237,22 @@ header.main-header .gamecraft-navbar {
         font-size: 0.9em;
     }
 
+.profile-section {
+    display: flex;
+    align-items: center;
+}
+
+.prize-points {
+    margin-right: 10px; /* Space between points and profile icon */
+    font-weight: bold;
+}
+
+.profile-icon {
+    width: 40px; /* Adjust size as needed */
+    height: 40px; /* Adjust size as needed */
+    cursor: pointer;
+}
+
 /* Footer */
 .site-footer {
     text-align: center;
