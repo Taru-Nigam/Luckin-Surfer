@@ -1,0 +1,264 @@
+﻿/* --- Employee Layout Specific Styling --- */
+
+.employee-header {
+    background-color: #000000; 
+    padding: 15px 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.employee-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px; 
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.employee-brand {
+    display: flex;
+    align-items: center;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+    .employee-brand .brand-logo {
+        height: 75px;
+        margin-right: 10px;
+    }
+
+.employee-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+    .employee-nav ul li {
+        margin: 0 15px;
+    }
+
+        .employee-nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            display: block;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            border-radius: 4px;
+        }
+
+            .employee-nav ul li a:hover,
+            .employee-nav ul li a.active { 
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+
+.employee-logout-button {
+    background-color: #e74c3c; 
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+    .employee-logout-button:hover {
+        background-color: #c0392b;
+    }
+
+/* Main content area for employee pages */
+.employee-main-content {
+    background-color: #ecf0f1; 
+    padding-top: 30px; 
+    padding-bottom: 30px;
+    flex-grow: 1; 
+}
+
+/* --- Common Employee Page Elements --- */
+
+/* Section headers on employee pages */
+.employee-section-title {
+    color: #2c3e50;
+    font-size: 2em;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+/* Cards used for displaying info/metrics */
+.employee-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 20px; 
+}
+
+.employee-card-title {
+    color: #34495e; 
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Forms on employee pages (e.g., Add Prize) */
+.employee-form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+    .employee-form .form-group {
+        margin-bottom: 15px;
+    }
+
+    .employee-form label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #34495e;
+    }
+
+    .employee-form input[type="text"],
+    .employee-form input[type="number"],
+    .employee-form input[type="password"],
+    .employee-form textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box; 
+        font-size: 1em;
+    }
+
+    .employee-form button.submit-button {
+        background-color: #28a745; 
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.1em;
+        width: 100%;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+        .employee-form button.submit-button:hover {
+            background-color: #218838;
+        }
+
+    .employee-form .error-message {
+        color: #e74c3c;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .employee-form .success-message {
+        color: #28a745;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+
+.employee-table-container {
+    overflow-x: auto; 
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.employee-table {
+    width: 100%;
+    border-collapse: collapse; 
+    margin-bottom: 0;
+}
+
+    .employee-table th,
+    .employee-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .employee-table th {
+        background-color: #f2f2f2;
+        color: #34495e;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .employee-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9; 
+    }
+
+    .employee-table tbody tr:hover {
+        background-color: #eef;
+    }
+
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Metrics and quick links on dashboard */
+.metric-card {
+    text-align: center;
+}
+
+    .metric-card .value {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #008080; /* Teal for values */
+        margin-bottom: 5px;
+    }
+
+    .metric-card .label {
+        font-size: 1em;
+        color: #555;
+    }
+
+.quick-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .quick-links ul li {
+        margin-bottom: 10px;
+    }
+
+        .quick-links ul li a {
+            display: block;
+            background-color: #3498db; 
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+            .quick-links ul li a:hover {
+                background-color: #2980b9;
+            }
+
+
+.prize-stock-image-thumb {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
