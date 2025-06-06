@@ -1,0 +1,46 @@
+﻿@model List<GameCraft.Models.Customer>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Manage Employee Accounts";
+}
+
+<h1 class="mb-6">Manage Employee Accounts</h1>
+
+<div class="employee-list-container">
+    @if (Model.Count == 0)
+    {
+        <p>No employee accounts found.</p>
+    }
+    else
+    {
+        <table class="table-admin-list">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>User Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var employee in Model)
+                {
+                    <tr>
+                        <td>@employee.Name</td>
+                        <td>@employee.Email</td>
+                        <td>@employee.Phone</td>
+                        <td>@(employee.UserType == 3 ? "Employee" : "Unknown")</td>
+                        <td>
+                            <a href="@Url.Action("EditEmployee", "Admin", new { id = employee.CustomerId })" class="btn-action btn-edit">Edit</a>
+                            <form asp-action="DeleteEmployee" asp-controller="Admin" method="post" class="inline-form" onsubmit="return confirm('Are you sure you want to delete this employee?');" style="display:inline;">
+                                <input type="hidden" name="id" value="@employee.CustomerId" />
+                                <button type="submit" class="btn-action btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
