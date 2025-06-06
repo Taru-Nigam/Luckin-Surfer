@@ -28,9 +28,9 @@ namespace GameCraft.Models
 
         [StringLength(100)]
         public int UserType { get; set; }
-        
+
         [Required]
-        public string HashedPassword { get; set; }
+        public string PasswordHash { get; set; }
 
         [Required]
         public string Salt { get; set; }
