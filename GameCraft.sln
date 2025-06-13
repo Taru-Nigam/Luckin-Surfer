@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36109.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameCraft", "GameCraft.csproj", "{67C6B729-6A35-4B84-EB53-2190E55E7367}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67C6B729-6A35-4B84-EB53-2190E55E7367}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67C6B729-6A35-4B84-EB53-2190E55E7367}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67C6B729-6A35-4B84-EB53-2190E55E7367}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67C6B729-6A35-4B84-EB53-2190E55E7367}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E2E1407C-0FC5-4C9B-A10F-43D13FCE1EA8}
+	EndGlobalSection
+EndGlobal

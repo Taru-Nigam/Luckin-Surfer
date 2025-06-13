@@ -1,19 +1,18 @@
-/*var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();*/
-
 using GameCraft.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<GameCraftDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("GameCraftDB")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("GameCraftDb")));
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
+
+app.UseSession();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -37,3 +36,4 @@ app.MapControllerRoute(
 
 
 app.Run();
+
