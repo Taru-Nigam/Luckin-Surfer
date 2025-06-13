@@ -27,12 +27,15 @@ namespace GameCraft.Models
         public string PostCode { get; set; }
 
         [StringLength(100)]
-        public int UserType { get; set; }
+        public int UserType { get; set; } // 0 = Admin, 1 = Customer, 2 = Employee
 
         [Required]
         public string PasswordHash { get; set; }
 
         [Required]
         public string Salt { get; set; }
+
+        public string? AvatarUrl { get; set; }
+        public int PrizePoints { get; set; } = 0;
     }
 }

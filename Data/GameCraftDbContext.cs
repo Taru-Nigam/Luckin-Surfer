@@ -17,8 +17,8 @@ namespace GameCraft.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<UserType> UserTypes { get; set; }
         public DbSet<UserType> RoleId { get; set; }
-
-
+        public DbSet<UserType> Id { get; internal set; }
     }
 }

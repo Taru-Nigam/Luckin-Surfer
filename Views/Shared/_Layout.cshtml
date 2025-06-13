@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -28,6 +28,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
+
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="main-nav-links navbar-nav flex-grow-1">
                         <li class="nav-item">
@@ -39,7 +40,15 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Prizes">Prizes</a>
                         </li>
-                        @if (User.Identity.IsAuthenticated) // Check if the user is authenticated
+                        @using Microsoft.AspNetCore.Http
+                        @inject IHttpContextAccessor HttpContextAccessor
+
+                        @{
+                            var prizepoints = HttpContextAccessor.HttpContext?.Session.GetString("PrizePoints");
+                            var username = HttpContextAccessor.HttpContext?.Session.GetString("UserName");
+                            var avatarUrl = HttpContextAccessor.HttpContext?.Session.GetString("AvatarUrl") ?? "/images/default-avatar.png";
+                        }
+                        @if (!string.IsNullOrEmpty(username))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Account" asp-action="MyAccount">My Account</a>
@@ -48,24 +57,29 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link" href="/Account/Login">My Account</a> <!-- Redirect to login if not authenticated -->
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">My Account</a>
                             </li>
                         }
                     </ul>
-                    <div class="auth-buttons">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <div class="profile-section">
-                                <span class="prize-points">@Model.PrizePoints Points</span> <!-- Display prize points -->
-                                <img src="~/Images/profile-icon.png" alt="Profile Icon" class="profile-icon" onclick="location.href='/Account/MyAccount'" />
-                            </div>
-                        }
-                        else
-                        {
+
+
+                    @if (string.IsNullOrEmpty(username))
+                    {
+                        <div class="auth-buttons">
                             <button class="login-button" onclick="location.href='/Account/Login'">Login</button>
                             <button class="signup-button" onclick="location.href='/Account/Register'">Sign Up</button>
-                        }
-                        <button onclick="location.href='@Url.Action("Login", "Employee")'">Employee Login</button>
+                            <button onclick="location.href='@Url.Action("Login", "Employee")'">Employee Login</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="user-info d-flex align-items-center gap-2">
+                            <img src="@avatarUrl" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%;" />
+                            <span class="text-light">@username</span>
+                            <a class="auth-buttons" href="/Account/Logout">Logout</a>
+                            <span class="prize-points">@prizepoints</span> <!-- Display prize points -->
+                        </div>
+                    }
                     </div>
                     <div class="cart-icon" id="cart-icon">
                         <a class="nav-link" href="/Cart/Cart">
@@ -77,7 +91,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
         </nav>
     </header> 
 

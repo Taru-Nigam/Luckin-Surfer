@@ -7,45 +7,46 @@
 <h2>My Account</h2>
 
 <form asp-action="UpdateAccount" method="post">
+    @* Show the Name field *@
     <div class="form-group">
         <label asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
+    @* Show the Email field *@
     <div class="form-group">
         <label asp-for="Email"></label>
         <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
+    @* Show the Phone field *@
     <div class="form-group">
         <label asp-for="Phone"></label>
         <input asp-for="Phone" class="form-control" />
         <span asp-validation-for="Phone" class="text-danger"></span>
     </div>
 
+    @* Show the Address field *@
     <div class="form-group">
         <label asp-for="Address"></label>
         <input asp-for="Address" class="form-control" />
         <span asp-validation-for="Address" class="text-danger"></span>
     </div>
 
+    @* Show the City field *@
     <div class="form-group">
         <label asp-for="City"></label>
         <input asp-for="City" class="form-control" />
         <span asp-validation-for="City" class="text-danger"></span>
     </div>
 
+    @* Show the PostCode field *@
     <div class="form-group">
         <label asp-for="PostCode"></label>
         <input asp-for="PostCode" class="form-control" />
         <span asp-validation-for="PostCode" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label>Are you an employee?</label>
-        <input type="checkbox" id="isEmployee" name="isEmployee" value="true" />
     </div>
 
     <button type="submit" class="btn btn-primary">Update Account</button>

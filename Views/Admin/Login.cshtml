@@ -1,0 +1,28 @@
+﻿@model GameCraft.Models.AdminLoginViewModel
+
+@{
+    ViewData["Title"] = "Admin Login";
+    Layout = "_AdminLayout";
+}
+
+<section class="admin-login-section">
+    <div class="container">
+        <h1 class="admin-heading">Admin Login</h1>
+
+        <form asp-action="Login" method="post" class="form-admin" novalidate>
+            <div class="form-group">    
+                <label for="adminKey">Admin Key</label>
+                <input type="password" id="adminKey" name="adminKey" class="form-input" placeholder="Enter your admin key" required />
+                @* Change to Model.AdminKey for strong typing *@
+                <span asp-validation-for="AdminKey" class="text-error"></span>
+            </div>
+
+            <button type="submit" class="btn-primary">Login</button>
+            <a asp-controller="Employee" asp-action="Login" class="btn-secondary ml-4">Back to Employee Login</a>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,12 +1,16 @@
-using System.Diagnostics;
+using GameCraft.Data;
 using GameCraft.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Security.Claims;
 
 namespace GameCraft.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly GameCraftDbContext _context;
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -15,7 +19,19 @@ namespace GameCraft.Controllers
 
         public IActionResult Index()
         {
-            return View(); // This corresponds to Index.cshtml
+            // Check if the user is an admin
+            var isAdmin = HttpContext.Session.GetString("IsAdmin");
+            if (isAdmin != null)
+            {
+                ViewBag.IsAdmin = true; // Indicate that the user is an admin
+            }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId != null)
+            {
+                var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == int.Parse(userId));
+                ViewBag.PrizePoints = customer?.PrizePoints ?? 0; // Pass prize points to the view
+            }
+            return View();
         }
 
         public IActionResult ConnectAccount() 

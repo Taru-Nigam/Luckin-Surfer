@@ -2,6 +2,9 @@
 using GameCraft.Data;
 using GameCraft.Models;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Rendering; // Add this using statement!
+using System.Collections.Generic; // Add this using statement!
+using GameCraft.Helpers;
 
 namespace GameCraft.Controllers
 {
@@ -15,12 +18,50 @@ namespace GameCraft.Controllers
             _context = context;
         }
 
+        private const string ValidAdminKey = "YourSecureAdminKey123"; // Set your actual admin key here
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            ViewData["Title"] = "Admin Login";
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(string adminKey)
+        {
+            if (string.IsNullOrWhiteSpace(adminKey))
+            {
+                ModelState.AddModelError("", "Admin key is required.");
+                return View();
+            }
+
+            // Log the admin key for debugging
+            Console.WriteLine($"Admin Key Entered: {adminKey}");
+
+            if (adminKey == ValidAdminKey)
+            {
+                // Optionally, set a session variable to indicate the admin is logged in
+                HttpContext.Session.SetString("IsAdmin", "true");
+                HttpContext.Session.SetString("UserName", "Admin"); // You can set a more descriptive name if needed
+
+                // Redirect to the admin index page
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Invalid admin key.");
+                return View();
+            }
+        }
+
+
         // GET: /Admin/ManageEmployees
         public IActionResult ManageEmployees()
         {
-            // Fetch all customers who are employees (UserType for Employee)
+            // Fetch all customers who are employees (User  Type for Employee)
             // Get the Employee role's Id first
-            var employeeRole = _context.RoleId.FirstOrDefault(rt => rt.Name == "Employee");
+            var employeeRole = _context.UserTypes.FirstOrDefault(rt => rt.Name == "Employee");
             if (employeeRole == null)
             {
                 // Handle null case if needed
@@ -31,11 +72,182 @@ namespace GameCraft.Controllers
 
             // Use employeeRoleId in query without `?.`
             var employees = _context.Customers
-                            .Where(c => c.UserType == employeeRoleId)
-                            .ToList();
+                                    .Where(c => c.UserType == employeeRoleId)
+                                    .ToList();
 
             return View(employees);
         }
+
+        // GET: /Admin/ManageUsers
+        public IActionResult ManageUsers()
+        {
+            var users = _context.Customers.ToList();
+
+            ViewBag.UserTypes = _context.UserTypes.Select(ut => new SelectListItem
+            {
+                Value = ut.Id.ToString(),
+                Text = ut.Name
+            }).ToList();
+
+            return View(users);
+        }
+
+
+        // GET: /Admin/CreateEmployee
+        public IActionResult CreateEmployee()
+        {
+            ViewBag.UserTypes = _context.UserTypes.Select(r => new SelectListItem
+            {
+                Value = r.Id.ToString(),
+                Text = r.Name
+            }).ToList();
+
+            return View(new Customer()); // Return a new Customer instance for creating an employee
+        }
+
+        // POST: /Admin/CreateEmployee
+        [HttpPost]
+        public IActionResult CreateEmployee(Customer newEmployee)
+        {
+            if (ModelState.IsValid)
+            {
+                // Hash the password and set the UserType
+                var (PasswordHash, salt) = PasswordHelper.HashPassword(newEmployee.PasswordHash);
+                newEmployee.PasswordHash = PasswordHash;
+                newEmployee.Salt = salt;
+
+                _context.Customers.Add(newEmployee);
+                _context.SaveChanges();
+                TempData["Message"] = "Employee account created successfully!";
+                return RedirectToAction("ManageUsers");
+            }
+
+            // If ModelState is not valid, re-populate ViewBag.UserTypes before returning the view
+            ViewBag.UserTypes = _context.UserTypes.Select(r => new SelectListItem
+            {
+                Value = r.Id.ToString(),
+                Text = r.Name
+            }).ToList();
+            return View(newEmployee);
+        }
+
+        // GET: /Admin/EditUser /{id}
+        public IActionResult EditUser(int id)
+        {
+            var user = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
+            if (user == null)
+            {
+                return NotFound(); // Return 404 if user not found
+            }
+
+            // Populate UserTypes for the dropdown
+            ViewBag.UserTypes = _context.UserTypes.Select(ut => new SelectListItem
+            {
+                Value = ut.Id.ToString(),
+                Text = ut.Name
+            }).ToList();
+
+            return View(user);
+        }
+
+        // POST: /Admin/EditUser 
+        [HttpPost]
+        public IActionResult EditUser(Customer editedUser)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingUser = _context.Customers.FirstOrDefault(c => c.CustomerId == editedUser.CustomerId);
+                if (existingUser == null)
+                {
+                    return NotFound(); // Return 404 if user not found
+                }
+
+                // Update user details
+                existingUser.Name = editedUser.Name;
+                existingUser.Email = editedUser.Email;
+                existingUser.Phone = editedUser.Phone;
+                existingUser.Address = editedUser.Address;
+                existingUser.City = editedUser.City;
+                existingUser.PostCode = editedUser.PostCode;
+                existingUser.UserType = editedUser.UserType;
+
+                // Update password if provided
+                if (!string.IsNullOrEmpty(editedUser.PasswordHash))
+                {
+                    var (passwordHash, salt) = PasswordHelper.HashPassword(editedUser.PasswordHash);
+                    existingUser.PasswordHash = passwordHash;
+                    existingUser.Salt = salt;
+                }
+
+                _context.Customers.Update(existingUser);
+                _context.SaveChanges();
+
+                TempData["Message"] = "User  updated successfully!";
+                return RedirectToAction("ManageUsers");
+            }
+
+            // If ModelState is not valid, re-populate ViewBag.UserTypes before returning the view
+            ViewBag.UserTypes = _context.UserTypes.Select(ut => new SelectListItem
+            {
+                Value = ut.Id.ToString(),
+                Text = ut.Name
+            }).ToList();
+            return View(editedUser);
+        }
+
+
+        // POST: /Admin/EditUser /{id}
+        [HttpPost]
+        public IActionResult EditUser(int id, Customer editedUser)
+        {
+            if (id != editedUser.CustomerId)
+                return BadRequest();
+
+            if (ModelState.IsValid)
+            {
+                var existingUser = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
+                if (existingUser == null)
+                    return NotFound();
+
+                // Update user details
+                existingUser.Name = editedUser.Name;
+                existingUser.Email = editedUser.Email;
+                existingUser.Phone = editedUser.Phone;
+                existingUser.Address = editedUser.Address;
+                existingUser.City = editedUser.City;
+                existingUser.PostCode = editedUser.PostCode;
+                existingUser.UserType = editedUser.UserType;
+
+                _context.Customers.Update(existingUser);
+                _context.SaveChanges();
+
+                TempData["Message"] = "User  updated successfully!";
+                return RedirectToAction("ManageUsers");
+            }
+
+            ViewBag.UserTypes = _context.UserTypes.Select(r => new SelectListItem
+            {
+                Value = r.Id.ToString(),
+                Text = r.Name
+            }).ToList();
+            return View(editedUser);
+        }
+
+        // POST: /Admin/DeleteUser /{id}
+        [HttpPost]
+        public IActionResult DeleteUser(int id)
+        {
+            var user = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
+            if (user == null)
+                return NotFound();
+
+            _context.Customers.Remove(user);
+            _context.SaveChanges();
+
+            TempData["Message"] = "User  deleted successfully!";
+            return RedirectToAction("ManageUsers");
+        }
+
 
         // GET: /Admin/EditEmployee/5
         public IActionResult EditEmployee(int id)
@@ -46,7 +258,12 @@ namespace GameCraft.Controllers
                 return NotFound();
             }
 
-            ViewBag.UserTypes = _context.RoleId.ToList(); // List of all roles for permission editing
+            // Populate UserTypes for the dropdown, converting to SelectListItem
+            ViewBag.UserTypes = _context.UserTypes.Select(r => new SelectListItem
+            {
+                Value = r.Id.ToString(),
+                Text = r.Name
+            }).ToList();
 
             return View(employee);
         }
@@ -73,7 +290,7 @@ namespace GameCraft.Controllers
                 existingEmployee.PostCode = editedEmployee.PostCode;
 
                 // Allow role change including permission level
-                if (_context.RoleId.Any(rt => rt.Id == editedEmployee.UserType))
+                if (_context.UserTypes.Any(rt => rt.Id == editedEmployee.UserType))
                 {
                     existingEmployee.UserType = editedEmployee.UserType;
                 }
@@ -84,7 +301,12 @@ namespace GameCraft.Controllers
                 return RedirectToAction("ManageEmployees");
             }
 
-            ViewBag.UserTypes = _context.RoleId.ToList();
+            // If ModelState is not valid, re-populate ViewBag.UserTypes before returning the view
+            ViewBag.UserTypes = _context.UserTypes.Select(r => new SelectListItem
+            {
+                Value = r.Id.ToString(),
+                Text = r.Name
+            }).ToList();
             return View(editedEmployee);
         }
 
@@ -112,8 +334,12 @@ namespace GameCraft.Controllers
         // GET: /Admin/AddOrEditPrize/{id?}
         public IActionResult AddOrEditPrize(int? id)
         {
-            // Populate categories for the dropdown
-            ViewBag.Categories = _context.Categories.ToList();
+            // Populate categories for the dropdown, converting to SelectListItem
+            ViewBag.Categories = _context.Categories.Select(c => new SelectListItem
+            {
+                Value = c.CategoryId.ToString(),
+                Text = c.Name
+            }).ToList();
 
             if (id == null || id == 0)
             {
@@ -164,9 +390,15 @@ namespace GameCraft.Controllers
                 return RedirectToAction("ManagePrizes");
             }
 
-            ViewBag.Categories = _context.Categories.ToList();
+            // If ModelState is not valid, re-populate ViewBag.Categories before returning the view
+            ViewBag.Categories = _context.Categories.Select(c => new SelectListItem
+            {
+                Value = c.CategoryId.ToString(),
+                Text = c.Name
+            }).ToList();
             return View(model);
         }
+
 
         // POST: /Admin/DeletePrize/5
         [HttpPost]
@@ -182,11 +414,82 @@ namespace GameCraft.Controllers
             return RedirectToAction("ManagePrizes");
         }
 
-        // Optional: Admin dashboard or home redirect
+        // GET: /Admin/ManageCategories
+        public IActionResult ManageCategories()
+        {
+            var categories = _context.Categories.ToList();
+            return View(categories);
+        }
+
+        // GET: /Admin/AddOrEditCategory/{id?}
+        public IActionResult AddOrEditCategory(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return View(new Category()); // Create a new category
+            }
+            else
+            {
+                var category = _context.Categories.FirstOrDefault(c => c.CategoryId == id);
+                if (category == null)
+                {
+                    return NotFound();
+                }
+                return View(category); // Edit existing category
+            }
+        }
+
+        // POST: /Admin/AddOrEditCategory/{id?}
+        [HttpPost]
+        public IActionResult AddOrEditCategory(int? id, Category model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (id == null || id == 0)
+                {
+                    // Add new category
+                    _context.Categories.Add(model);
+                    TempData["Message"] = "Category added successfully!";
+                }
+                else
+                {
+                    // Edit existing category
+                    var existingCategory = _context.Categories.FirstOrDefault(c => c.CategoryId == id);
+                    if (existingCategory == null)
+                        return NotFound();
+
+                    existingCategory.Name = model.Name; // Update category name
+                    TempData["Message"] = "Category updated successfully!";
+                }
+                _context.SaveChanges();
+                return RedirectToAction("ManageCategories");
+            }
+            return View(model);
+        }
+
+        // POST: /Admin/DeleteCategory/5
+        [HttpPost]
+        public IActionResult DeleteCategory(int id)
+        {
+            var category = _context.Categories.FirstOrDefault(c => c.CategoryId == id);
+            if (category == null)
+                return NotFound();
+
+            _context.Categories.Remove(category);
+            _context.SaveChanges();
+
+            return RedirectToAction("ManageCategories");
+        }
+
+
+        // GET: /Admin/Index
         public IActionResult Index()
         {
-            return RedirectToAction("ManageEmployees");
+            var users = _context.Customers.ToList();
+            var prizes = _context.Products.ToList();
+            var model = new Tuple<List<Customer>, List<Product>>(users, prizes);
+            return View(model);
         }
+
     }
 }
-

@@ -1,0 +1,102 @@
+﻿@model Tuple<List<GameCraft.Models.Customer>, List<GameCraft.Models.Product>>
+@{
+    ViewBag.Title = "Admin Dashboard - Manage Users and Prizes";
+    Layout = "_AdminLayout";
+}
+
+<section class="hero content-section"> 
+    <h1>Welcome to the Admin Dashboard</h1>
+    <p>Manage users and prizes efficiently!</p>
+</section>
+
+<section class="user-management content-section"> 
+    <h2>Registered Users</h2>
+    <div class="user-list">
+        @if (Model.Item1.Count == 0)
+        {
+            <p>No users found.</p>
+        }
+        else
+        {
+            <table class="table-admin-list">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Item1)
+                    {
+                        <tr>
+                            <td>@user.Name</td>
+                            <td>@user.Email</td>
+                            <td>
+                                <a class="btn-action btn-edit" href="@Url.Action("EditUser", "Admin", new { id = user.CustomerId })">Edit</a>
+                                <form asp-action="DeleteUser " asp-controller="Admin" method="post" class="inline-form" onsubmit="return confirm('Are you sure you want to delete this user?');" style="display:inline;">
+                                    <input type="hidden" name="id" value="@user.CustomerId" />
+                                    <button type="submit" class="btn-action btn-delete">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</section>
+
+<section class="prize-management content-section"> 
+    <h2>Registered Prizes</h2>
+    <div class="prize-list">
+        @if (Model.Item2.Count == 0)
+        {
+            <p>No prizes found.</p>
+        }
+        else
+        {
+            <table class="table-admin-list">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price (Points)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var prize in Model.Item2)
+                    {
+                        <tr>
+                            <td>@prize.Name</td>
+                            <td>@prize.Description</td>
+                            <td>@prize.Price</td>
+                            <td>
+                                <a class="btn-action btn-edit" href="@Url.Action("AddOrEditPrize", "Admin", new { id = prize.ProductId })">Edit</a>
+                                <form asp-action="DeletePrize" asp-controller="Admin" method="post" class="inline-form" onsubmit="return confirm('Are you sure you want to delete this prize?');" style="display:inline;">
+                                    <input type="hidden" name="id" value="@prize.ProductId" />
+                                    <button type="submit" class="btn-action btn-delete">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</section>
+
+<section class="hero content-section"> 
+    <h1>Welcome to the Admin Dashboard</h1>
+    <p>Manage users and prizes efficiently!</p>
+    <a href="@Url.Action("Dashboard", "Employee")" class="btn btn-primary">Go to Employee Portal</a> <!-- Employee Portal Button -->
+</section>
+
+<!-- Existing user management and prize management sections -->
+
+@section Scripts {
+    <script>
+        // Any additional scripts can be added here
+    </script>
+}

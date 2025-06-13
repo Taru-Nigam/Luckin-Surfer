@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - GameCraft Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/admin.css" />
+</head>
+<body>
+    <nav class="navbar navbar-expand navbar-light bg-light shadow-sm sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="@Url.Action("Dashboard", "Admin")">GameCraft Admin</a>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Home")" target="_blank">Website Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Admin")" target="_blank">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageUsers", "Admin")">Manage Users</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("ManagePrizes", "Admin")">Manage Prizes</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageCategories", "Admin")">Manage Categories</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Account/MyAccount">My Profile</a></li>
+                <li class="nav-item"><form method="post" action="/Account/Logout"><button type="submit" class="btn btn-link nav-link">Logout</button></form></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container admin-main py-5">
+        @RenderBody()
+    </div>
+    @RenderSection("Scripts", required: false) <!-- Make this section optional -->
+</body>
+</html>

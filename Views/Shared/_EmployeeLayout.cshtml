@@ -20,9 +20,29 @@
                     <li><a href="@Url.Action("PrizeStock", "Employee")">Prize Stock</a></li>
                     <li><a href="@Url.Action("RedeemedPrizes", "Employee")">Redeemed Prizes</a></li>
                     <li><a href="@Url.Action("AuditLog", "Employee")">Audit Log</a></li>
-                    <li><a href="@Url.Action("AddPrize", "Employee")">Add Prize</a></li>
                 </ul>
             </nav>
+
+            @* Admin Navigation Section *@
+            @if (ViewBag.IsAdmin != null && (bool)ViewBag.IsAdmin)
+            {
+                <nav class="admin-nav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Admin Options
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                <li><a class="dropdown-item" href="@Url.Action("ManageEmployees", "Admin")">Manage Employees</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("ManageUsers", "Admin")">Manage Users</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("ManagePrizes", "Admin")">Manage Prizes</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("ManageCategories", "Admin")">Manage Categories</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            }
+
             <div class="employee-auth">
                 <a href="@Url.Action("Login", "Employee")" class="employee-logout-button">Logout</a>
             </div>

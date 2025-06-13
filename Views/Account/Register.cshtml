@@ -35,5 +35,17 @@
         <div class="login-link">
             <p>Already have an account? <a asp-action="Login">Login here</a></p>
         </div>
+
+        @if (ViewBag.RegistrationSuccess != null && ViewBag.RegistrationSuccess == true)
+        {
+            <div id="successModal" class="modal" style="display:block; position: fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5);">
+                <div style="background:white; padding:20px; margin: 15% auto; width: 300px; text-align:center;">
+                    <h3>Registration Successful!</h3>
+                    <p>Your account has been created.</p>
+                    <a href="/" class="btn btn-primary">Go to Home</a>
+                </div>
+            </div>
+        }
+
     </div>
 </section>
