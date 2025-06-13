@@ -1,0 +1,92 @@
+﻿@model List<GameCraft.Models.Prize> 
+@* This line is CRUCIAL as it declares the type of data this view expects *@
+@{
+    ViewData["Title"] = "Prizes Catalog";
+    Layout = "_Layout"; // Ensures this view uses your main public layout
+}
+
+<section class="prizes-catalog-section">
+    <div class="container">
+        <h2 class="section-title">Prize Catalog</h2>
+
+        <div class="prizes-filters-search">
+            <div class="filter-group">
+                <label for="category-filter">Category - Dropdown:</label>
+                <select id="category-filter" class="form-control">
+                    <option value="all">All</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="toys">Toys</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="gaming">Gaming</option>
+                    <option value="giftcards">Gift Cards</option>
+                </select>
+            </div>
+            <div class="search-group">
+                <label for="prize-search">Search:</label>
+                <input type="text" id="prize-search" placeholder="e.g. Enter Prize Name..." class="form-control" />
+                <button type="button" class="btn btn-primary search-button">GO</button>
+            </div>
+        </div>
+
+        <div class="prizes-grid">
+            @if (Model != null && Model.Any()) @* Checks if the list of prizes is not null AND contains items *@
+            {
+                foreach (var prize in Model) @* Loops through each Prize object provided by the controller *@
+                {
+                    <div class="prize-card" data-category="@prize.Category?.ToLower()"> @* Uses prize.Category for client-side filtering *@
+                        <div class="prize-image-container">
+                            @* The src will come from prize.ImageUrl from your database.
+                                onerror provides a fallback if the image URL is broken or missing. *@
+                            <img src="@prize.ImageUrl" alt="@prize.Name" class="prize-image" onerror="this.onerror=null;this.src='/images/placeholder_prize.png';" />
+                        </div>
+                        <h3 class="prize-name">@prize.Name</h3>
+                        <p class="prize-cost">TICKET COST: @prize.TicketCost Tickets</p>
+                        <button class="quick-view-button">Quick View</button>
+                    </div>
+                }
+            }
+            else
+            {
+                @* This message will display because your HomeController currently passes an empty list **@
+                <p class="no-prizes-message">No prizes available at the moment. Check back soon!</p>
+            }
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Basic client-side search functionality (filters displayed cards)
+            $('#prize-search').on('keyup', function() {
+                var searchText = $(this).val().toLowerCase();
+                $('.prize-card').each(function() {
+                    var prizeName = $(this).find('.prize-name').text().toLowerCase();
+                    if (prizeName.includes(searchText)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            // Basic client-side category filtering (filters displayed cards)
+            $('#category-filter').on('change', function() {
+                var selectedCategory = $(this).val(); // 'all', 'electronics', 'toys', etc.
+
+                $('.prize-card').each(function() {
+                    var cardCategory = $(this).data('category'); // Gets the category from the data-category attribute
+                    if (selectedCategory === 'all' || cardCategory === selectedCategory) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            // Trigger initial filter/search if values are pre-set (e.g., after back button)
+            $('#prize-search').trigger('keyup');
+            $('#category-filter').trigger('change');
+        });
+    </script>
+}
