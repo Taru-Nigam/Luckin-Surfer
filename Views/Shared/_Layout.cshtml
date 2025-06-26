@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,25 +9,27 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GameCraft.styles.css" asp-append-version="true" />
     <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM6g0g5z5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM6g0g5z5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e" crossorigin="anonymous" />
 </head>
 <body>
     <header class="main-header">
-        
         <nav class="navbar navbar-expand-lg navbar-dark gamecraft-navbar">
-           
             <div class="container-fluid top-header-content">
-                
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
 
                 <a class="navbar-brand header-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/Images/GameCraft logo.png" alt="GameCraft Logo" class="brand-logo" /> 
+                    <img src="~/Images/GameCraft logo.png" alt="GameCraft Logo" class="brand-logo" />
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="main-nav-links navbar-nav flex-grow-1">
@@ -62,7 +64,6 @@
                         }
                     </ul>
 
-
                     @if (string.IsNullOrEmpty(username))
                     {
                         <div class="auth-buttons">
@@ -77,57 +78,122 @@
                             <img src="@avatarUrl" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%;" />
                             <span class="text-light">@username</span>
                             <a class="auth-buttons" href="/Account/Logout">Logout</a>
-                            <span class="prize-points">@prizepoints</span> <!-- Display prize points -->
+                            <span class="prize-points">@prizepoints</span>
                         </div>
                     }
-                    </div>
-                    <div class="cart-icon" id="cart-icon">
-                        <a class="nav-link" href="/Cart/Cart">
-                            <img src="~/Images/cart icon.png" alt="Cart Icon" style="width: 50px; height: 50px;" />
-                            <span class="cart-count" id="cartCount">0</span>
-                        </a>
-                        <div class="cart-preview" style="display: none;">
-                            <p>Your cart is empty.</p>
-                        </div>
+                </div>
+                <div class="cart-icon" id="cart-icon">
+                    <a class="nav-link" href="/Cart/Cart">
+                        <img src="~/Images/cart icon.png" alt="Cart Icon" style="width: 50px; height: 50px;" />
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                    <div class="cart-preview" id="cartPreviewBox" style="display: none;">
+                        @* Added id="cartPreviewBox" *@
+                        <p id="cartPreviewMessage">Your cart is empty.</p> @* Added id="cartPreviewMessage" *@
                     </div>
                 </div>
+            </div>
         </nav>
-    </header> 
+    </header>
 
     <div>
         <main role="main">
-            
-            @RenderBody() 
+            @RenderBody()
         </main>
     </div>
 
     <footer class="site-footer">
-        
         <div class="container-fluid">
-            
-           Copyright &copy; 2025 - GameCraft 
+            Copyright &copy; 2025 - GameCraft
         </div>
-    </footer> 
+    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     <script>
-        document.querySelector('.cart-icon').addEventListener('mouseenter', function() {
-            document.querySelector('.cart-preview').style.display = 'block';
-        });
-        document.querySelector('.cart-icon').addEventListener('mouseleave', function() {
-            document.querySelector('.cart-preview').style.display = 'none';
-        });
-        // Example function to update cart count
-        function updateCartCount(count) {
-            const cartCount = document.getElementById('cartCount');
-            cartCount.innerText = count;
-            cartCount.style.display = count > 0 ? 'block' : 'none'; // Show or hide based on count
+        // Get references to the cart preview elements
+        const cartIcon = document.querySelector('.cart-icon');
+        const cartPreviewBox = document.getElementById('cartPreviewBox'); // Using the new ID
+        const cartPreviewMessage = document.getElementById('cartPreviewMessage'); // Using the new ID
+
+        // Cart preview hover logic
+        if (cartIcon && cartPreviewBox) {
+            cartIcon.addEventListener('mouseenter', function() {
+                cartPreviewBox.style.display = 'block';
+            });
+            cartIcon.addEventListener('mouseleave', function() {
+                cartPreviewBox.style.display = 'none';
+            });
         }
-        // Call this function whenever an item is added to the cart
-        // updateCartCount(3); // Example: Update to 3 items
+
+
+        // Function to update cart count display AND the preview message
+        function updateCartCount(count) {
+            const cartCountSpan = document.getElementById('cartCount');
+            if (cartCountSpan) {
+                cartCountSpan.innerText = count;
+                cartCountSpan.style.display = count > 0 ? 'inline-block' : 'none'; // Show or hide based on count
+            }
+
+            // --- NEW LOGIC FOR CART PREVIEW MESSAGE ---
+            if (cartPreviewMessage) {
+                if (count > 0) {
+                    cartPreviewMessage.innerText = `You have ${count} item(s) in your cart.`; 
+                    
+                } else {
+                    cartPreviewMessage.innerText = "Your cart is empty.";
+                }
+            }
+            // --- END NEW LOGIC ---
+        }
+
+        // Function to fetch and update cart count on page load
+        function fetchCartCount() {
+            $.get("/Cart/GetCartCount", function(data) {
+                if (data && typeof data.cartCount !== 'undefined') {
+                    updateCartCount(data.cartCount);
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                 console.error("Failed to fetch initial cart count:", textStatus, errorThrown);
+            });
+        }
+
+        // jQuery document ready function
+        $(document).ready(function() {
+            // Fetch initial cart count when the page loads
+            fetchCartCount();
+
+            // Handle Add to Cart button click using event delegation
+            $(document).on('click', '.add-to-cart-btn', function(e) {
+                e.preventDefault(); // Prevent default button behavior (e.g., form submission)
+
+                var productId = $(this).data('product-id');
+                var productName = $(this).data('product-name');
+
+                if (!productId) {
+                    console.error("Product ID not found for Add to Cart button.");
+                    return;
+                }
+
+                // AJAX POST request to add item to cart
+                $.post("/Cart/AddToCart", { productId: productId, quantity: 1 }, function(data) {
+                    if (data.success) {
+                        updateCartCount(data.cartCount); // Update the number next to the cart icon AND the preview message
+                    } else {
+                        // Handle server-side errors
+                        alert("Error adding item to cart: " + data.message);
+                    }
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    // Handle AJAX request failure
+                    console.error("AJAX Error:", textStatus, errorThrown);
+                    alert("An error occurred while adding to cart. Please try again.");
+                });
+            });
+        });
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
