@@ -1,9 +1,10 @@
+/* --- General Styles --- */
 body {
-    font-family: sans-serif;
-    margin: 0; /* Remove all default body margins */
-    padding: 0; /* Remove all default body padding */
-    background-color: #f4f4f4;
-    color: #333;
+    font-family: 'Raleway', sans-serif; /* Use a modern font */
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a; /* Dark background for a futuristic look */
+    color: #e0e0e0; /* Light text color for contrast */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -13,13 +14,17 @@ main {
     flex-grow: 1;
 }
 
+h2 {
+    color: #00ffcc; /* Neon color for headings */
+}
+
+/* --- Header Styles --- */
 header.main-header .gamecraft-navbar {
-    background-color: #008080;
-    border-bottom: none;
-    box-shadow: none;
+    background-color: #008080; /* Teal background */
+    border-bottom: 2px solid #00ffcc; /* Neon border */
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5); /* Neon glow effect */
     padding: 15px 20px;
     flex-wrap: nowrap;
-    width: 100%;
 }
 
 /* Container for logo, nav, and auth buttons within the header */
@@ -28,22 +33,21 @@ header.main-header .gamecraft-navbar {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding-left: 0px; /* Adjusted to move logo slightly to the left */
 }
 
-/* Styling for the logo and brand name (combined from .navbar-brand and .logo) */
+/* Styling for the logo and brand name */
 .header-brand {
     display: flex;
     align-items: center;
     font-weight: bold;
-    color: white;
+    color: #00ffcc; /* Neon color */
     text-decoration: none;
     flex-shrink: 0;
 }
 
     .header-brand .brand-logo {
-        height: 80px; /* Adjusted logo height to match new text size */
-        margin-right: 15px; /* Space between logo and text */
+        height: 80px;
+        margin-right: 15px;
     }
 
 /* Custom Navigation links */
@@ -57,21 +61,22 @@ header.main-header .gamecraft-navbar {
 }
 
     .main-nav-links .nav-item {
-        margin: 0 40px; /* INCREASED space between nav items to spread them out */
+        margin: 0 40px;
     }
 
     .main-nav-links .nav-link {
-        color: white;
+        color: #00ffcc; /* Neon color */
         text-decoration: none;
         padding: 10px 15px;
         display: block;
         font-weight: bold;
-        transition: background-color 0.3s;
+        transition: background-color 0.3s, color 0.3s;
     }
 
         .main-nav-links .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(0, 255, 204, 0.2);
             border-radius: 5px;
+            color: #fff; /* Change text color on hover */
         }
 
 /* Login/Sign Up buttons */
@@ -87,29 +92,33 @@ header.main-header .gamecraft-navbar {
         border-radius: 5px;
         cursor: pointer;
         font-size: 1em;
+        transition: background-color 0.3s;
     }
 
+        .auth-buttons button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
 
-/* --- Content Section Styling (Full Width with inner padding) --- */
+/* Content Section Styling */
 .content-section {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 20px;
     box-sizing: border-box;
     width: 100%;
 }
 
 /* Hero Section */
 .hero {
-    background-color: #e0f7fa;
-    padding-top: 40px;
-    padding-bottom: 40px;
+    background-color: #0d0d0d; /* Dark background */
+    padding: 40px;
     text-align: left;
     margin-top: 0;
+    border: 2px solid #00ffcc; /* Neon border */
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5); /* Neon glow */
 }
 
     .hero h1 {
         margin-top: 0;
-        color: #008080;
+        color: #00ffcc; /* Neon color */
     }
 
     .hero .connect-account-button {
@@ -120,14 +129,162 @@ header.main-header .gamecraft-navbar {
         border-radius: 5px;
         cursor: pointer;
         font-size: 1.1em;
-        margin-top: 20px;
+        transition: background-color 0.3s;
     }
+
+        .hero .connect-account-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+/* --- Section Headers --- */
+.section-title {
+    color: #2c3e50;
+    font-size: 2.5em; /* Increased font size for emphasis */
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.form-instruction {
+    color: #2c3e50;
+    font-size: 1.5em; /* Increased font size for emphasis */
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+/* --- Forms --- */
+.login-form, .register-form, #accountForm {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #222; /* Dark background for forms */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+    .login-form .form-group, .register-form .form-group, #accountForm .form-group {
+        margin-bottom: 15px;
+    }
+
+    .login-form label, .register-form label, #accountForm label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #00ffcc; /* Neon color for labels */
+    }
+
+    .login-form input[type="text"],
+    .login-form input[type="email"],
+    .login-form input[type="password"],
+    .register-form input[type="text"],
+    .register-form input[type="email"],
+    .register-form input[type="password"],
+    #accountForm input[type="text"],
+    #accountForm input[type="email"],
+    #accountForm input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #00ffcc; /* Neon border */
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 1em;
+        background-color: #333; /* Dark background for input fields */
+        color: #e0e0e0; /* Light text color */
+        transition: border-color 0.3s;
+    }
+
+        .login-form input[type="text"]:focus,
+        .login-form input[type="email"]:focus,
+        .login-form input[type="password"]:focus,
+        .register-form input[type="text"]:focus,
+        .register-form input[type="email"]:focus,
+        .register-form input[type="password"]:focus,
+        #accountForm input[type="text"]:focus,
+        #accountForm input[type="email"]:focus,
+        #accountForm input[type="password"]:focus {
+            border-color: #3498db; /* Highlight border on focus */
+        }
+
+.submit-button {
+    background-color: #28a745; /* Green color for buttons */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+    .submit-button:hover {
+        background-color: #218838; /* Darker green on hover */
+        transform: scale(1.05); /* Slight scale effect on hover */
+    }
+
+/* --- Change Password Section --- */
+#changePasswordSection {
+    margin-top: 20px; /* Space above the change password section */
+    background-color: #222; /* Dark background */
+    padding: 20px; /* Padding for the section */
+    border-radius: 5px; /* Rounded corners */
+    border: 1px solid #00ffcc; /* Neon border */
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5); /* Neon glow */
+}
+
+    #changePasswordSection h3 {
+        color: #00ffcc; /* Neon color for section heading */
+    }
+
+/* --- Messages --- */
+.login-form .error-message,
+.register-form .error-message,
+#error-message {
+    color: #e74c3c; /* Red color for error messages */
+    margin-top: 10px;
+    text-align: center;
+}
+
+.login-form .success-message,
+.register-form .success-message,
+#success-message {
+    color: #28a745; /* Green color for success messages */
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Additional styles for links */
+.register-link, .login-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+    .register-link a, .login-link a {
+        color: #00ffcc; /* Neon color for links */
+        text-decoration: underline;
+    }
+
+.login-link {
+    color: #2c3e50;
+    font-size: 1.5em; /* Increased font size for emphasis */
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.register-link {
+    color: #2c3e50;
+    font-size: 1.5em; /* Increased font size for emphasis */
+    margin-bottom: 25px;
+    text-align: center;
+}
 
 /* Featured Prizes Section */
 .featured-prizes {
     padding: 30px 20px;
     text-align: center;
-    background-color: #fff;
+    background-color: #222; /* Dark background */
+    border: 2px solid #00ffcc; /* Neon border */
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5); /* Neon glow */
 }
 
     .featured-prizes h2 {
@@ -136,7 +293,7 @@ header.main-header .gamecraft-navbar {
         padding: 10px 0;
         margin: 0 auto 25px auto;
         border-radius: 5px;
-        color: #008080;
+        color: #00ffcc; /* Neon color */
     }
 
 .prize-list {
@@ -153,9 +310,15 @@ header.main-header .gamecraft-navbar {
     border-radius: 8px;
     width: 200px;
     text-align: center;
-    background-color: #f9f9f9;
+    background-color: #333; /* Dark background */
     flex-shrink: 0;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
+
+    .prize-item:hover {
+        transform: scale(1.05); /* Slightly enlarge on hover */
+        box-shadow: 0 0 20px rgba(0, 255, 204, 0.5); /* Neon glow */
+    }
 
     .prize-item .prize-image {
         height: 120px;
@@ -166,21 +329,22 @@ header.main-header .gamecraft-navbar {
     }
 
         .prize-item .prize-image img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+            width: 100%; /* Ensure uniform size */
+            height: 100%; /* Ensure uniform size */
+            object-fit: cover; /* Maintain aspect ratio */
         }
 
     .prize-item .prize-name {
         font-size: 1.1em;
         margin-bottom: 5px;
         font-weight: bold;
+        color: #00ffcc; /* Neon color */
     }
 
     .prize-item .ticket-cost {
         display: block;
         margin-bottom: 10px;
-        color: #008080;
+        color: #00ffcc; /* Neon color */
         font-weight: bold;
     }
 
@@ -192,17 +356,66 @@ header.main-header .gamecraft-navbar {
         border-radius: 5px;
         cursor: pointer;
         font-size: 0.9em;
+        transition: background-color 0.3s;
     }
+
+        .prize-item .quick-view-button:hover {
+            background-color: #555; /* Darker on hover */
+        }
+
+.prizes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.prize-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.prize-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #222; /* Dark background */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.prize-name {
+    font-size: 1.2em;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    min-height: 2.4em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #00ffcc; /* Neon color */
+}
+
+.prize-cost {
+    font-weight: bold;
+    color: #00ffcc; /* Neon color */
+    margin-bottom: 15px;
+}
 
 /* How It Works Section */
 .how-it-works {
-    background-color: #f0f8ff;
+    background-color: #0d0d0d; /* Dark background */
     padding: 30px 20px;
     text-align: center;
+    border: 2px solid #00ffcc; /* Neon border */
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5); /* Neon glow */
 }
 
     .how-it-works h2 {
-        color: #008080;
+        color: #00ffcc; /* Neon color */
     }
 
 .steps {
@@ -235,6 +448,7 @@ header.main-header .gamecraft-navbar {
 
     .step p {
         font-size: 0.9em;
+        color: #e0e0e0; /* Light text color */
     }
 
 .profile-section {
@@ -245,6 +459,7 @@ header.main-header .gamecraft-navbar {
 .prize-points {
     margin-right: 10px; /* Space between points and profile icon */
     font-weight: bold;
+    color: #00ffcc; /* Neon color */
 }
 
 .profile-icon {
@@ -272,4 +487,68 @@ header.main-header .gamecraft-navbar {
         height: 100%;
         margin-top: auto;
         flex-shrink: 0;
+    }
+
+/* Cart icon container */
+.cart-icon {
+    position: relative;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+/* Number badge on cart icon */
+.cart-count {
+    position: absolute;
+    top: -5px; /* Adjust this value to position the badge */
+    right: -10px; /* Adjust this value to position the badge */
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    display: none; /* Initially hidden */
+}
+
+/* Cart preview popup */
+.cart-preview {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 35px;
+    width: 300px;
+    background: #222; /* Dark background for the preview */
+    border: 1px solid #00ffcc; /* Neon border */
+    box-shadow: 0 2px 5px rgba(0, 255, 204, 0.5); /* Neon glow */
+    padding: 10px;
+    z-index: 1000;
+    color: #e0e0e0; /* Light text color */
+    border-radius: 5px;
+}
+
+    .cart-preview p {
+        margin: 0;
+    }
+
+/* Alert styles */
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.alert-info {
+    background-color: rgba(0, 123, 255, 0.1);
+    color: #0d6efd;
+    border: 1px solid rgba(0, 123, 255, 0.2);
+}
+
+/* General button styles */
+.btn {
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+    .btn:hover {
+        transform: scale(1.05); /* Slight scale effect on hover */
     }
