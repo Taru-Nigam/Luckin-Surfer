@@ -110,6 +110,16 @@ namespace GameCraft.Controllers
             HttpContext.Session.SetString("PrizePoints", customer.PrizePoints.ToString());
             HttpContext.Session.SetString("AvatarUrl", customer.AvatarUrl ?? "/images/default-avatar.png");
 
+            CookieOptions options = new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddDays(7),
+                IsEssential = true
+            };
+            Response.Cookies.Append("UserToken", customer.CustomerId.ToString(), options);
+
+            return RedirectToAction("Index", "Home");
+        }
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -120,6 +130,7 @@ namespace GameCraft.Controllers
         {
             // Clear the session
             HttpContext.Session.Clear();
+            Response.Cookies.Delete("UserToken");
             return RedirectToAction("Index", "Home");
         }
 
