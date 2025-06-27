@@ -8,53 +8,45 @@
 
 @if (TempData["Message"] != null)
 {
-    <div class="alert-success">@TempData["Message"]</div>
+    <div class="alert alert-success">@TempData["Message"]</div>
 }
 
-<div class="prizes-list-container">
-    <a href="@Url.Action("AddOrEditPrize", "Admin")" class="btn-primary mb-4">Add New Prize</a>
+<a href="@Url.Action("AddOrEditPrize", "Admin")" class="btn btn-primary mb-4">Add New Prize</a>
 
-    @if (Model.Count == 0)
-    {
-        <p>No prizes found.</p>
-    }
-    else
-    {
-        <table class="table-admin-list">
-            <thead>
+@if (Model.Count == 0)
+{
+    <p>No prizes found.</p>
+}
+else
+{
+    <table class="table-admin-list">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
                 <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price (Points)</th>
-                    <th>Category</th>
-                    <th>Image</th> <!-- New column for image -->
-                    <th>Actions</th>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price</td>
+                    <td>@product.CategoryId</td>
+                    <td>@product.ImageUrl</td>
+                    <td>
+                        <a href="@Url.Action("AddOrEditPrize", "Admin", new { id = product.ProductId })" class="btn-action btn-edit">Edit</a>
+                        <form asp-action="DeletePrize" asp-controller="Admin" method="post" class="inline-form" onsubmit="return confirm('Are you sure you want to delete this product?');" style="display:inline;">
+                            <input type="hidden" name="id" value="@product.ProductId" />
+                            <button type="submit" class="btn-action btn-delete">Delete</button>
+                        </form>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var prize in Model)
-                {
-                    <tr>
-                        <td>@prize.Name</td>
-                        <td>@prize.Description</td>
-                        <td>@prize.Price</td>
-                        <td>@prize.CategoryId</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(prize.ImageUrl))
-                            {
-                                <img src="@Url.Content(prize.ImageUrl)" alt="Prize Image" style="width: 50px; height: 50px;" />
-                            }
-                        </td>
-                        <td>
-                            <a href="@Url.Action("AddOrEditPrize", "Admin", new { id = prize.ProductId })" class="btn-action btn-edit">Edit</a>
-                            <form asp-action="DeletePrize" asp-controller="Admin" method="post" class="inline-form" onsubmit="return confirm('Are you sure you want to delete this prize?');" style="display:inline;">
-                                <input type="hidden" name="id" value="@prize.ProductId" />
-                                <button type="submit" class="btn-action btn-delete">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-</div>
+            }
+        </tbody>
+    </table>
+}

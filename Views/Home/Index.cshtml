@@ -9,33 +9,27 @@
     <button class="connect-account-button" onclick="location.href='/Home/ConnectAccount'">CONNECT YOUR ACCOUNT</button>
 </section>
 
-<section class="featured-prizes content-section"> 
+<section class="featured-prizes content-section">
     <h2>Featured Prize Section</h2>
     <div class="prize-list">
-        <div class="prize-item">
-            <div class="prize-image">
-                <img src="~/Images/gaming console.jpg" alt="Gaming Console" />
-            </div>
-            <h3 class="prize-name">Gaming Console</h3>
-            <span class="ticket-cost">TICKET COST: 1500 Tickets</span>
-            <button class="quick-view-button" data-prize-id="1">Quick View</button>
-        </div>
-        <div class="prize-item">
-            <div class="prize-image">
-                <img src="~/Images/dragon plush toy.png" alt="Plush Toy - Dragon" />
-            </div>
-            <h3 class="prize-name">Plush Toy - Dragon</h3>
-            <span class="ticket-cost">TICKET COST: 500 tickets</span>
-            <button class="quick-view-button" data-prize-id="2">Quick View</button>
-        </div>
-        <div class="prize-item">
-            <div class="prize-image">
-                <img src="~/Images/wireless headphone.jpeg" alt="Wireless Headphone" />
-            </div>
-            <h3 class="prize-name">Wireless Headphone</h3>
-            <span class="ticket-cost">TICKET COST: 2200 Tickets</span>
-            <button class="quick-view-button" data-prize-id="3">Quick View</button>
-        </div>
+        @if (ViewBag.RandomProducts != null && ViewBag.RandomProducts.Count > 0)
+        {
+            foreach (var prize in ViewBag.RandomProducts)
+            {
+                <div class="prize-item">
+                    <div class="prize-image">
+                        <img src="@prize.ImageUrl" alt="@prize.Name" class="prize-image" onerror="this.onerror=null;this.src='/images/placeholder_product.png';" /> <!-- Assuming you have an ImageUrl property -->
+                    </div>
+                    <h3 class="prize-name">@prize.Name</h3>
+                    <span class="ticket-cost">TICKET COST: @prize.Price Tickets</span>
+                    <button class="quick-view-button" onclick="location.href='@Url.Action("Details", "Product", new { id = prize.ProductId })'">Quick View</button>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No featured prizes available.</p>
+        }
     </div>
 </section>
 
@@ -68,17 +62,3 @@
         </div>
     </div>
 </section>
-
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const quickViewButtons = document.querySelectorAll('.quick-view-button');
-            quickViewButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const prizeId = this.getAttribute('data-prize-id');
-                    alert('Quick view for prize ID: ' + prizeId);
-                });
-            });
-        });
-    </script>
-}

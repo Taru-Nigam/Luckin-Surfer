@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - Employee Dashboard</title>
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/employee.css" />
+    <link rel="stylesheet" href="~/css/admin.css" /> <!-- Include admin CSS -->
 </head>
 <body>
     <header class="employee-header">
@@ -27,18 +28,10 @@
             @if (ViewBag.IsAdmin != null && (bool)ViewBag.IsAdmin)
             {
                 <nav class="admin-nav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Admin Options
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                                <li><a class="dropdown-item" href="@Url.Action("ManageEmployees", "Admin")">Manage Employees</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("ManageUsers", "Admin")">Manage Users</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("ManagePrizes", "Admin")">Manage Prizes</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("ManageCategories", "Admin")">Manage Categories</a></li>
-                            </ul>
-                        </li>
+                    <ul>
+                        <li><a href="@Url.Action("ManageUsers", "Admin")">Manage Users</a></li>
+                        <li><a href="@Url.Action("ManagePrizes", "Admin")">Manage Prizes</a></li>
+                        <li><a href="@Url.Action("ManageCategories", "Admin")">Manage Categories</a></li>
                     </ul>
                 </nav>
             }

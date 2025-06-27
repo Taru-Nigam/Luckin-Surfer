@@ -1,9 +1,19 @@
-﻿/* --- Employee Layout Specific Styling --- */
+﻿/* --- General Styles --- */
+body {
+    background-color: #f4f4f4; /* Light background for contrast */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
 
+/* --- Header Styles --- */
 .employee-header {
-    background-color: #000000;
+    background-color: #1a1a1a; /* Darker background for header */
     padding: 15px 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .employee-header-content {
@@ -12,7 +22,6 @@
     justify-content: space-between;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
 }
 
 .employee-brand {
@@ -20,9 +29,8 @@
     align-items: center;
     font-size: 1.8em;
     font-weight: bold;
-    color: white;
+    color: #ffffff;
     text-decoration: none;
-    flex-shrink: 0;
 }
 
     .employee-brand .brand-logo {
@@ -30,90 +38,98 @@
         margin-right: 10px;
     }
 
-.employee-nav ul {
+/* --- Navigation Styles --- */
+.employee-nav ul,
+.admin-nav ul {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
 }
 
-    .employee-nav ul li {
+    .employee-nav ul li,
+    .admin-nav ul li {
         margin: 0 15px;
     }
 
-        .employee-nav ul li a {
-            color: white;
+        .employee-nav ul li a,
+        .admin-nav ul li a {
+            color: #ffffff;
             text-decoration: none;
-            padding: 8px 12px;
+            padding: 10px 15px;
             display: block;
             font-weight: bold;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
             border-radius: 4px;
         }
 
             .employee-nav ul li a:hover,
-            .employee-nav ul li a.active {
+            .admin-nav ul li a:hover {
                 background-color: rgba(255, 255, 255, 0.2);
+                transform: scale(1.05); /* Slight scale effect on hover */
             }
 
+/* Logout Button */
 .employee-logout-button {
     background-color: #e74c3c;
     color: white;
     border: none;
-    padding: 8px 15px;
+    padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 0.9em;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s;
 }
 
     .employee-logout-button:hover {
         background-color: #c0392b;
+        transform: scale(1.05); /* Slight scale effect on hover */
     }
 
-/* Main content area for employee pages */
+/* --- Main Content Area --- */
 .employee-main-content {
     background-color: #ecf0f1;
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding: 30px;
     flex-grow: 1;
 }
 
-/* --- Common Employee Page Elements --- */
-
-/* Section headers on employee pages */
+/* --- Section Headers --- */
 .employee-section-title {
     color: #2c3e50;
-    font-size: 2em;
+    font-size: 2.5em; /* Increased font size for emphasis */
     margin-bottom: 25px;
     text-align: center;
 }
 
-/* Cards used for displaying info/metrics */
+/* --- Cards --- */
 .employee-card {
     background-color: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-bottom: 20px;
+    transition: transform 0.2s;
 }
+
+    .employee-card:hover {
+        transform: translateY(-5px); /* Lift effect on hover */
+    }
 
 .employee-card-title {
     color: #34495e;
-    font-size: 1.3em;
+    font-size: 1.5em; /* Increased font size for emphasis */
     margin-bottom: 15px;
     text-align: center;
 }
 
-/* Forms on employee pages (e.g., Add Prize) */
+/* --- Forms --- */
 .employee-form {
     max-width: 500px;
     margin: 0 auto;
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
     .employee-form .form-group {
@@ -137,8 +153,17 @@
         border-radius: 4px;
         box-sizing: border-box;
         font-size: 1em;
+        transition: border-color 0.3s;
     }
 
+        .employee-form input[type="text"]:focus,
+        .employee-form input[type="number"]:focus,
+        .employee-form input[type="password"]:focus,
+        .employee-form textarea:focus {
+            border-color: #3498db; /* Highlight border on focus */
+        }
+
+    /* Submit Button */
     .employee-form button.submit-button {
         background-color: #28a745;
         color: white;
@@ -149,13 +174,15 @@
         font-size: 1.1em;
         width: 100%;
         margin-top: 20px;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, transform 0.2s;
     }
 
         .employee-form button.submit-button:hover {
             background-color: #218838;
+            transform: scale(1.05); /* Slight scale effect on hover */
         }
 
+    /* --- Messages --- */
     .employee-form .error-message {
         color: #e74c3c;
         margin-top: 10px;
@@ -168,11 +195,12 @@
         text-align: center;
     }
 
+/* --- Tables --- */
 .employee-table-container {
     overflow-x: auto;
     background-color: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-top: 20px;
 }
@@ -205,6 +233,7 @@
         background-color: #eef;
     }
 
+/* --- Dashboard Grid --- */
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -212,7 +241,7 @@
     margin-top: 20px;
 }
 
-/* Metrics and quick links on dashboard */
+/* --- Metrics and Quick Links --- */
 .metric-card {
     text-align: center;
 }
@@ -246,14 +275,15 @@
             padding: 10px 15px;
             border-radius: 5px;
             text-decoration: none;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s;
         }
 
             .quick-links ul li a:hover {
                 background-color: #2980b9;
+                transform: scale(1.05); /* Slight scale effect on hover */
             }
 
-/* Admin Checkbox Section */
+/* --- Admin Section Styles --- */
 .admin-checkbox-section {
     margin-top: 1.5rem;
     font-size: 1rem;
@@ -261,7 +291,6 @@
     text-align: center;
 }
 
-/* Admin Login Section */
 .admin-login-section {
     margin: 1.5rem auto; /* Center the section with auto margins */
     font-size: 1rem;
@@ -271,7 +300,7 @@
     border-radius: 8px; /* Rounded corners */
     padding: 20px; /* Padding for spacing */
     background-color: #f9f9f9; /* Light background for contrast */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     width: 80%; /* Set a specific width for the section */
     max-width: 500px; /* Optional: Set a maximum width */
 }
@@ -302,12 +331,13 @@
         border-radius: 5px;
         cursor: pointer;
         font-size: 1em;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, transform 0.2s;
         width: 80%; /* Full width for the button */
     }
 
         .admin-login-section button:hover {
             background-color: #2980b9; /* Darker shade on hover */
+            transform: scale(1.05); /* Slight scale effect on hover */
         }
 
 .admin-options {
@@ -344,8 +374,7 @@
                     color: #2980b9; /* Darker shade on hover */
                 }
 
-
-
+/* Return Home Link */
 .return-home-link {
     margin-top: 1.5rem;
     font-size: 1rem;
@@ -353,6 +382,7 @@
     text-align: center;
 }
 
+/* Prize Stock Image Thumbnail */
 .prize-stock-image-thumb {
     width: 50px;
     height: 50px;

@@ -1,0 +1,49 @@
+﻿@model GameCraft.Models.Product
+@{
+    ViewData["Title"] = Model.Name; // Set the title to the product name
+    Layout = "_Layout"; // Use the main layout
+}
+
+<section class="product-details-section">
+    <div class="container">
+        <h2 class="product-name">@Model.Name</h2>
+        <div class="product-image">
+            <img src="@Model.ImageUrl" alt="@Model.Name" onerror="this.onerror=null;this.src='/images/placeholder_product.png';" />
+        </div>
+        <div class="product-info">
+            <p class="product-description">@Model.Description</p>
+            <p class="ticket-cost">TICKET COST: @Model.Price Tickets</p>
+            <div class="product-actions">
+                <button class="btn btn-primary add-to-cart-button" data-product-id="@Model.ProductId">Add to Cart</button>
+                <a class="btn btn-success buy-now-button" href="@Url.Action("Index", "Checkout", new { productId = Model.ProductId })">Buy Now</a>
+            </div>
+            <div id="cart-message" class="alert alert-info" style="display:none;"></div> <!-- Message for cart updates -->
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.add-to-cart-button').click(function() {
+                var productId = $(this).data('product-id');
+                var quantity = 1; // Default quantity
+                $.post("/Cart/AddToCart", { productId: productId, quantity: quantity }, function(data) {
+                    if (data.success) {
+                        $('#cart-message').text('Product added to cart!').fadeIn().delay(2000).fadeOut(); // Show message
+                        updateCartCount(data.cartCount); // Update the cart count in the layout
+                        $('.cart-icon').addClass('bounce'); // Add bounce class to cart icon
+                        setTimeout(function() {
+                            $('.cart-icon').removeClass('bounce'); // Remove bounce class after animation
+                        }, 700); // Duration of the bounce animation
+                    } else {
+                        alert(data.message); // Show error message if any
+                    }
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX Error:", textStatus, errorThrown);
+                    alert("An error occurred while adding the product to the cart. Please try again.");
+                });
+            });
+        });
+    </script>
+}

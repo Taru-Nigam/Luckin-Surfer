@@ -8,6 +8,18 @@
 
         <p class="form-instruction">Fill in the details to register</p>
 
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
         <form asp-action="Register" method="post" class="register-form">
             <div class="form-group">
                 <label for="username">Username:</label>
@@ -46,6 +58,5 @@
                 </div>
             </div>
         }
-
     </div>
 </section>

@@ -534,6 +534,26 @@ header.main-header .gamecraft-navbar {
         margin: 0;
     }
 
+/* Bounce animation for cart icon */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-10px);
+    }
+
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.cart-icon.bounce {
+    animation: bounce 0.7s; /* Duration of the bounce animation */
+}
+
+
 /* Alert styles */
 .alert {
     padding: 15px;

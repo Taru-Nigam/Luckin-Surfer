@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GameCraft.styles.css" asp-append-version="true" />
     <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM6g0g5z5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM6g0g5z5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e" crossorigin="anonymous" />
 </head>
 <body>
     <header class="main-header">
@@ -78,10 +78,11 @@
                             <img src="@avatarUrl" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%;" />
                             <span class="text-light">@username</span>
                             <a class="auth-buttons" href="/Account/Logout">Logout</a>
-                            <span class="prize-points">@prizepoints</span>
+                            <span class="prize-points">@prizepoints</span> <!-- Display prize points -->
                         </div>
                     }
                 </div>
+
                 <div class="cart-icon" id="cart-icon">
                     <a class="nav-link" href="/Cart/Cart">
                         <img src="~/Images/cart icon.png" alt="Cart Icon" style="width: 50px; height: 50px;" />
@@ -100,7 +101,7 @@
         <main role="main">
             @RenderBody()
         </main>
-    </div>
+    
 
     <footer class="site-footer">
         <div class="container-fluid">
@@ -111,9 +112,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     <script>
-        // Get references to the cart preview elements
+                // Get references to the cart preview elements
         const cartIcon = document.querySelector('.cart-icon');
         const cartPreviewBox = document.getElementById('cartPreviewBox'); // Using the new ID
         const cartPreviewMessage = document.getElementById('cartPreviewMessage'); // Using the new ID
@@ -140,8 +140,8 @@
             // --- NEW LOGIC FOR CART PREVIEW MESSAGE ---
             if (cartPreviewMessage) {
                 if (count > 0) {
-                    cartPreviewMessage.innerText = `You have ${count} item(s) in your cart.`; 
-                    
+                    cartPreviewMessage.innerText = `You have ${count} item(s) in your cart.`; // More dynamic message
+                    // Or, if you want to hide the whole preview box if not empty, you'd adjust display property of cartPreviewBox
                 } else {
                     cartPreviewMessage.innerText = "Your cart is empty.";
                 }
