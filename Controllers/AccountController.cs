@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using GameCraft.Data;
 using GameCraft.Models;
 using System.Linq;
@@ -49,7 +49,8 @@ namespace GameCraft.Controllers
                     Phone = "",
                     Address = "",
                     City = "",
-                    PostCode = ""
+                    PostCode = "",
+                    UserType = 1 // Set UserType to 1 for regular users
                 };
 
                 _context.Customers.Add(customer);
@@ -154,15 +155,90 @@ namespace GameCraft.Controllers
         [HttpPost]
         public IActionResult UpdateAccount(Customer customer)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Save the customer data to the database
-                _context.Customers.Update(customer);
-                _context.SaveChanges();
-                return RedirectToAction("Index", "Home"); // Redirect after successful update
+                return View("MyAccount", customer);
             }
-            return View("MyAccount", customer); // Return to the view with validation errors
+
+            // check whether email been taken
+            var existingEmail = _context.Customers
+                .FirstOrDefault(c => c.Email == customer.Email && c.CustomerId != customer.CustomerId);
+            if (existingEmail != null)
+            {
+                ModelState.AddModelError("Email", "This email is already in use.");
+                return View("MyAccount", customer);
+            }
+
+            // check username been taken
+            var existingName = _context.Customers
+                .FirstOrDefault(c => c.Name == customer.Name && c.CustomerId != customer.CustomerId);
+            if (existingName != null)
+            {
+                ModelState.AddModelError("Name", "This username is already taken.");
+                return View("MyAccount", customer);
+            }
+
+            // keep hidden data not be replaced by null
+            var existingCustomer = _context.Customers.FirstOrDefault(c => c.CustomerId == customer.CustomerId);
+            if (existingCustomer == null)
+            {
+                return NotFound();
+            }
+
+            // update data
+            existingCustomer.Name = customer.Name;
+            existingCustomer.Email = customer.Email;
+            existingCustomer.Phone = customer.Phone;
+            existingCustomer.Address = customer.Address;
+            existingCustomer.City = customer.City;
+            existingCustomer.PostCode = customer.PostCode;
+            existingCustomer.AvatarUrl = customer.AvatarUrl;
+
+            _context.Customers.Update(existingCustomer);
+            _context.SaveChanges();
+
+            // update Session
+            HttpContext.Session.SetString("UserName", existingCustomer.Name);
+            HttpContext.Session.SetString("Email", existingCustomer.Email);
+            HttpContext.Session.SetString("AvatarUrl", existingCustomer.AvatarUrl ?? "/images/default-avatar.png");
+
+            TempData["SuccessMessage"] = "Account updated successfully.";
+            return RedirectToAction("Index", "Home");
         }
 
+        // POST: /Account/ChangePassword
+        [HttpPost]
+        public IActionResult ChangePassword(string newPassword, string confirmPassword)
+        {
+            if (newPassword != confirmPassword)
+            {
+                ModelState.AddModelError("", "Passwords do not match.");
+                return RedirectToAction("MyAccount");
+            }
+
+            var email = HttpContext.Session.GetString("Email");
+            var customer = _context.Customers.FirstOrDefault(c => c.Email == email);
+            if (customer == null)
+            {
+                return RedirectToAction("Login"); // Redirect to login if customer not found
+            }
+
+            // Hash the new password
+            string passwordHash, salt;
+            (passwordHash, salt) = PasswordHelper.HashPassword(newPassword);
+
+            // Update the customer's password
+            customer.PasswordHash = passwordHash;
+            customer.Salt = salt;
+
+            _context.Customers.Update(customer);
+            _context.SaveChanges();
+
+            TempData["SuccessMessage"] = "Password changed successfully.";
+            return RedirectToAction("MyAccount"); // Redirect to MyAccount to show the success message
+        }
     }
 }
+
+
+       
