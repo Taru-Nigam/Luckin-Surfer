@@ -8,12 +8,13 @@ using System.Security.Claims;
 
 namespace GameCraft.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly GameCraftDbContext _context;
 
         public HomeController(ILogger<HomeController> logger, GameCraftDbContext context)
+            : base(context)
         {
             _logger = logger;
             _context = context; // Initialize the context
