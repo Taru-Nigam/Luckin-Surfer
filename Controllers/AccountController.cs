@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using GameCraft.Data;
 using GameCraft.Models;
 using System.Linq;
 using GameCraft.Helpers;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace GameCraft.Controllers
 {
@@ -104,7 +107,7 @@ namespace GameCraft.Controllers
                 return View();
             }
 
-            // Store user info in session, or sign in as per your setup
+            // Store user info in session
             HttpContext.Session.SetString("UserName", customer.Name);
             HttpContext.Session.SetString("Email", customer.Email);
             HttpContext.Session.SetString("PrizePoints", customer.PrizePoints.ToString());
@@ -119,10 +122,6 @@ namespace GameCraft.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-
-            return RedirectToAction("Index", "Home");
-        }
-
 
         // GET: /Account/Logout
         [HttpGet]
@@ -233,7 +232,7 @@ namespace GameCraft.Controllers
             await _context.SaveChangesAsync();
 
             // Update Session
-            HttpContext.Session.SetString("User Name", existingCustomer.Name);
+            HttpContext.Session.SetString("UserName", existingCustomer.Name);
             HttpContext.Session.SetString("Email", existingCustomer.Email);
             HttpContext.Session.SetString("AvatarUrl", existingCustomer.AvatarUrl ?? "/images/default-avatar.png");
 
@@ -273,7 +272,7 @@ namespace GameCraft.Controllers
             return RedirectToAction("MyAccount"); // Redirect to MyAccount to show the success message
         }
 
-        // GET: /Account/GetUser names
+        // GET: /Account/GetUserNames
         [HttpGet]
         public IActionResult GetUser(string searchTerm)
         {
@@ -283,6 +282,7 @@ namespace GameCraft.Controllers
                 .ToList();
             return Json(usernames);
         }
+
         // POST: /Account/ConnectAccount
         [HttpPost]
         public IActionResult ConnectAccount(string cardNumber, string username)
