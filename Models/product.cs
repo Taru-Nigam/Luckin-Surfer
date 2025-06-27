@@ -21,6 +21,7 @@ namespace GameCraft.Models
 
         [Required]
         public int CategoryId { get; set; }
+
         [StringLength(255)]
         public string ImageUrl { get; set; }
 

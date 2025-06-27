@@ -25,5 +25,11 @@ namespace GameCraft.Models
         // Optional: You can add more properties like image URL, description etc. if needed
         [StringLength(500)]
         public string ImageUrl { get; set; }
+
+
+        // Navigation properties
+        public virtual Customer Customer { get; set; }
+        public int CustomerId { get; internal set; }
+        public virtual Product Product { get; set; }
     }
 }

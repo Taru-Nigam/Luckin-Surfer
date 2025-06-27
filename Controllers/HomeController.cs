@@ -1,5 +1,6 @@
 using GameCraft.Data;
 using GameCraft.Models;
+using GameCraft.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -12,12 +13,13 @@ namespace GameCraft.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly GameCraftDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, GameCraftDbContext context)
         {
             _logger = logger;
+            _context = context; // Initialize the context
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
             // Check if the user is an admin
             var isAdmin = HttpContext.Session.GetString("IsAdmin");
@@ -31,6 +33,14 @@ namespace GameCraft.Controllers
                 var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == int.Parse(userId));
                 ViewBag.PrizePoints = customer?.PrizePoints ?? 0; // Pass prize points to the view
             }
+
+            // Retrieve 3 random products
+            var randomProducts = await _context.Products
+                .OrderBy(r => Guid.NewGuid()) // Randomize the order
+                .Take(3) // Take 3 products
+                .ToListAsync();
+            ViewBag.RandomProducts = randomProducts; // Pass the random products to the view
+
             return View();
         }
 
@@ -44,10 +54,20 @@ namespace GameCraft.Controllers
             return View(); // This corresponds to About.cshtml
         }
 
-        public IActionResult Prizes()
+        public async Task<IActionResult> Prizes()
         {
-            return View(); // You'll create Prizes.cshtml
+            // Retrieve products without including categories
+            var products = await _context.Products.ToListAsync();
+            var categories = await _context.Categories.ToListAsync();
+            var viewModel = new PrizeCatalogViewModel
+            {
+                Products = products,
+                Categories = categories
+            };
+            return View("~/Views/Home/Prizes.cshtml", viewModel); // Ensure you are passing the view model
         }
+
+
 
         public IActionResult MyAccount()
         {

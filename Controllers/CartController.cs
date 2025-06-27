@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GameCraft.Data;
 using GameCraft.Models;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json; // Ensure you have installed the Newtonsoft.Json NuGet package
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using GameCraft.Data; // Assuming your DbContext is here
+using Microsoft.EntityFrameworkCore; // Needed for Include
+using Newtonsoft.Json; // For JSON serialization
 
 namespace GameCraft.Controllers
 {
@@ -15,6 +16,15 @@ namespace GameCraft.Controllers
         public CartController(GameCraftDbContext context)
         {
             _context = context;
+        }
+
+        // Helper method to get the current cart from the database
+        private List<CartItem> GetCartFromDatabase(int customerId)
+        {
+            return _context.CartItems
+                .Where(c => c.CustomerId == customerId)
+                .Include(c => c.Product) // Include product details
+                .ToList();
         }
 
         // Helper method to get the current cart from session
@@ -38,14 +48,22 @@ namespace GameCraft.Controllers
         [HttpPost]
         public IActionResult AddToCart(int productId, int quantity = 1)
         {
+            var customerEmail = HttpContext.Session.GetString("Email");
+            var customer = _context.Customers.FirstOrDefault(c => c.Email == customerEmail);
+            if (customer == null)
+            {
+                return NotFound(new { success = false, message = "User  not found." });
+            }
+
             var product = _context.Products.FirstOrDefault(p => p.ProductId == productId);
             if (product == null)
             {
                 return NotFound(new { success = false, message = "Product not found." });
             }
 
-            var cart = GetCart();
-            var existingItem = cart.FirstOrDefault(item => item.ProductId == productId);
+            // Check if the item already exists in the database cart
+            var existingItem = _context.CartItems
+                .FirstOrDefault(ci => ci.CustomerId == customer.CustomerId && ci.ProductId == productId);
 
             if (existingItem != null)
             {
@@ -53,78 +71,153 @@ namespace GameCraft.Controllers
             }
             else
             {
+                var newCartItem = new CartItem
+                {
+                    ProductId = product.ProductId,
+                    Name = product.Name,
+                    Price = product.Price,
+                    Quantity = quantity,
+                    ImageUrl = product.ImageUrl, // Assuming Product has an ImageUrl property
+                    CustomerId = customer.CustomerId // Set the CustomerId
+                };
+                _context.CartItems.Add(newCartItem);
+            }
+
+            _context.SaveChanges(); // Save changes to the database
+
+            // Update session cart as well
+            var cart = GetCart();
+            var sessionItem = cart.FirstOrDefault(item => item.ProductId == productId);
+            if (sessionItem != null)
+            {
+                sessionItem.Quantity += quantity; // Increase quantity in session cart
+            }
+            else
+            {
                 cart.Add(new CartItem
                 {
                     ProductId = product.ProductId,
-                    Name = product.Name,       // Use 'Name' as per your CartItem model
+                    Name = product.Name,
                     Price = product.Price,
                     Quantity = quantity,
-                    ImageUrl = product.ImageUrl // Assuming your Product model has an ImageUrl property
+                    ImageUrl = product.ImageUrl
                 });
             }
+            SaveCart(cart); // Save updated cart to session
 
-            SaveCart(cart);
-
-            return Json(new { success = true, cartCount = cart.Sum(item => item.Quantity) });
+            return Json(new { success = true, cartCount = _context.CartItems.Count(ci => ci.CustomerId == customer.CustomerId) });
         }
 
         // GET: /Cart/Cart
         public IActionResult Cart()
         {
-            var userName = HttpContext.Session.GetString("UserName");
+            var customerEmail = HttpContext.Session.GetString("Email");
+            var customer = _context.Customers.FirstOrDefault(c => c.Email == customerEmail);
 
-            if (string.IsNullOrEmpty(userName))
+            if (customer == null)
             {
                 TempData["ReturnUrl"] = Url.Action("Cart", "Cart");
                 TempData["ErrorMessage"] = "Please log in to view your cart.";
                 return RedirectToAction("Login", "Account");
             }
 
-            var cart = GetCart();
-            return View(cart);
+            var cartItems = GetCartFromDatabase(customer.CustomerId);
+            ViewBag.CartItems = cartItems; // Pass cart items to the view
+            return View(cartItems);
         }
 
         // POST: /Cart/RemoveFromCart
         [HttpPost]
         public IActionResult RemoveFromCart(int productId)
         {
-            var cart = GetCart();
-            var itemToRemove = cart.FirstOrDefault(item => item.ProductId == productId);
+            var customerEmail = HttpContext.Session.GetString("Email");
+            var customer = _context.Customers.FirstOrDefault(c => c.Email == customerEmail);
+
+            if (customer == null)
+            {
+                return NotFound(new { success = false, message = "User  not found." });
+            }
+
+            var itemToRemove = _context.CartItems
+                .FirstOrDefault(item => item.CustomerId == customer.CustomerId && item.ProductId == productId);
             if (itemToRemove != null)
             {
-                cart.Remove(itemToRemove);
+                _context.CartItems.Remove(itemToRemove);
+                _context.SaveChanges();
+            }
+
+            // Update session cart
+            var cart = GetCart();
+            var sessionItemToRemove = cart.FirstOrDefault(item => item.ProductId == productId);
+            if (sessionItemToRemove != null)
+            {
+                cart.Remove(sessionItemToRemove);
                 SaveCart(cart);
             }
-            return Json(new { success = true, cartCount = cart.Sum(item => item.Quantity) });
+
+            return Json(new { success = true, cartCount = _context.CartItems.Count(ci => ci.CustomerId == customer.CustomerId) });
         }
 
         // POST: /Cart/UpdateCartQuantity
         [HttpPost]
         public IActionResult UpdateCartQuantity(int productId, int newQuantity)
         {
-            var cart = GetCart();
-            var itemToUpdate = cart.FirstOrDefault(item => item.ProductId == productId);
+            var customerEmail = HttpContext.Session.GetString("Email");
+            var customer = _context.Customers.FirstOrDefault(c => c.Email == customerEmail);
+
+            if (customer == null)
+            {
+                return NotFound(new { success = false, message = "User  not found." });
+            }
+
+            var itemToUpdate = _context.CartItems
+                .FirstOrDefault(item => item.CustomerId == customer.CustomerId && item.ProductId == productId);
             if (itemToUpdate != null)
             {
                 if (newQuantity <= 0)
                 {
-                    cart.Remove(itemToUpdate);
+                    _context.CartItems.Remove(itemToUpdate);
                 }
                 else
                 {
                     itemToUpdate.Quantity = newQuantity;
                 }
+                _context.SaveChanges();
+            }
+
+            // Update session cart
+            var cart = GetCart();
+            var sessionItemToUpdate = cart.FirstOrDefault(item => item.ProductId == productId);
+            if (sessionItemToUpdate != null)
+            {
+                if (newQuantity <= 0)
+                {
+                    cart.Remove(sessionItemToUpdate);
+                }
+                else
+                {
+                    sessionItemToUpdate.Quantity = newQuantity;
+                }
                 SaveCart(cart);
             }
-            return Json(new { success = true, cartCount = cart.Sum(item => item.Quantity) });
+
+            return Json(new { success = true, cartCount = _context.CartItems.Count(ci => ci.CustomerId == customer.CustomerId) });
         }
 
         // Action to get the current cart count for initial load or manual refresh
         [HttpGet]
         public IActionResult GetCartCount()
         {
-            var cart = GetCart();
-            return Json(new { cartCount = cart.Sum(item => item.Quantity) });
+            var customerEmail = HttpContext.Session.GetString("Email");
+            var customer = _context.Customers.FirstOrDefault(c => c.Email == customerEmail);
+
+            if (customer == null)
+            {
+                return Json(new { cartCount = 0 });
+            }
+
+            var cartCount = _context.CartItems.Count(ci => ci.CustomerId == customer.CustomerId);
+            return Json(new { cartCount });
         }
     }
 }

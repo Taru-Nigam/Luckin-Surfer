@@ -15,18 +15,18 @@ namespace GameCraft.Models
         public string Email { get; set; }
 
         [StringLength(100)]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
 
         [StringLength(200)]
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         [StringLength(100)]
-        public string City { get; set; }
+        public string? City { get; set; }
 
         [StringLength(20)]
-        public string PostCode { get; set; }
+        public string? PostCode { get; set; }
 
-        [StringLength(100)]
+        [Range (0, 2)]
         public int UserType { get; set; } // 0 = Admin, 1 = Customer, 2 = Employee
 
         [Required]
@@ -36,6 +36,9 @@ namespace GameCraft.Models
         public string Salt { get; set; }
 
         public string? AvatarUrl { get; set; }
+        [Range (0, 1000000)]
         public int PrizePoints { get; set; } = 0;
+        public string? GameCraftCardNumber { get; set; }
+
     }
 }

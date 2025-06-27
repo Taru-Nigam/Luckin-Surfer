@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using GameCraft.Data;
-using GameCraft.Models;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc.Rendering; // Add this using statement!
-using System.Collections.Generic; // Add this using statement!
+﻿using GameCraft.Data;
 using GameCraft.Helpers;
+using GameCraft.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering; // Add this using statement!
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic; // Add this using statement!
+using System.Linq;
 
 namespace GameCraft.Controllers
 {
@@ -327,9 +328,10 @@ namespace GameCraft.Controllers
         // GET: /Admin/ManagePrizes
         public IActionResult ManagePrizes()
         {
-            var prizes = _context.Products.ToList();
-            return View(prizes);
+            var prizes = _context.Products.ToList(); // Fetch all prizes from the database
+            return View(prizes); // Return the list of prizes to the view
         }
+
 
         // GET: /Admin/AddOrEditPrize/{id?}
         public IActionResult AddOrEditPrize(int? id)
@@ -358,22 +360,30 @@ namespace GameCraft.Controllers
             }
         }
 
-        // POST: /Admin/AddOrEditPrize/{id?}
         [HttpPost]
-        public IActionResult AddOrEditPrize(int? id, Product model)
+        public IActionResult AddOrEditPrize(int? id, Product model, IFormFile ImageUpload)
         {
             if (ModelState.IsValid)
             {
+                if (ImageUpload != null && ImageUpload.Length > 0)
+                {
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", ImageUpload.FileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        ImageUpload.CopyTo(stream); // Use synchronous method
+                    }
+                    model.ImageUrl = "/images/" + ImageUpload.FileName;
+                }
+
                 if (id == null || id == 0)
                 {
-                    // Add
+                    // Add new prize
                     _context.Products.Add(model);
-                    _context.SaveChanges();
                     TempData["Message"] = "Prize added successfully!";
                 }
                 else
                 {
-                    // Edit
+                    // Edit existing prize
                     var existingPrize = _context.Products.FirstOrDefault(p => p.ProductId == id);
                     if (existingPrize == null)
                         return NotFound();
@@ -383,11 +393,25 @@ namespace GameCraft.Controllers
                     existingPrize.Price = model.Price;
                     existingPrize.CategoryId = model.CategoryId;
 
+                    if (ImageUpload != null && ImageUpload.Length > 0)
+                    {
+                        existingPrize.ImageUrl = model.ImageUrl; // Update the ImageUrl
+                    }
+
                     _context.Products.Update(existingPrize);
-                    _context.SaveChanges();
                     TempData["Message"] = "Prize updated successfully!";
                 }
-                return RedirectToAction("ManagePrizes");
+
+                _context.SaveChanges(); // Save changes to the database
+                return RedirectToAction("ManagePrizes"); // Redirect to ManagePrizes
+            }
+            else
+            {
+                // Log the errors for debugging
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
             }
 
             // If ModelState is not valid, re-populate ViewBag.Categories before returning the view
@@ -396,8 +420,10 @@ namespace GameCraft.Controllers
                 Value = c.CategoryId.ToString(),
                 Text = c.Name
             }).ToList();
-            return View(model);
+            return View(model); // Return the model to the view for correction
         }
+
+
 
 
         // POST: /Admin/DeletePrize/5

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using GameCraft.Data;
 using GameCraft.Models;
 using System.Linq;
@@ -153,14 +153,14 @@ namespace GameCraft.Controllers
 
         // POST: /Account/UpdateAccount
         [HttpPost]
-        public IActionResult UpdateAccount(Customer customer)
+        public async Task<IActionResult> UpdateAccount(Customer customer, IFormFile avatarFile)
         {
             if (!ModelState.IsValid)
             {
                 return View("MyAccount", customer);
             }
 
-            // check whether email been taken
+            // Check whether email has been taken
             var existingEmail = _context.Customers
                 .FirstOrDefault(c => c.Email == customer.Email && c.CustomerId != customer.CustomerId);
             if (existingEmail != null)
@@ -169,7 +169,7 @@ namespace GameCraft.Controllers
                 return View("MyAccount", customer);
             }
 
-            // check username been taken
+            // Check username has been taken
             var existingName = _context.Customers
                 .FirstOrDefault(c => c.Name == customer.Name && c.CustomerId != customer.CustomerId);
             if (existingName != null)
@@ -178,27 +178,51 @@ namespace GameCraft.Controllers
                 return View("MyAccount", customer);
             }
 
-            // keep hidden data not be replaced by null
+            // Keep hidden data not be replaced by null
             var existingCustomer = _context.Customers.FirstOrDefault(c => c.CustomerId == customer.CustomerId);
             if (existingCustomer == null)
             {
                 return NotFound();
             }
 
-            // update data
+            // Update data
             existingCustomer.Name = customer.Name;
             existingCustomer.Email = customer.Email;
             existingCustomer.Phone = customer.Phone;
             existingCustomer.Address = customer.Address;
             existingCustomer.City = customer.City;
             existingCustomer.PostCode = customer.PostCode;
-            existingCustomer.AvatarUrl = customer.AvatarUrl;
+
+            // Handle avatar file upload
+            if (avatarFile != null && avatarFile.Length > 0)
+            {
+                // Define the path to save the uploaded file
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/avatars");
+
+                // Check if the directory exists, if not, create it
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(avatarFile.FileName);
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                // Save the file
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await avatarFile.CopyToAsync(fileStream);
+                }
+
+                // Update the AvatarUrl in the customer object
+                existingCustomer.AvatarUrl = "/images/avatars/" + uniqueFileName; // Update with the new path
+            }
 
             _context.Customers.Update(existingCustomer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            // update Session
-            HttpContext.Session.SetString("UserName", existingCustomer.Name);
+            // Update Session
+            HttpContext.Session.SetString("User Name", existingCustomer.Name);
             HttpContext.Session.SetString("Email", existingCustomer.Email);
             HttpContext.Session.SetString("AvatarUrl", existingCustomer.AvatarUrl ?? "/images/default-avatar.png");
 
@@ -237,8 +261,32 @@ namespace GameCraft.Controllers
             TempData["SuccessMessage"] = "Password changed successfully.";
             return RedirectToAction("MyAccount"); // Redirect to MyAccount to show the success message
         }
+
+        // GET: /Account/GetUser names
+        [HttpGet]
+        public IActionResult GetUser(string searchTerm)
+        {
+            var usernames = _context.Customers
+                .Where(c => c.Name.Contains(searchTerm))
+                .Select(c => c.Name)
+                .ToList();
+            return Json(usernames);
+        }
+        // POST: /Account/ConnectAccount
+        [HttpPost]
+        public IActionResult ConnectAccount(string cardNumber, string username)
+        {
+            var customer = _context.Customers.FirstOrDefault(c => c.Name == username);
+            if (customer == null)
+            {
+                return Json(new { success = false, message = "Username not found." });
+            }
+            // Here you would typically save the card number to the customer's record
+            // Assuming you have a property in the Customer model for the card number
+            customer.GameCraftCardNumber = cardNumber; // Add this property to your Customer model
+            _context.Customers.Update(customer);
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
     }
 }
-
-
-       

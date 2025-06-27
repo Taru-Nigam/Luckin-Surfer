@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Linq;
+﻿using GameCraft.Data;
 using GameCraft.Models;
-using GameCraft.Data;
+using GameCraft.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GameCraft.Controllers
 {
@@ -15,18 +18,19 @@ namespace GameCraft.Controllers
         }
 
         // Show all products
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var products = new List<Product>
-    {
-        new Product { ProductId = 1, Name = "Book A", Description = "A test book", Price = 19.99M },
-        new Product { ProductId = 2, Name = "Movie B", Description = "Sample movie", Price = 29.99M },
-        new Product { ProductId = 3, Name = "Game C", Description = "Exciting new game", Price = 49.90M }
-    };
+            var products = await _context.Products.ToListAsync();
+            var categories = await _context.Categories.ToListAsync();
 
-            return View(products);
+            var viewModel = new PrizeCatalogViewModel
+            {
+                Products = products,
+                Categories = categories
+            };
+
+            return View(viewModel);
         }
-        
 
         // Show product details
         public IActionResult Details(int id)
@@ -39,20 +43,55 @@ namespace GameCraft.Controllers
             return View(product);
         }
 
-        // Search for products by name
-        public IActionResult Search(string keyword)
+        // Filter products by category
+        public async Task<IActionResult> FilterByCategory(int categoryId)
         {
-            var results = _context.Products
-                .Where(p => p.Name.Contains(keyword))
-                .ToList();
+            var products = await _context.Products
+                .Where(p => p.CategoryId == categoryId)
+                .ToListAsync();
+            var categories = await _context.Categories.ToListAsync();
 
-            return View("Index", results); 
+            var viewModel = new PrizeCatalogViewModel
+            {
+                Products = products,
+                Categories = categories
+            };
+
+            return PartialView("_ProductGrid", viewModel); // Return a partial view
+        }
+
+
+        // Search for products by name
+        public async Task<IActionResult> Search(string keyword)
+        {
+            var results = await _context.Products
+                .Where(p => p.Name.Contains(keyword))
+                .ToListAsync();
+
+            var categories = await _context.Categories.ToListAsync();
+
+            return View("Index", new PrizeCatalogViewModel { Products = results, Categories = categories });
         }
 
         public IActionResult Debug()
         {
             var products = _context.Products.ToList();
             return Content("Total products in DB: " + products.Count);
+        }
+
+        // This will handle requests to /Products or /Products/Index
+        public async Task<IActionResult> Products()
+        {
+            var products = await _context.Products.ToListAsync();
+            var categories = await _context.Categories.ToListAsync();
+
+            var viewModel = new PrizeCatalogViewModel
+            {
+                Products = products,
+                Categories = categories
+            };
+
+            return View("~/Views/Home/Products.cshtml", viewModel);
         }
     }
 }
