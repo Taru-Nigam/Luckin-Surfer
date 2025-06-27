@@ -56,24 +56,20 @@
         </div>
 
         <div class="form-group" id="avatarUploadSection" style="display:none;">
-            <label for="avatarFile">Upload Avatar:</label>
-            <input type="file" id="avatarFile" name="avatarFile" class="form-control" accept="image/*" />
-            <span asp-validation-for="AvatarUrl" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-        <label>Select Avatar:</label><br />
-        @for (int i = 1; i <= 4; i++)
-        {
-            var avatarPath = $"/images/avatar-00{i}.png";
-            <label style="margin-right: 10px;">
-                    <input type="radio" name="AvatarUrl" value="@avatarPath"
-                    @(Model.AvatarUrl == avatarPath ? "checked" : "") />
-                <img src="@avatarPath" style="width: 48px; height: 48px; border-radius: 50%;" />
-            </label>
-        }
-        <span asp-validation-for="AvatarUrl" class="text-danger"></span>
-    </div>
+    <label for="avatarFile">Upload Avatar:</label>
+    <input type="file" id="avatarFile" name="avatarFile" class="form-control" accept="image/*" />
+    <label>Select Avatar:</label><br />
+    @for (int i = 1; i <= 4; i++)
+    {
+        var avatarPath = $"/images/avatar-00{i}.png";
+        <label style="margin-right: 10px;">
+            <input type="radio" name="AvatarUrl" value="@avatarPath"
+                   @(Model.AvatarUrl == avatarPath ? "checked" : "") />
+            <img src="@avatarPath" style="width: 48px; height: 48px; border-radius: 50%;" />
+        </label>
+    }
+    <span asp-validation-for="AvatarUrl" class="text-danger"></span>
+</div>
 
 
         <button type="button" class="btn btn-secondary" id="editInfoButton">Edit My Info</button>
