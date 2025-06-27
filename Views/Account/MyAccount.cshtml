@@ -1,59 +1,134 @@
-﻿@model GameCraft.Models.Customer
+@model GameCraft.Models.Customer
 
 @{
     ViewBag.Title = "My Account";
 }
 
-<h2>My Account</h2>
+<section class="account-section content-section">
+    <h2 class="section-title">My Account</h2>
 
-<form asp-action="UpdateAccount" method="post">
-    @* Show the Name field *@
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="account-section success-message">@TempData["SuccessMessage"]</div>
+    }
+
+    <form asp-controller="Account" asp-action="UpdateAccount" method="post" id="accountForm" enctype="multipart/form-data">
+        <input type="hidden" asp-for="CustomerId" />
+        <input type="hidden" asp-for="UserType" />
+        <input type="hidden" asp-for="PrizePoints" />
+        <input type="hidden" asp-for="PasswordHash" />
+        <input type="hidden" asp-for="Salt" />
+        <input type="hidden" asp-for="AvatarUrl" />
+
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" readonly />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="form-control" readonly />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Phone"></label>
+            <input asp-for="Phone" class="form-control" readonly />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Address"></label>
+            <input asp-for="Address" class="form-control" readonly />
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="City"></label>
+            <input asp-for="City" class="form-control" readonly />
+            <span asp-validation-for="City" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PostCode"></label>
+            <input asp-for="PostCode" class="form-control" readonly />
+            <span asp-validation-for="PostCode" class="text-danger"></span>
+        </div>
+
+        <div class="form-group" id="avatarUploadSection" style="display:none;">
+            <label for="avatarFile">Upload Avatar:</label>
+            <input type="file" id="avatarFile" name="avatarFile" class="form-control" accept="image/*" />
+            <span asp-validation-for="AvatarUrl" class="text-danger"></span>
+        </div>
+
+        <button type="button" class="btn btn-secondary" id="editInfoButton">Edit My Info</button>
+        <button type="submit" class="btn btn-primary" id="saveButton" style="display:none;">Save Changes</button>
+        <button type="button" class="btn btn-secondary" id="toggleChangePasswordButton" style="display:none;">Change Password</button>
+    </form>
+
+    <div class="form-group" id="changePasswordSection" style="display:none;">
+        <h3>Change Password</h3>
+        <div class="form-group">
+            <label for="newPassword">New Password:</label>
+            <input type="password" id="newPassword" class="form-control" />
+            <input type="checkbox" id="showNewPassword" /> Show Password
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">Confirm New Password:</label>
+            <input type="password" id="confirmPassword" class="form-control" />
+            <input type="checkbox" id="showConfirmPassword" /> Show Password
+        </div>
+        <button type="button" class="btn btn-primary" id="changePasswordButton">Change Password</button>
     </div>
-
-    @* Show the Email field *@
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    @* Show the Phone field *@
-    <div class="form-group">
-        <label asp-for="Phone"></label>
-        <input asp-for="Phone" class="form-control" />
-        <span asp-validation-for="Phone" class="text-danger"></span>
-    </div>
-
-    @* Show the Address field *@
-    <div class="form-group">
-        <label asp-for="Address"></label>
-        <input asp-for="Address" class="form-control" />
-        <span asp-validation-for="Address" class="text-danger"></span>
-    </div>
-
-    @* Show the City field *@
-    <div class="form-group">
-        <label asp-for="City"></label>
-        <input asp-for="City" class="form-control" />
-        <span asp-validation-for="City" class="text-danger"></span>
-    </div>
-
-    @* Show the PostCode field *@
-    <div class="form-group">
-        <label asp-for="PostCode"></label>
-        <input asp-for="PostCode" class="form-control" />
-        <span asp-validation-for="PostCode" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Update Account</button>
-</form>
+</section>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        $(document).ready(function() {
+            $('#editInfoButton').click(function() {
+                // Enable all input fields
+                $('#accountForm input').removeAttr('readonly');
+                $('#saveButton').show(); // Show the save button
+                $('#toggleChangePasswordButton').show(); // Show the change password button
+                $(this).hide(); // Hide the edit button
+
+                // Show the avatar upload section
+                $('#avatarUploadSection').show();
+            });
+
+            $('#toggleChangePasswordButton').click(function() {
+                $('#changePasswordSection').toggle(); // Toggle visibility of the change password section
+            });
+
+            $('#changePasswordButton').click(function() {
+                const newPassword = $('#newPassword').val();
+                const confirmPassword = $('#confirmPassword').val();
+
+                if (newPassword !== confirmPassword) {
+                    alert("Passwords do not match.");
+                    return;
+                }
+
+                // Implement the logic to change the password
+                $.post('@Url.Action("ChangePassword", "Account")', { newPassword: newPassword, confirmPassword: confirmPassword }, function(response) {
+                    alert("Password changed successfully!"); // Placeholder alert
+                });
+            });
+
+            // Toggle password visibility
+            $('#showNewPassword').change(function() {
+                const passwordField = $('#newPassword');
+                passwordField.attr('type', this.checked ? 'text' : 'password');
+            });
+
+            $('#showConfirmPassword').change(function() {
+                const confirmPasswordField = $('#confirmPassword');
+                confirmPasswordField.attr('type', this.checked ? 'text' : 'password');
+            });
+        });
+    </script>
 }
