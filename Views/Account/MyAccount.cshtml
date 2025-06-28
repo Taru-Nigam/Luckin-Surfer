@@ -1,97 +1,145 @@
-﻿@model GameCraft.Models.Customer
+@model GameCraft.Models.Customer
 
 @{
     ViewBag.Title = "My Account";
+    // Set the initial active section based on ViewBag.ActiveSection, default to 'dashboard'
+    string activeSection = ViewBag.ActiveSection ?? "dashboard";
 }
 
-<section class="account-section content-section">
-    <h2 class="section-title">My Account</h2>
+<div class="account-page-container">
+    <div class="sidebar">
+        <img src="@(Model.AvatarUrl ?? "/images/default-avatar.png")" alt="User Avatar" class="profile-header-avatar" id="profileHeaderAvatar" />
+        <ul>
+            <li><a href="#" class="sidebar-link @(activeSection == "dashboard" ? "active" : "")" id="sidebarDashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="#" class="sidebar-link @(activeSection == "accountDetails" ? "active" : "")" id="sidebarAccountDetails"><i class="fas fa-user-circle"></i> Account Details</a></li>
+            <li><a href="#" class="sidebar-link @(activeSection == "changePassword" ? "active" : "")" id="sidebarChangePassword"><i class="fas fa-key"></i> Change Password</a></li>
+            <li><a href="@Url.Action("Logout", "Account")"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="account-section success-message">@TempData["SuccessMessage"]</div>
-    }
+    <section class="account-content">
+        <h2 class="section-title" id="dashboardTitle" style="display:@(activeSection == "dashboard" ? "block" : "none");">Dashboard</h2>
+        <h2 class="section-title" id="accountDetailsTitle" style="display:@(activeSection == "accountDetails" ? "block" : "none");">Account Settings</h2>
+        <h2 class="section-title" id="changePasswordTitle" style="display:@(activeSection == "changePassword" ? "block" : "none");">Change Password</h2>
 
-    <form asp-controller="Account" asp-action="UpdateAccount" method="post" id="accountForm" enctype="multipart/form-data">
-        <input type="hidden" asp-for="CustomerId" />
-        <input type="hidden" asp-for="UserType" />
-        <input type="hidden" asp-for="PrizePoints" />
-        <input type="hidden" asp-for="PasswordHash" />
-        <input type="hidden" asp-for="Salt" />
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="account-section success-message">@TempData["SuccessMessage"]</div>
+        }
 
-        <div class="form-group">
-            <label asp-for="Name"></label>
-            <input asp-for="Name" class="form-control" readonly />
-            <span asp-validation-for="Name" class="text-danger"></span>
+        @* Dashboard Section *@
+        <div id="dashboardSection" class="dashboard-section" style="display:@(activeSection == "dashboard" ? "grid" : "none");">
+            <div class="dashboard-card">
+                <h3>Prize Points</h3>
+                <p class="dashboard-value">@Model.PrizePoints</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>Account Status</h3>
+                <p class="dashboard-value">@Model.UserType</p>
+            </div>
+            <div class="dashboard-card">
+                <h3>Recent Activity</h3>
+                <ul class="activity-list">
+                    <li>Played "Space Conquerors" - Earned 100 points</li>
+                    <li>Purchased "Power-up Pack" - Spent 500 points</li>
+                    <li>Completed "Daily Quest" - Earned 50 points</li>
+                    <li>Joined "Weekend Tournament"</li>
+                </ul>
+            </div>
+            @* Add more dashboard cards as needed *@
         </div>
 
-        <div class="form-group">
-            <label asp-for="Email"></label>
-            <input asp-for="Email" class="form-control" readonly />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
+        @* Account Details Form *@
+        <form asp-controller="Account" asp-action="UpdateAccount" method="post" id="accountForm" enctype="multipart/form-data" style="display:@(activeSection == "accountDetails" ? "block" : "none");">
+            <input type="hidden" asp-for="CustomerId" />
+            <input type="hidden" asp-for="UserType" />
+            <input type="hidden" asp-for="PrizePoints" />
+            <input type="hidden" asp-for="PasswordHash" />
+            <input type="hidden" asp-for="Salt" />
+            <input type="hidden" asp-for="AvatarUrl" id="hiddenAvatarUrl" /> @* Hidden field to submit selected avatar URL *@
 
-        <div class="form-group">
-            <label asp-for="Phone"></label>
-            <input asp-for="Phone" class="form-control" readonly />
-            <span asp-validation-for="Phone" class="text-danger"></span>
-        </div>
 
-        <div class="form-group">
-            <label asp-for="Address"></label>
-            <input asp-for="Address" class="form-control" readonly />
-            <span asp-validation-for="Address" class="text-danger"></span>
-        </div>
+            <div class="form-group">
+                <label asp-for="Email">Email address</label>
+                <input asp-for="Email" class="form-control" readonly />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
 
-        <div class="form-group">
-            <label asp-for="City"></label>
-            <input asp-for="City" class="form-control" readonly />
-            <span asp-validation-for="City" class="text-danger"></span>
-        </div>
+            <div class="form-group">
+                <label asp-for="Name">Username</label>
+                <input asp-for="Name" class="form-control" readonly />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
 
-        <div class="form-group">
-            <label asp-for="PostCode"></label>
-            <input asp-for="PostCode" class="form-control" readonly />
-            <span asp-validation-for="PostCode" class="text-danger"></span>
-        </div>
+            <div class="form-group">
+                <label asp-for="Phone"></label>
+                <input asp-for="Phone" class="form-control" readonly />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
 
-        <div class="form-group" id="avatarUploadSection" style="display:none;">
-    <label for="avatarFile">Upload Avatar:</label>
-    <input type="file" id="avatarFile" name="avatarFile" class="form-control" accept="image/*" />
-    <label>Select Avatar:</label><br />
-    @for (int i = 1; i <= 4; i++)
-    {
-        var avatarPath = $"/images/avatar-00{i}.png";
-        <label style="margin-right: 10px;">
-            <input type="radio" name="AvatarUrl" value="@avatarPath"
-                   @(Model.AvatarUrl == avatarPath ? "checked" : "") />
-            <img src="@avatarPath" style="width: 48px; height: 48px; border-radius: 50%;" />
-        </label>
-    }
-    <span asp-validation-for="AvatarUrl" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="Address"></label>
+                <input asp-for="Address" class="form-control" readonly />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="City"></label>
+                <input asp-for="City" class="form-control" readonly />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PostCode"></label>
+                <input asp-for="PostCode" class="form-control" readonly />
+                <span asp-validation-for="PostCode" class="text-danger"></span>
+            </div>
+
+            <button type="button" class="btn btn-secondary" id="editInfoButton">Edit My Info</button>
+            <button type="submit" class="btn btn-primary" id="saveButton" style="display:none;">Save Changes</button>
+        </form>
+
+        @* Change Password Section *@
+        <div id="changePasswordSection" class="form-group" style="display:@(activeSection == "changePassword" ? "block" : "none"); margin-top: 20px;">
+            <div class="form-group">
+                <label for="newPassword">New Password:</label>
+                <input type="password" id="newPassword" class="form-control" />
+                <input type="checkbox" id="showNewPassword" /> Show Password
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm New Password:</label>
+                <input type="password" id="confirmPassword" class="form-control" />
+                <input type="checkbox" id="showConfirmPassword" /> Show Password
+            </div>
+            <button type="button" class="btn btn-primary" id="changePasswordButton">Change Password</button>
+        </div>
+    </section>
 </div>
 
-
-        <button type="button" class="btn btn-secondary" id="editInfoButton">Edit My Info</button>
-        <button type="submit" class="btn btn-primary" id="saveButton" style="display:none;">Save Changes</button>
-        <button type="button" class="btn btn-secondary" id="toggleChangePasswordButton" style="display:none;">Change Password</button>
-    </form>
-
-    <div class="form-group" id="changePasswordSection" style="display:none;">
-        <h3>Change Password</h3>
-        <div class="form-group">
-            <label for="newPassword">New Password:</label>
-            <input type="password" id="newPassword" class="form-control" />
-            <input type="checkbox" id="showNewPassword" /> Show Password
+<div id="avatarModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h4 style="color: #00ffcc;">Choose Avatar:</h4>
+        <div class="mt-2" id="avatarSelectionOptions">
+            @for (int i = 1; i <= 4; i++)
+            {
+                var avatarPath = $"/images/avatar-00{i}.png";
+                <label style="margin-right: 10px; cursor: pointer;">
+                    <input type="radio" name="AvatarUrlSelection" value="@avatarPath"
+                                   @(Model.AvatarUrl == avatarPath ? "checked" : "")
+                                   class="avatar-radio" />
+                    <img src="@avatarPath" style="width: 48px; height: 48px; border-radius: 50%;" class="avatar-image" />
+                </label>
+            }
         </div>
-        <div class="form-group">
-            <label for="confirmPassword">Confirm New Password:</label>
-            <input type="password" id="confirmPassword" class="form-control" />
-            <input type="checkbox" id="showConfirmPassword" /> Show Password
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label for="avatarFile">Upload Custom Avatar:</label>
+            <input type="file" id="avatarFile" name="avatarFile" class="form-control" accept="image/*" />
         </div>
-        <button type="button" class="btn btn-primary" id="changePasswordButton">Change Password</button>
+        <button type="button" class="btn btn-primary" id="saveAvatarButton" style="margin-top: 20px;">Save Avatar</button>
     </div>
-</section>
+</div>
 
 @section Scripts {
     @{
@@ -99,19 +147,122 @@
     }
     <script>
         $(document).ready(function() {
+            // Initial state is set by ViewBag.ActiveSection in the Razor code
+            // Hide all sections initially, then show the active one
+            function hideAllSections() {
+                $('#dashboardSection').hide();
+                $('#accountForm').hide();
+                $('#changePasswordSection').hide();
+                $('#dashboardTitle').hide();
+                $('#accountDetailsTitle').hide();
+                $('#changePasswordTitle').hide();
+                $('#saveButton').hide();
+                $('#editInfoButton').hide(); // Hide edit button initially for account details
+            }
+
+            function showSection(sectionName) {
+                hideAllSections();
+                $('.sidebar-link').removeClass('active'); // Remove active from all sidebar links
+
+                if (sectionName === 'dashboard') {
+                    $('#dashboardSection').show();
+                    $('#dashboardTitle').show();
+                    $('#sidebarDashboard').addClass('active');
+                } else if (sectionName === 'accountDetails') {
+                    $('#accountForm').show();
+                    $('#accountDetailsTitle').show();
+                    setFormReadonly(); // Ensure form is readonly on display
+                    $('#sidebarAccountDetails').addClass('active');
+                } else if (sectionName === 'changePassword') {
+                    $('#changePasswordSection').show();
+                    $('#changePasswordTitle').show();
+                    $('#sidebarChangePassword').addClass('active');
+                }
+            }
+
+            // Function to reset form to readonly state
+            function setFormReadonly() {
+                $('#accountForm input:not([type="hidden"])').attr('readonly', 'readonly');
+                $('#saveButton').hide();
+                $('#editInfoButton').show();
+            }
+
+            // Initial display based on ViewBag (or default 'dashboard')
+            showSection('@activeSection');
+
+           // Handle "Edit My Info" button click
             $('#editInfoButton').click(function() {
                 // Enable all input fields
                 $('#accountForm input').removeAttr('readonly');
                 $('#saveButton').show(); // Show the save button
-                $('#toggleChangePasswordButton').show(); // Show the change password button
                 $(this).hide(); // Hide the edit button
-
-                // Show the avatar upload section
-                $('#avatarUploadSection').show();
             });
 
-            $('#toggleChangePasswordButton').click(function() {
-                $('#changePasswordSection').toggle(); // Toggle visibility of the change password section
+
+            // Handle clicking the main profile avatar
+            $('#profileHeaderAvatar').click(function() {
+                $('#avatarModal').show();
+                const currentAvatarUrl = $('#profileHeaderAvatar').attr('src');
+                $('.avatar-radio').prop('checked', false);
+                $(`.avatar-radio[value="${currentAvatarUrl}"]`).prop('checked', true);
+                $('#avatarFile').val('');
+            });
+
+            // Close avatar modal
+            $('.close-button').click(function() {
+                $('#avatarModal').hide();
+            });
+
+            // Close modal when clicking outside of modal-content
+            $(window).click(function(event) {
+                if (event.target.id === 'avatarModal') {
+                    $('#avatarModal').hide();
+                }
+            });
+
+            // Update the main profile header avatar when a radio button is selected in modal
+            $('.avatar-radio').change(function() {
+                $('#profileHeaderAvatar').attr('src', $(this).val());
+                $('#hiddenAvatarUrl').val($(this).val());
+                $('#avatarFile').val('');
+            });
+
+            // Handle custom avatar upload preview in modal
+            $('#avatarFile').change(function() {
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#profileHeaderAvatar').attr('src', e.target.result);
+                        $('#hiddenAvatarUrl').val(e.target.result);
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                    $('.avatar-radio').prop('checked', false);
+                }
+            });
+
+            // Save Avatar button in modal
+            $('#saveAvatarButton').click(function() {
+                // If a file is selected, the form will handle the upload.
+                // If a radio button is selected, the hiddenAvatarUrl is already set.
+                // Submit the form to save the avatar.
+                $('#accountForm').submit(); // This will submit the form with the avatar data
+                $('#avatarModal').hide();
+            });
+
+            // Sidebar navigation clicks
+            $('#sidebarDashboard').click(function(e) {
+                e.preventDefault();
+                showSection('dashboard');
+            });
+
+            $('#sidebarAccountDetails').click(function(e) {
+                e.preventDefault();
+                showSection('accountDetails');
+            });
+
+            $('#sidebarChangePassword').click(function(e) {
+                e.preventDefault();
+                showSection('changePassword');
             });
 
             $('#changePasswordButton').click(function() {
@@ -122,10 +273,23 @@
                     alert("Passwords do not match.");
                     return;
                 }
+                if (newPassword === "" || confirmPassword === "") {
+                    alert("Password fields cannot be empty.");
+                    return;
+                }
 
-                // Implement the logic to change the password
                 $.post('@Url.Action("ChangePassword", "Account")', { newPassword: newPassword, confirmPassword: confirmPassword }, function(response) {
-                    alert("Password changed successfully!"); // Placeholder alert
+                    if (response.success) {
+                        alert("Password changed successfully!");
+                        // After successful password change, show account details
+                        showSection('accountDetails');
+                        $('#newPassword').val('');
+                        $('#confirmPassword').val('');
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    alert("An error occurred while changing password: " + textStatus);
                 });
             });
 
@@ -141,4 +305,4 @@
             });
         });
     </script>
-}
+    }
