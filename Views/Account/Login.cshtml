@@ -1,30 +1,43 @@
-﻿@{
+@{
     ViewBag.Title = "Login";
 }
 
 <section class="login-section content-section">
     <div class="container">
-        <h2 class="section-title">LOGIN TO YOUR ACCOUNT</h2>
+        <div class="welcome-text">
+            <h2>Welcome!</h2>
+            <p>To Our New Website.</p>
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae, asperiores.</p>
+        </div>
+        <div class="login-content">
+            <h2>Log In</h2>
 
-        <p class="form-instruction">Enter your credentials</p>
+            <form asp-action="Login" method="post" class="login-form">
+                <div class="form-group">
+                    <label for="login">Email or Username:</label>
+                    <input type="text" id="login" name="login" class="form-control" required placeholder="Email" />
+                    <i class="fas fa-envelope"></i>
+                </div>
 
-        <form asp-action="Login" method="post" class="login-form">
-            <div class="form-group">
-                <label for="login">Email or Username:</label>
-                <input type="text" id="login" name="login" class="form-control" required placeholder="Enter your email or username" />
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" class="form-control" required placeholder="Password" />
+                    <i class="fas fa-lock"></i>
+                </div>
+
+                <div class="remember-forgot">
+                    <label>
+                        <input type="checkbox" name="rememberMe" /> Remember me
+                    </label>
+                    <a href="#">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="submit-button">Sign In</button>
+            </form>
+
+            <div class="register-link">
+                <p>Don't have an account? <a asp-action="Register">Sign Up</a></p>
             </div>
-
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" class="form-control" required placeholder="Enter your password" />
-            </div>
-
-            <button type="submit" class="submit-button">Login</button>
-        </form>
-
-
-        <div class="register-link">
-            <p>Don't have an account? <a asp-action="Register">Register here</a></p>
         </div>
     </div>
 </section>
