@@ -27,19 +27,16 @@
         </div>
 
         <div class="prizes-grid">
-            <!-- Updated class to match CSS -->
-            @if (Model.Products != null && Model.Products.Any()) // Checks if the list of products is not null AND contains items
+            @if (Model.Products != null && Model.Products.Any())
             {
-                foreach (var product in Model.Products) // Loops through each Product object provided by the controller
+                foreach (var product in Model.Products)
                 {
                     <div class="prize-card" data-category="@product.CategoryId">
-                        <!-- Updated class to match CSS -->
                         <div class="prize-image-container">
-                            <!-- Updated class to match CSS -->
-                            <img src="@product.ImageUrl" alt="@product.Name" class="prize-image" onerror="this.onerror=null;this.src='/images/placeholder_product.png';" /> <!-- Updated class to match CSS -->
+                            <img src="@Url.Action("GetImage", "Product", new { id = product.ProductId })" alt="@product.Name" class="prize-image" onerror="this.onerror=null;this.src='/images/placeholder_product.png';" />
                         </div>
-                        <h3 class="prize-name">@product.Name</h3> <!-- Updated class to match CSS -->
-                        <p class="ticket-cost">TICKET COST: @product.Price Tickets</p> <!-- Updated class to match CSS -->
+                        <h3 class="prize-name">@product.Name</h3>
+                        <p class="ticket-cost">TICKET COST: @product.Price Tickets</p>
                         <button class="quick-view-button" onclick="location.href='@Url.Action("Details", "Product", new { id = product.ProductId })'">Quick View</button>
                     </div>
                 }

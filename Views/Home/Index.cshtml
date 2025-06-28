@@ -3,8 +3,7 @@
     ViewBag.Title = "GameCraft - Redeem Your Arcade Tickets!";
 }
 
-
-<section class="hero content-section"> 
+<section class="hero content-section">
     <h1>TURN YOUR ARCADE TICKETS INTO AWESOME REWARDS!</h1>
     <button class="connect-account-button" onclick="location.href='/Home/ConnectAccount'">CONNECT YOUR ACCOUNT</button>
 </section>
@@ -18,7 +17,7 @@
             {
                 <div class="prize-item">
                     <div class="prize-image">
-                        <img src="@prize.ImageUrl" alt="@prize.Name" class="prize-image" onerror="this.onerror=null;this.src='/images/placeholder_product.png';" /> <!-- Assuming you have an ImageUrl property -->
+                        <img src="@Url.Action("GetImage", "Product", new { id = prize.ProductId })" alt="@prize.Name" class="prize-image" onerror="this.onerror=null;this.src='/images/placeholder_product.png';" />
                     </div>
                     <h3 class="prize-name">@prize.Name</h3>
                     <span class="ticket-cost">TICKET COST: @prize.Price Tickets</span>
@@ -33,7 +32,7 @@
     </div>
 </section>
 
-<section class="how-it-works content-section"> 
+<section class="how-it-works content-section">
     <h2>How it works</h2>
     <div class="steps">
         <div class="step">

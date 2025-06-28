@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewBag.Title = "Login";
 }
 
@@ -13,6 +13,7 @@
             <h2>Log In</h2>
 
             <form asp-action="Login" method="post" class="login-form">
+                <div asp-validation-summary="All" class="text-danger"></div> <!-- Display validation errors -->
                 <div class="form-group">
                     <label for="login">Email or Username:</label>
                     <input type="text" id="login" name="login" class="form-control" required placeholder="Email" />

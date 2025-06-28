@@ -8,7 +8,7 @@
     <div class="container">
         <h2 class="product-name">@Model.Name</h2>
         <div class="product-image">
-            <img src="@Model.ImageUrl" alt="@Model.Name" onerror="this.onerror=null;this.src='/images/placeholder_product.png';" />
+            <img src="@Url.Action("GetImage", "Product", new { id = Model.ProductId })" alt="@Model.Name" onerror="this.onerror=null;this.src='/images/placeholder_product.png';" />
         </div>
         <div class="product-info">
             <p class="product-description">@Model.Description</p>

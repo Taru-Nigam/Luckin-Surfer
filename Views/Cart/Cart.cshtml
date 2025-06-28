@@ -35,13 +35,11 @@ else
                 <tr id="cartItem_@item.ProductId">
                     @* Added an ID for potential AJAX updates/removals *@
                     <td>
-                        @if (!string.IsNullOrEmpty(item.ImageUrl))
-                        {
-                            <img src="@item.ImageUrl" alt="@item.Name" style="width: 50px; height: 50px; object-fit: cover;" />
-                        }
+                        @* Use the GetImage action to display the image *@
+                        <img src="@Url.Action("GetImage", "Product", new { id = item.ProductId })" alt="@item.Name" style="width: 50px; height: 50px; object-fit: cover;" />
                     </td>
                     <td>@item.Name</td> @* Use item.Name as per your CartItem model *@
-                    <td>@item.Price.ToString("F2")</td> 
+                    <td>@item.Price.ToString("F2")</td>
                     <td>
                         <input type="number" value="@item.Quantity"
                                class="form-control quantity-input"
