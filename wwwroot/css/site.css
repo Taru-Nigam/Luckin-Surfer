@@ -3,12 +3,31 @@ body {
     font-family: 'Raleway', sans-serif; /* Use a modern font */
     margin: 0;
     padding: 0;
-    background-color: #1a1a1a; /* Dark background for a futuristic look */
+    /* Background now handled by a new pseudo-element for the image */
+    background-color: #1a1a1a; /* Fallback dark background */
     color: #e0e0e0; /* Light text color for contrast */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    position: relative; /* Needed for absolute positioning of background */
+    z-index: 1; /* Ensure body content is above the background image */
 }
+
+    /* New: Background image overlay for the login/register pages */
+    body::before {
+        content: '';
+        position: fixed; /* Fixed so it doesn't scroll with content */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* Replace with your actual background image path */
+        background-image: url('/Images/login-background.jpg'); /* YOU NEED TO REPLACE THIS WITH YOUR IMAGE PATH */
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.6) contrast(1.2) grayscale(0.2); /* Adjust for desired mood */
+        z-index: -1; /* Place it behind the content */
+    }
 
 main {
     flex-grow: 1;
@@ -19,7 +38,7 @@ h2 {
 }
 
 .p {
-    color: white;
+    color: #00ffcc;
 }
 
 /* --- Header Styles --- */
@@ -29,6 +48,8 @@ header.main-header .gamecraft-navbar {
     box-shadow: 0 0 10px rgba(0, 255, 204, 0.5); /* Neon glow effect */
     padding: 15px 20px;
     flex-wrap: nowrap;
+    position: relative; /* To ensure it sits above the main content's background */
+    z-index: 10;
 }
 
 /* Container for logo, nav, and auth buttons within the header */
@@ -149,86 +170,334 @@ header.main-header .gamecraft-navbar {
 }
 
 .form-instruction {
-    color: #2c3e50;
+    color: #ffffff;
     font-size: 1.5em; /* Increased font size for emphasis */
     margin-bottom: 25px;
     text-align: center;
 }
 
-/* --- Forms --- */
-.login-form, .register-form {
-    max-width: 500px;
-    margin: 0 auto;
+/* --- Forms (Login & Register) - Updated to match image design --- */
+.login-section, .register-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 100px); /* Adjust based on header/footer height */
     padding: 20px;
-    background-color: #222; /* Dark background for forms */
-    border: 1px solid #00ffcc; /* Neon border */
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    position: relative; /* Needed for the card to be positioned correctly */
+    z-index: 2; /* Ensure forms are above the background */
 }
 
-    .login-form .form-group, .register-form .form-group, #accountForm .form-group {
-        margin-bottom: 15px;
+    .login-section .container, .register-section .container {
+        display: flex;
+        background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background for the main card */
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        padding: 0; /* Remove padding from container, move to inner elements */
+        width: 90%;
+        max-width: 900px; /* Adjust max-width as needed */
+        overflow: hidden; /* Ensure rounded corners for internal elements */
     }
 
-    .login-form label, .register-form label, #accountForm label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 5px;
-        color: #00ffcc; /* Neon color for labels */
+        .login-section .container > div, .register-section .container > div {
+            flex: 1;
+            padding: 40px; /* Padding for inner sections */
+        }
+
+.login-form, .register-form {
+    max-width: none; /* Remove max-width set previously */
+    margin: 0; /* Remove auto margin */
+    padding: 0; /* Remove padding, handled by parent div */
+    background-color: transparent; /* Transparent background */
+    border: none; /* Remove border */
+    box-shadow: none; /* Remove box-shadow */
+    text-align: left; /* Align text within form */
+}
+
+/* Left side content for Login page */
+.login-section .welcome-text {
+    background-image: url('/Images/login-card-left-background.jpg'); /* Background for the left side of the login card */
+    background-size: cover;
+    background-position: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start; /* Align text to the left */
+    padding: 40px;
+}
+
+    .login-section .welcome-text h2 {
+        color: white; /* White for this section title */
+        font-size: 3em;
+        margin-bottom: 10px;
+        text-align: left;
     }
 
-    .login-form input[type="text"],
-    .login-form input[type="email"],
-    .login-form input[type="password"],
-    .register-form input[type="text"],
-    .register-form input[type="email"],
-    .register-form input[type="password"],
-    #accountForm input[type="text"],
-    #accountForm input[type="email"],
-    #accountForm input[type="password"],
-    #changePasswordSection input[type="password"] {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #00ffcc; /* Neon border */
-        border-radius: 4px;
-        box-sizing: border-box;
-        font-size: 1em;
-        background-color: #333; /* Dark background for input fields */
-        color: #e0e0e0; /* Light text color */
-        transition: border-color 0.3s;
+    .login-section .welcome-text p {
+        color: #ddd;
+        font-size: 1.1em;
+        margin-bottom: 20px;
+        text-align: left;
     }
 
-        .login-form input[type="text"]:focus,
-        .login-form input[type="email"]:focus,
-        .login-form input[type="password"]:focus,
-        .register-form input[type="text"]:focus,
-        .register-form input[type="email"]:focus,
-        .register-form input[type="password"]:focus,
-        #accountForm input[type="text"]:focus,
-        #accountForm input[type="email"]:focus,
-        #accountForm input[type="password"]:focus {
-            border-color: #3498db; /* Highlight border on focus */
+    .login-section .welcome-text .social-icons a {
+        color: white;
+        margin-right: 15px;
+        font-size: 1.5em;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+        .login-section .welcome-text .social-icons a:hover {
+            color: #00ffcc; /* Neon hover */
+        }
+
+/* Right side content for Login page (the form part) */
+.login-section .login-content {
+    background-color: rgba(255, 255, 255, 0.05); /* Slightly lighter transparent background */
+    padding: 40px;
+    border-radius: 0 10px 10px 0; /* Rounded only on the right side */
+}
+
+    .login-section .login-content h2 {
+        color: white; /* Changed to white */
+        font-size: 2.5em;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+.login-form .form-group {
+    margin-bottom: 20px;
+    position: relative; /* For icon positioning */
+}
+
+.login-form label {
+    display: none; /* Hide labels for a cleaner look as per image */
+}
+
+.login-form input[type="text"],
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 12px 15px 12px 40px; /* Add padding for icon */
+    border: none; /* No border for input fields */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Subtle bottom border */
+    background-color: transparent; /* Transparent input background */
+    color: white;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-bottom-color 0.3s;
+}
+
+    .login-form input[type="text"]:focus,
+    .login-form input[type="email"]:focus,
+    .login-form input[type="password"]:focus {
+        border-bottom-color: #00ffcc; /* Neon highlight on focus */
+        outline: none; /* Remove default outline */
+    }
+
+.login-form input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form-group .fa-envelope, .form-group .fa-lock {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+}
+
+    .remember-forgot label {
+        display: inline-block; /* Show label for remember me */
+        color: white;
+    }
+
+    .remember-forgot input[type="checkbox"] {
+        margin-right: 5px;
+    }
+
+    .remember-forgot a {
+        color: #00ffcc; /* Neon color for forgot password */
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+        .remember-forgot a:hover {
+            color: white;
         }
 
 .submit-button {
-    background-color: #28a745; /* Green color for buttons */
+    background-color: #e6005c; /* Pinkish-red as in the image */
     color: white;
-    padding: 12px 20px;
+    padding: 15px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1.1em;
+    font-size: 1.2em;
     width: 100%;
     margin-top: 20px;
     transition: background-color 0.3s ease, transform 0.2s;
+    font-weight: bold;
 }
 
     .submit-button:hover {
-        background-color: #218838; /* Darker green on hover */
-        transform: scale(1.05); /* Slight scale effect on hover */
+        background-color: #cc004c; /* Darker pinkish-red on hover */
+        transform: scale(1.02); /* Slight scale effect on hover */
     }
 
-/* --- Change Password Section --- */
+.register-link {
+    text-align: center;
+    margin-top: 25px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+    .register-link p {
+        margin: 0;
+    }
+
+    .register-link a {
+        color: #00ffcc; /* Neon color for register link */
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+        .register-link a:hover {
+            color: white;
+        }
+
+
+/* --- Register Form - Updated to match the login card's aesthetic --- */
+/* For register, let's assume a similar layout to the login card, perhaps without the left image part
+   or with a simplified version. For now, let's make it a single card. */
+.register-section .container {
+    flex-direction: column; /* Stack sections vertically for register */
+    background-color: rgba(0, 0, 0, 0.7); /* Same card background */
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    padding: 40px; /* Padding for the single card */
+    max-width: 600px; /* Adjust max-width for register form */
+    text-align: center;
+}
+
+    .register-section .container h2 {
+        color: white;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+    }
+
+    .register-section .container .form-instruction {
+        color: #ddd;
+        margin-bottom: 30px;
+    }
+
+.register-form .form-group {
+    margin-bottom: 20px;
+}
+
+.register-form label {
+    display: block; /* Keep labels for register form for clarity */
+    color: white;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.register-form input[type="text"],
+.register-form input[type="email"],
+.register-form input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: transparent;
+    color: white;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-bottom-color 0.3s;
+}
+
+    .register-form input[type="text"]:focus,
+    .register-form input[type="email"]:focus,
+    .register-form input[type="password"]:focus {
+        border-bottom-color: #00ffcc;
+        outline: none;
+    }
+
+.register-form input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.register-button {
+    background-color: #008080; /* Teal color for register button */
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    width: 100%;
+    margin-top: 30px;
+    transition: background-color 0.3s ease, transform 0.2s;
+    font-weight: bold;
+}
+
+    .register-button:hover {
+        background-color: #006666; /* Darker teal on hover */
+        transform: scale(1.02);
+    }
+
+.login-link {
+    text-align: center;
+    margin-top: 25px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+    .login-link p {
+        margin: 0;
+    }
+
+    .login-link a {
+        color: #00ffcc;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+        .login-link a:hover {
+            color: white;
+        }
+
+/* --- Error/Success Messages --- */
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: left; /* Align alert text left */
+}
+
+.alert-danger {
+    background-color: rgba(231, 76, 60, 0.2); /* Red with transparency */
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.2); /* Green with transparency */
+    color: #28a745;
+    border: 1px solid #28a745;
+}
+
+/* --- Change Password Section (Reused styles, adjust if needed) --- */
 #changePasswordSection {
     margin-inline: auto;
     background-color: #222; /* Dark background */
@@ -244,7 +513,7 @@ header.main-header .gamecraft-navbar {
         color: #00ffcc; /* Neon color for section heading */
     }
 
-/* --- Messages --- */
+/* --- Messages (Reused styles, adjust if needed) --- */
 .login-form .error-message,
 .register-form .error-message,
 #error-message {
@@ -258,31 +527,6 @@ header.main-header .gamecraft-navbar {
 .account-section .success-message {
     color: #28a745; /* Green color for success messages */
     margin-top: 10px;
-    text-align: center;
-}
-
-/* Additional styles for links */
-.register-link, .login-link {
-    text-align: center;
-    margin-top: 15px;
-}
-
-    .register-link a, .login-link a {
-        color: #00ffcc; /* Neon color for links */
-        text-decoration: underline;
-    }
-
-.login-link {
-    color: #2c3e50;
-    font-size: 1.5em; /* Increased font size for emphasis */
-    margin-bottom: 25px;
-    text-align: center;
-}
-
-.register-link {
-    color: #2c3e50;
-    font-size: 1.5em; /* Increased font size for emphasis */
-    margin-bottom: 25px;
     text-align: center;
 }
 
@@ -765,6 +1009,8 @@ header.main-header .gamecraft-navbar {
     font-size: 0.9em;
     margin-top: auto;
     flex-shrink: 0;
+    position: relative; /* Ensure footer is above the body's pseudo-element */
+    z-index: 10;
 }
 
     .site-footer .container-fluid {
@@ -840,3 +1086,51 @@ header.main-header .gamecraft-navbar {
     .btn:hover {
         transform: scale(1.05); /* Slight scale effect on hover */
     }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .login-section .container, .register-section .container {
+        flex-direction: column;
+        max-width: 400px; /* Adjust for smaller screens */
+    }
+
+        .login-section .container > div, .register-section .container > div {
+            border-radius: 0; /* Remove specific border radius on inner divs */
+        }
+
+    .login-section .welcome-text {
+        padding: 30px;
+        text-align: center;
+        align-items: center;
+    }
+
+        .login-section .welcome-text h2 {
+            font-size: 2.5em;
+            text-align: center;
+        }
+
+    .login-section .login-content {
+        padding: 30px;
+        border-radius: 0; /* No specific right-side rounding on small screens */
+    }
+
+    .main-nav-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
+        .main-nav-links .nav-item {
+            margin: 10px 0;
+        }
+
+    .auth-buttons {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+        .auth-buttons button {
+            width: 100%;
+        }
+}
