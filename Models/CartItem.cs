@@ -22,9 +22,7 @@ namespace GameCraft.Models
         [Range(1, int.MaxValue)]
         public int Quantity { get; set; }  // Number of units of this item in the cart
 
-        // Optional: You can add more properties like image URL, description etc. if needed
-        [StringLength(500)]
-        public string ImageUrl { get; set; }
+        public byte[] ImageData { get; set; }
 
 
         // Navigation properties

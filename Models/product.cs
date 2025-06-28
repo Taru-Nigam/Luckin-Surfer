@@ -22,8 +22,7 @@ namespace GameCraft.Models
         [Required]
         public int CategoryId { get; set; }
 
-        [StringLength(255)]
-        public string ImageUrl { get; set; }
+        public byte[] ImageData { get; set; } // Change from ImageUrl to ImageData
 
     }
 }
