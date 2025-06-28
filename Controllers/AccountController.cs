@@ -1,11 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using GameCraft.Data;
 using GameCraft.Models;
 using System.Linq;
 using GameCraft.Helpers;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace GameCraft.Controllers
 {
@@ -67,7 +64,15 @@ namespace GameCraft.Controllers
 
                 ViewBag.RegistrationSuccess = true;
 
-                return RedirectToAction("Index", "Home"); // Redirect to home after successful registration and login
+                CookieOptions options = new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddDays(7),
+                    IsEssential = true
+                };
+                Response.Cookies.Append("UserToken", customer.CustomerId.ToString(), options);
+
+                // Redirect to home page after successful registration and login
+                return RedirectToAction("Index", "Home");
             }
 
             return View(model);
@@ -88,9 +93,7 @@ namespace GameCraft.Controllers
                 ModelState.AddModelError("", "Login and password are required.");
                 return View();
             }
-
             Customer customer = null;
-
             // Simple check: if input contains '@' and '.', assume it's an email
             if (login.Contains("@") && login.Contains("."))
             {
@@ -100,28 +103,32 @@ namespace GameCraft.Controllers
             {
                 customer = _context.Customers.FirstOrDefault(c => c.Name == login);
             }
-
-            if (customer == null || !PasswordHelper.VerifyPassword(password, customer.PasswordHash, customer.Salt))
+            // Check if the customer exists
+            if (customer == null)
+            {
+                ModelState.AddModelError("", "User  does not exist."); // Add error message
+                return View(); // Return to the login view with the error
+            }
+            // Verify the password
+            if (!PasswordHelper.VerifyPassword(password, customer.PasswordHash, customer.Salt))
             {
                 ModelState.AddModelError("", "Invalid login or password.");
                 return View();
             }
-
             // Store user info in session
-            HttpContext.Session.SetString("UserName", customer.Name);
+            HttpContext.Session.SetString("User Name", customer.Name);
             HttpContext.Session.SetString("Email", customer.Email);
             HttpContext.Session.SetString("PrizePoints", customer.PrizePoints.ToString());
             HttpContext.Session.SetString("AvatarUrl", customer.AvatarUrl ?? "/images/default-avatar.png");
-
             CookieOptions options = new CookieOptions
             {
                 Expires = DateTimeOffset.Now.AddDays(7),
                 IsEssential = true
             };
             Response.Cookies.Append("UserToken", customer.CustomerId.ToString(), options);
-
             return RedirectToAction("Index", "Home");
         }
+
 
         // GET: /Account/Logout
         [HttpGet]
@@ -163,14 +170,15 @@ namespace GameCraft.Controllers
 
         // POST: /Account/UpdateAccount
         [HttpPost]
-        public async Task<IActionResult> UpdateAccount(Customer customer, IFormFile avatarFile)
+        public IActionResult UpdateAccount(Customer customer)
         {
+            
             if (!ModelState.IsValid)
             {
                 return View("MyAccount", customer);
             }
 
-            // Check whether email has been taken
+            // check whether email been taken
             var existingEmail = _context.Customers
                 .FirstOrDefault(c => c.Email == customer.Email && c.CustomerId != customer.CustomerId);
             if (existingEmail != null)
@@ -179,7 +187,7 @@ namespace GameCraft.Controllers
                 return View("MyAccount", customer);
             }
 
-            // Check username has been taken
+            // check username been taken
             var existingName = _context.Customers
                 .FirstOrDefault(c => c.Name == customer.Name && c.CustomerId != customer.CustomerId);
             if (existingName != null)
@@ -188,50 +196,26 @@ namespace GameCraft.Controllers
                 return View("MyAccount", customer);
             }
 
-            // Keep hidden data not be replaced by null
+            // keep hidden data not be replaced by null
             var existingCustomer = _context.Customers.FirstOrDefault(c => c.CustomerId == customer.CustomerId);
             if (existingCustomer == null)
             {
                 return NotFound();
             }
 
-            // Update data
+            // update data
             existingCustomer.Name = customer.Name;
             existingCustomer.Email = customer.Email;
             existingCustomer.Phone = customer.Phone;
             existingCustomer.Address = customer.Address;
             existingCustomer.City = customer.City;
             existingCustomer.PostCode = customer.PostCode;
-
-            // Handle avatar file upload
-            if (avatarFile != null && avatarFile.Length > 0)
-            {
-                // Define the path to save the uploaded file
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/avatars");
-
-                // Check if the directory exists, if not, create it
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(avatarFile.FileName);
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                // Save the file
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await avatarFile.CopyToAsync(fileStream);
-                }
-
-                // Update the AvatarUrl in the customer object
-                existingCustomer.AvatarUrl = "/images/avatars/" + uniqueFileName; // Update with the new path
-            }
+            existingCustomer.AvatarUrl = customer.AvatarUrl;
 
             _context.Customers.Update(existingCustomer);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            // Update Session
+            // update Session
             HttpContext.Session.SetString("UserName", existingCustomer.Name);
             HttpContext.Session.SetString("Email", existingCustomer.Email);
             HttpContext.Session.SetString("AvatarUrl", existingCustomer.AvatarUrl ?? "/images/default-avatar.png");
@@ -271,33 +255,8 @@ namespace GameCraft.Controllers
             TempData["SuccessMessage"] = "Password changed successfully.";
             return RedirectToAction("MyAccount"); // Redirect to MyAccount to show the success message
         }
-
-        // GET: /Account/GetUserNames
-        [HttpGet]
-        public IActionResult GetUser(string searchTerm)
-        {
-            var usernames = _context.Customers
-                .Where(c => c.Name.Contains(searchTerm))
-                .Select(c => c.Name)
-                .ToList();
-            return Json(usernames);
-        }
-
-        // POST: /Account/ConnectAccount
-        [HttpPost]
-        public IActionResult ConnectAccount(string cardNumber, string username)
-        {
-            var customer = _context.Customers.FirstOrDefault(c => c.Name == username);
-            if (customer == null)
-            {
-                return Json(new { success = false, message = "Username not found." });
-            }
-            // Here you would typically save the card number to the customer's record
-            // Assuming you have a property in the Customer model for the card number
-            customer.GameCraftCardNumber = cardNumber; // Add this property to your Customer model
-            _context.Customers.Update(customer);
-            _context.SaveChanges();
-            return Json(new { success = true });
-        }
     }
 }
+
+
+       

@@ -332,7 +332,6 @@ namespace GameCraft.Controllers
             return View(prizes); // Return the list of prizes to the view
         }
 
-
         // GET: /Admin/AddOrEditPrize/{id?}
         public IActionResult AddOrEditPrize(int? id)
         {
@@ -361,18 +360,17 @@ namespace GameCraft.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddOrEditPrize(int? id, Product model, IFormFile ImageUpload)
+        public IActionResult AddOrEditPrize(int? id, Product model, IFormFile imageUpload)
         {
             if (ModelState.IsValid)
             {
-                if (ImageUpload != null && ImageUpload.Length > 0)
+                if (imageUpload != null && imageUpload.Length > 0)
                 {
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", ImageUpload.FileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    using (var memoryStream = new MemoryStream())
                     {
-                        ImageUpload.CopyTo(stream); // Use synchronous method
+                        imageUpload.CopyTo(memoryStream); // Copy the uploaded file to memory
+                        model.ImageData = memoryStream.ToArray(); // Save the image data
                     }
-                    model.ImageUrl = "/images/" + ImageUpload.FileName;
                 }
 
                 if (id == null || id == 0)
@@ -388,14 +386,15 @@ namespace GameCraft.Controllers
                     if (existingPrize == null)
                         return NotFound();
 
+                    // Update product details
                     existingPrize.Name = model.Name;
                     existingPrize.Description = model.Description;
                     existingPrize.Price = model.Price;
                     existingPrize.CategoryId = model.CategoryId;
 
-                    if (ImageUpload != null && ImageUpload.Length > 0)
+                    if (imageUpload != null && imageUpload.Length > 0)
                     {
-                        existingPrize.ImageUrl = model.ImageUrl; // Update the ImageUrl
+                        existingPrize.ImageData = model.ImageData; // Update the ImageData
                     }
 
                     _context.Products.Update(existingPrize);
@@ -412,18 +411,16 @@ namespace GameCraft.Controllers
                 {
                     Console.WriteLine(error.ErrorMessage);
                 }
+
+                // If ModelState is not valid, re-populate ViewBag.Categories before returning the view
+                ViewBag.Categories = _context.Categories.Select(c => new SelectListItem
+                {
+                    Value = c.CategoryId.ToString(),
+                    Text = c.Name
+                }).ToList();
+                return View(model); // Return the model to the view for correction
             }
-
-            // If ModelState is not valid, re-populate ViewBag.Categories before returning the view
-            ViewBag.Categories = _context.Categories.Select(c => new SelectListItem
-            {
-                Value = c.CategoryId.ToString(),
-                Text = c.Name
-            }).ToList();
-            return View(model); // Return the model to the view for correction
         }
-
-
 
 
         // POST: /Admin/DeletePrize/5

@@ -77,7 +77,7 @@ namespace GameCraft.Controllers
                     Name = product.Name,
                     Price = product.Price,
                     Quantity = quantity,
-                    ImageUrl = product.ImageUrl, // Assuming Product has an ImageUrl property
+                    ImageData = product.ImageData, // Use ImageData instead of ImageUrl
                     CustomerId = customer.CustomerId // Set the CustomerId
                 };
                 _context.CartItems.Add(newCartItem);
@@ -100,7 +100,7 @@ namespace GameCraft.Controllers
                     Name = product.Name,
                     Price = product.Price,
                     Quantity = quantity,
-                    ImageUrl = product.ImageUrl
+                    ImageData = product.ImageData // Use ImageData instead of ImageUrl
                 });
             }
             SaveCart(cart); // Save updated cart to session
