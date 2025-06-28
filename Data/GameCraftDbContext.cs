@@ -27,12 +27,12 @@ namespace GameCraft.Data
             modelBuilder.Entity<UserType>().HasKey(u => u.Id); // Ensure Id is the primary key
             modelBuilder.Entity<UserType>()
                 .Property(u => u.Id)
-                .ValueGeneratedOnAdd(); // Configure Id to be auto-incremented
+                .ValueGeneratedNever();
             // Seed data if necessary
             modelBuilder.Entity<UserType>().HasData(
-                new UserType { Id = 1, Name = "Admin" },
-                new UserType { Id = 2, Name = "User " },
-                new UserType { Id = 3, Name = "Employee" }
+                new UserType { Id = 0, Name = "Admin" },
+                new UserType { Id = 1, Name = "User " },
+                new UserType { Id = 2, Name = "Employee" }
             );
 
             // Seed Categories
