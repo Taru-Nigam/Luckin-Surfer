@@ -57,181 +57,71 @@ namespace GameCraft.Controllers
         }
 
 
-        // GET: /Admin/ManageEmployees
-        public IActionResult ManageEmployees()
-        {
-            // Fetch all customers who are employees (User  Type for Employee)
-            // Get the Employee role's Id first
-            var employeeRole = _context.UserTypes.FirstOrDefault(rt => rt.Name == "Employee");
-            if (employeeRole == null)
-            {
-                // Handle null case if needed
-                // Maybe return empty list or throw exception
-                return View(new List<Customer>());
-            }
-            int employeeRoleId = employeeRole.Id;
-
-            // Use employeeRoleId in query without `?.`
-            var employees = _context.Customers
-                                    .Where(c => c.UserType == employeeRoleId)
-                                    .ToList();
-
-            return View(employees);
-        }
-
         // GET: /Admin/ManageUsers
         public IActionResult ManageUsers()
         {
             var users = _context.Customers.ToList();
-
-            ViewBag.UserTypes = _context.UserTypes.Select(ut => new SelectListItem
-            {
-                Value = ut.Id.ToString(),
-                Text = ut.Name
-            }).ToList();
-
+            ViewBag.UserTypes = GetUserTypes();
             return View(users);
         }
 
-
-        // GET: /Admin/CreateEmployee
-        public IActionResult CreateEmployee()
+        // GET: /Admin/CreateOrEditUser /{id?}
+        public IActionResult CreateOrEditUser(int? id)
         {
-            ViewBag.UserTypes = _context.UserTypes.Select(r => new SelectListItem
+            ViewBag.UserTypes = GetUserTypes();
+            if (id == null)
             {
-                Value = r.Id.ToString(),
-                Text = r.Name
-            }).ToList();
-
-            return View(new Customer()); // Return a new Customer instance for creating an employee
+                return View(new Customer()); // Create new user
+            }
+            else
+            {
+                var user = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
+                if (user == null) return NotFound();
+                return View(user); // Edit existing user
+            }
         }
 
-        // POST: /Admin/CreateEmployee
+        // POST: /Admin/CreateOrEditUser 
         [HttpPost]
-        public IActionResult CreateEmployee(Customer newEmployee)
+        public IActionResult CreateOrEditUser(Customer user)
         {
             if (ModelState.IsValid)
             {
-                // Hash the password and set the UserType
-                var (PasswordHash, salt) = PasswordHelper.HashPassword(newEmployee.PasswordHash);
-                newEmployee.PasswordHash = PasswordHash;
-                newEmployee.Salt = salt;
+                if (!string.IsNullOrEmpty(user.PasswordHash))
+                {
+                    var (passwordHash, salt) = PasswordHelper.HashPassword(user.PasswordHash);
+                    user.PasswordHash = passwordHash;
+                    user.Salt = salt;
+                }
 
-                _context.Customers.Add(newEmployee);
+                if (user.CustomerId == 0) // New user
+                {
+                    _context.Customers.Add(user);
+                    TempData["Message"] = "User created successfully!";
+                }
+                else // Existing user
+                {
+                    var existingUser = _context.Customers.FirstOrDefault(c => c.CustomerId == user.CustomerId);
+                    if (existingUser == null) return NotFound();
+
+                    existingUser.Name = user.Name;
+                    existingUser.Email = user.Email;
+                    existingUser.Phone = user.Phone;
+                    existingUser.Address = user.Address;
+                    existingUser.City = user.City;
+                    existingUser.PostCode = user.PostCode;
+                    existingUser.UserType = user.UserType;
+
+                    _context.Customers.Update(existingUser);
+                    TempData["Message"] = "User  updated successfully!";
+                }
+
                 _context.SaveChanges();
-                TempData["Message"] = "Employee account created successfully!";
                 return RedirectToAction("ManageUsers");
             }
 
-            // If ModelState is not valid, re-populate ViewBag.UserTypes before returning the view
-            ViewBag.UserTypes = _context.UserTypes.Select(r => new SelectListItem
-            {
-                Value = r.Id.ToString(),
-                Text = r.Name
-            }).ToList();
-            return View(newEmployee);
-        }
-
-        // GET: /Admin/EditUser /{id}
-        public IActionResult EditUser(int id)
-        {
-            var user = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
-            if (user == null)
-            {
-                return NotFound(); // Return 404 if user not found
-            }
-
-            // Populate UserTypes for the dropdown
-            ViewBag.UserTypes = _context.UserTypes.Select(ut => new SelectListItem
-            {
-                Value = ut.Id.ToString(),
-                Text = ut.Name
-            }).ToList();
-
+            ViewBag.UserTypes = GetUserTypes();
             return View(user);
-        }
-
-        // POST: /Admin/EditUser 
-        [HttpPost]
-        public IActionResult EditUser(Customer editedUser)
-        {
-            if (ModelState.IsValid)
-            {
-                var existingUser = _context.Customers.FirstOrDefault(c => c.CustomerId == editedUser.CustomerId);
-                if (existingUser == null)
-                {
-                    return NotFound(); // Return 404 if user not found
-                }
-
-                // Update user details
-                existingUser.Name = editedUser.Name;
-                existingUser.Email = editedUser.Email;
-                existingUser.Phone = editedUser.Phone;
-                existingUser.Address = editedUser.Address;
-                existingUser.City = editedUser.City;
-                existingUser.PostCode = editedUser.PostCode;
-                existingUser.UserType = editedUser.UserType;
-
-                // Update password if provided
-                if (!string.IsNullOrEmpty(editedUser.PasswordHash))
-                {
-                    var (passwordHash, salt) = PasswordHelper.HashPassword(editedUser.PasswordHash);
-                    existingUser.PasswordHash = passwordHash;
-                    existingUser.Salt = salt;
-                }
-
-                _context.Customers.Update(existingUser);
-                _context.SaveChanges();
-
-                TempData["Message"] = "User  updated successfully!";
-                return RedirectToAction("ManageUsers");
-            }
-
-            // If ModelState is not valid, re-populate ViewBag.UserTypes before returning the view
-            ViewBag.UserTypes = _context.UserTypes.Select(ut => new SelectListItem
-            {
-                Value = ut.Id.ToString(),
-                Text = ut.Name
-            }).ToList();
-            return View(editedUser);
-        }
-
-
-        // POST: /Admin/EditUser /{id}
-        [HttpPost]
-        public IActionResult EditUser(int id, Customer editedUser)
-        {
-            if (id != editedUser.CustomerId)
-                return BadRequest();
-
-            if (ModelState.IsValid)
-            {
-                var existingUser = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
-                if (existingUser == null)
-                    return NotFound();
-
-                // Update user details
-                existingUser.Name = editedUser.Name;
-                existingUser.Email = editedUser.Email;
-                existingUser.Phone = editedUser.Phone;
-                existingUser.Address = editedUser.Address;
-                existingUser.City = editedUser.City;
-                existingUser.PostCode = editedUser.PostCode;
-                existingUser.UserType = editedUser.UserType;
-
-                _context.Customers.Update(existingUser);
-                _context.SaveChanges();
-
-                TempData["Message"] = "User  updated successfully!";
-                return RedirectToAction("ManageUsers");
-            }
-
-            ViewBag.UserTypes = _context.UserTypes.Select(r => new SelectListItem
-            {
-                Value = r.Id.ToString(),
-                Text = r.Name
-            }).ToList();
-            return View(editedUser);
         }
 
         // POST: /Admin/DeleteUser /{id}
@@ -239,91 +129,25 @@ namespace GameCraft.Controllers
         public IActionResult DeleteUser(int id)
         {
             var user = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
-            if (user == null)
-                return NotFound();
+            if (user == null) return NotFound();
 
             _context.Customers.Remove(user);
             _context.SaveChanges();
-
-            TempData["Message"] = "User  deleted successfully!";
+            TempData["Message"] = "User deleted successfully!";
             return RedirectToAction("ManageUsers");
         }
 
-
-        // GET: /Admin/EditEmployee/5
-        public IActionResult EditEmployee(int id)
+        // Helper method to get user types
+        private List<SelectListItem> GetUserTypes()
         {
-            var employee = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
-            if (employee == null)
+            return _context.UserTypes.Select(ut => new SelectListItem
             {
-                return NotFound();
-            }
-
-            // Populate UserTypes for the dropdown, converting to SelectListItem
-            ViewBag.UserTypes = _context.UserTypes.Select(r => new SelectListItem
-            {
-                Value = r.Id.ToString(),
-                Text = r.Name
+                Value = ut.Id.ToString(),
+                Text = ut.Name
             }).ToList();
-
-            return View(employee);
         }
 
-        // POST: /Admin/EditEmployee/5
-        [HttpPost]
-        public IActionResult EditEmployee(int id, Customer editedEmployee)
-        {
-            if (id != editedEmployee.CustomerId)
-                return BadRequest();
 
-            if (ModelState.IsValid)
-            {
-                var existingEmployee = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
-                if (existingEmployee == null)
-                    return NotFound();
-
-                // We update basic fields but not password here for simplicity
-                existingEmployee.Name = editedEmployee.Name;
-                existingEmployee.Email = editedEmployee.Email;
-                existingEmployee.Phone = editedEmployee.Phone;
-                existingEmployee.Address = editedEmployee.Address;
-                existingEmployee.City = editedEmployee.City;
-                existingEmployee.PostCode = editedEmployee.PostCode;
-
-                // Allow role change including permission level
-                if (_context.UserTypes.Any(rt => rt.Id == editedEmployee.UserType))
-                {
-                    existingEmployee.UserType = editedEmployee.UserType;
-                }
-
-                _context.Customers.Update(existingEmployee);
-                _context.SaveChanges();
-
-                return RedirectToAction("ManageEmployees");
-            }
-
-            // If ModelState is not valid, re-populate ViewBag.UserTypes before returning the view
-            ViewBag.UserTypes = _context.UserTypes.Select(r => new SelectListItem
-            {
-                Value = r.Id.ToString(),
-                Text = r.Name
-            }).ToList();
-            return View(editedEmployee);
-        }
-
-        // POST: /Admin/DeleteEmployee/5
-        [HttpPost]
-        public IActionResult DeleteEmployee(int id)
-        {
-            var employee = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
-            if (employee == null)
-                return NotFound();
-
-            _context.Customers.Remove(employee);
-            _context.SaveChanges();
-
-            return RedirectToAction("ManageEmployees");
-        }
 
         // GET: /Admin/ManagePrizes
         public IActionResult ManagePrizes()
@@ -362,65 +186,75 @@ namespace GameCraft.Controllers
         [HttpPost]
         public IActionResult AddOrEditPrize(int? id, Product model, IFormFile imageUpload)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (imageUpload != null && imageUpload.Length > 0)
+                if (ModelState.IsValid)
                 {
-                    using (var memoryStream = new MemoryStream())
+                    if (imageUpload != null && imageUpload.Length > 0)
                     {
-                        imageUpload.CopyTo(memoryStream); // Copy the uploaded file to memory
-                        model.ImageData = memoryStream.ToArray(); // Save the image data
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            imageUpload.CopyTo(memoryStream); // Copy the uploaded file to memory
+                            model.ImageData = memoryStream.ToArray(); // Save the image data
+                        }
                     }
-                }
 
-                if (id == null || id == 0)
-                {
-                    // Add new prize
-                    _context.Products.Add(model);
-                    TempData["Message"] = "Prize added successfully!";
+                    if (id == null || id == 0)
+                    {
+                        // Add new prize
+                        _context.Products.Add(model);
+                        TempData["Message"] = "Prize added successfully!";
+                    }
+                    else
+                    {
+                        // Edit existing prize
+                        var existingPrize = _context.Products.FirstOrDefault(p => p.ProductId == id);
+                        if (existingPrize == null)
+                            return NotFound();
+
+                        // Update product details
+                        existingPrize.Name = model.Name;
+                        existingPrize.Description = model.Description;
+                        existingPrize.Price = model.Price;
+                        existingPrize.CategoryId = model.CategoryId;
+
+                        if (imageUpload != null && imageUpload.Length > 0)
+                        {
+                            existingPrize.ImageData = model.ImageData; // Update the ImageData
+                        }
+
+                        _context.Products.Update(existingPrize);
+                        TempData["Message"] = "Prize updated successfully!";
+                    }
+
+                    _context.SaveChanges(); // Save changes to the database
+                    return RedirectToAction("ManagePrizes"); // Redirect to ManagePrizes
                 }
                 else
                 {
-                    // Edit existing prize
-                    var existingPrize = _context.Products.FirstOrDefault(p => p.ProductId == id);
-                    if (existingPrize == null)
-                        return NotFound();
-
-                    // Update product details
-                    existingPrize.Name = model.Name;
-                    existingPrize.Description = model.Description;
-                    existingPrize.Price = model.Price;
-                    existingPrize.CategoryId = model.CategoryId;
-
-                    if (imageUpload != null && imageUpload.Length > 0)
+                    // Log the errors for debugging
+                    foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                     {
-                        existingPrize.ImageData = model.ImageData; // Update the ImageData
+                        Console.WriteLine(error.ErrorMessage);
                     }
-
-                    _context.Products.Update(existingPrize);
-                    TempData["Message"] = "Prize updated successfully!";
+                    // Re-populate ViewBag.Categories before returning the view
+                    ViewBag.Categories = _context.Categories.Select(c => new SelectListItem
+                    {
+                        Value = c.CategoryId.ToString(),
+                        Text = c.Name
+                    }).ToList();
+                    return View(model); // Return the model to the view for correction
                 }
-
-                _context.SaveChanges(); // Save changes to the database
-                return RedirectToAction("ManagePrizes"); // Redirect to ManagePrizes
             }
-            else
+            catch (Exception ex)
             {
-                // Log the errors for debugging
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine(error.ErrorMessage);
-                }
-
-                // If ModelState is not valid, re-populate ViewBag.Categories before returning the view
-                ViewBag.Categories = _context.Categories.Select(c => new SelectListItem
-                {
-                    Value = c.CategoryId.ToString(),
-                    Text = c.Name
-                }).ToList();
-                return View(model); // Return the model to the view for correction
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                // Optionally, set an error message in TempData
+                TempData["Message"] = "An error occurred while processing your request.";
+                return View(model);
             }
         }
+
 
 
         // POST: /Admin/DeletePrize/5
