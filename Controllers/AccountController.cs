@@ -224,21 +224,19 @@ namespace GameCraft.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // POST: /Account/ChangePassword
         [HttpPost]
         public IActionResult ChangePassword(string newPassword, string confirmPassword)
         {
             if (newPassword != confirmPassword)
             {
-                ModelState.AddModelError("", "Passwords do not match.");
-                return RedirectToAction("MyAccount");
+                return Json(new { success = false, message = "Passwords do not match." });
             }
 
             var email = HttpContext.Session.GetString("Email");
             var customer = _context.Customers.FirstOrDefault(c => c.Email == email);
             if (customer == null)
             {
-                return RedirectToAction("Login"); // Redirect to login if customer not found
+                return Json(new { success = false, message = "User  not found." });
             }
 
             // Hash the new password
@@ -252,9 +250,9 @@ namespace GameCraft.Controllers
             _context.Customers.Update(customer);
             _context.SaveChanges();
 
-            TempData["SuccessMessage"] = "Password changed successfully.";
-            return RedirectToAction("MyAccount"); // Redirect to MyAccount to show the success message
+            return Json(new { success = true, message = "Password changed successfully." });
         }
+
     }
 }
 
