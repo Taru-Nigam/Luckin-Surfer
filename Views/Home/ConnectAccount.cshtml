@@ -37,11 +37,12 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // Username suggestions
             $('#username').on('input', function () {
                 var input = $(this).val();
                 if (input.length > 0) {
                     $.ajax({
-                        url: '@Url.Action("GetUser names", "Account")',
+                        url: '@Url.Action("GetUser  Names", "Account")',
                         type: 'GET',
                         data: { searchTerm: input },
                         success: function (data) {
@@ -67,6 +68,7 @@
                 $('#usernameSuggestions').hide();
             });
 
+            // Connect account form submission
             $('#connectAccountForm').on('submit', function (e) {
                 e.preventDefault();
                 var cardNumber = $('#gamecraftCardNumber').val();
@@ -74,8 +76,8 @@
 
                 $.post('@Url.Action("ConnectAccount", "Account")', { cardNumber: cardNumber, username: username }, function (response) {
                     if (response.success) {
-                        alert('Account connected successfully!');
-                        // Optionally redirect or update the UI
+                        // Show a popup message with the new account details
+                        alert(response.message);
                     } else {
                         alert('Error: ' + response.message);
                     }
@@ -84,3 +86,4 @@
         });
     </script>
 }
+
