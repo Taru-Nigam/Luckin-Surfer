@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using GameCraft.Data;
-using GameCraft.Models;
-using System.Linq;
+﻿using GameCraft.Data;
 using GameCraft.Helpers;
+using GameCraft.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System.Linq;
 
 namespace GameCraft.Controllers
 {
@@ -106,7 +107,7 @@ namespace GameCraft.Controllers
             // Check if the customer exists
             if (customer == null)
             {
-                ModelState.AddModelError("", "User  does not exist."); // Add error message
+                ModelState.AddModelError("", "User does not exist."); // Add error message
                 return View(); // Return to the login view with the error
             }
             // Verify the password
@@ -116,7 +117,7 @@ namespace GameCraft.Controllers
                 return View();
             }
             // Store user info in session
-            HttpContext.Session.SetString("User Name", customer.Name);
+            HttpContext.Session.SetString("UserName", customer.Name);
             HttpContext.Session.SetString("Email", customer.Email);
             HttpContext.Session.SetString("PrizePoints", customer.PrizePoints.ToString());
             HttpContext.Session.SetString("AvatarUrl", customer.AvatarUrl ?? "/images/default-avatar.png");
@@ -167,6 +168,81 @@ namespace GameCraft.Controllers
             }
             return View(customer);
         }
+
+        // POST: /Account/ConnectAccount
+        [HttpPost]
+        public IActionResult ConnectAccount(string cardNumber, string username)
+        {
+            // Check if the username already exists
+            var existingCustomer = _context.Customers.FirstOrDefault(c => c.Name == username);
+            if (existingCustomer != null)
+            {
+                // Update existing user with the GameCraft card number
+                existingCustomer.GameCraftCardNumber = cardNumber;
+                _context.SaveChanges();
+
+                // Automatically log in the existing user
+                HttpContext.Session.SetString("UserName", existingCustomer.Name);
+                HttpContext.Session.SetString("Email", existingCustomer.Email ?? "email@gamecraft.com");
+                HttpContext.Session.SetString("PrizePoints", existingCustomer.PrizePoints.ToString());
+                HttpContext.Session.SetString("AvatarUrl", existingCustomer.AvatarUrl ?? "/images/default-avatar.png");
+
+                Response.Cookies.Append("UserToken", existingCustomer.CustomerId.ToString(), new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddDays(7),
+                    IsEssential = true
+                });
+
+                return Json(new
+                {
+                    success = true,
+                    message = "GameCraft card number added to existing account.",
+                    customerId = existingCustomer.CustomerId,
+                    redirectUrl = Url.Action("Index", "Home")  // Add redirect URL
+                });
+            }
+
+            // Create a new user with placeholder email
+            var Customer = new Customer
+            {
+                Name = username,
+                Email = "email@gamecraft.com",
+                PasswordHash = PasswordHelper.HashPassword("password").Item1,
+                Salt = PasswordHelper.HashPassword("password").Item2,
+                GameCraftCardNumber = cardNumber,
+                UserType = 1,
+                Phone = "",
+                Address = "",
+                City = "",
+                PostCode = ""
+            };
+
+            _context.Customers.Add(Customer);
+            _context.SaveChanges();
+
+            // Full authentication setup (same as Register)
+            HttpContext.Session.SetString("UserName", Customer.Name);
+            HttpContext.Session.SetString("Email", Customer.Email);
+            HttpContext.Session.SetString("PrizePoints", Customer.PrizePoints.ToString());
+            HttpContext.Session.SetString("AvatarUrl", Customer.AvatarUrl ?? "/images/default-avatar.png");
+
+            Response.Cookies.Append("UserToken", Customer.CustomerId.ToString(), new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddDays(7),
+                IsEssential = true
+            });
+
+            return Json(new
+            {
+                success = true,
+                message = "A new account has been created with the username: " + username + " and default password" + "You are logged in, Please Update your password in My Account -> Change password",
+                customerId = Customer.CustomerId,
+                redirectUrl = Url.Action("Index", "Home")  // Add redirect URL
+            });
+        }
+
+
+
 
         // POST: /Account/UpdateAccount
         [HttpPost]
@@ -252,7 +328,6 @@ namespace GameCraft.Controllers
 
             return Json(new { success = true, message = "Password changed successfully." });
         }
-
     }
 }
 
