@@ -1,10 +1,15 @@
-﻿@model List<GameCraft.Models.Customer>
+@model List<GameCraft.Models.Customer>
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Manage Users";
 }
 
 <h1 class="mb-6">Manage Users</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert-success">@TempData["Message"]</div>
+}
 
 <div class="user-list-container">
     <a href="@Url.Action("CreateOrEditUser", "Admin")" class="btn-primary mb-4">Create New User</a>
@@ -34,18 +39,18 @@
                         <td>@user.Phone</td>
                         <td>
                             @(ViewBag.UserTypes != null
-                                                ? ((List<SelectListItem>)ViewBag.UserTypes).FirstOrDefault(ut => ut.Value == user.UserType.ToString())?.Text ?? "Unknown"
-                                                : "Unknown")
-                </td>
-                <td>
-                    <a href="@Url.Action("CreateOrEditUser", "Admin", new { id = user.CustomerId })" class="btn-action btn-edit">Edit</a>
-                    <form asp-action="DeleteUser " asp-controller="Admin" method="post" class="inline-form" onsubmit="return confirm('Are you sure you want to delete this user?');" style="display:inline;">
-                        <input type="hidden" name="id" value="@user.CustomerId" />
-                        <button type="submit" class="btn-action btn-delete">Delete</button>
-                    </form>
-                </td>
-            </tr>
-                        }
+                                ? ((List<SelectListItem>)ViewBag.UserTypes).FirstOrDefault(ut => ut.Value == user.UserType.ToString())?.Text ?? "Unknown"
+                                : "Unknown")
+                        </td>
+                        <td>
+                            <a href="@Url.Action("CreateOrEditUser", "Admin", new { id = user.CustomerId })" class="btn-action btn-edit">Edit</a>
+                            <form asp-action="DeleteUser" asp-controller="Admin" method="post" class="inline-form" onsubmit="return confirm('Are you sure you want to delete this user?');" style="display:inline;">
+                                <input type="hidden" name="id" value="@user.CustomerId" />
+                                <button type="submit" class="btn-action btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     }
