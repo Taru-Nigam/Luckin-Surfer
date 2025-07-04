@@ -1,4 +1,4 @@
-﻿@model List<GameCraft.Models.Product>
+@model List<GameCraft.Models.Product>
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Manage Prizes";
@@ -8,7 +8,7 @@
 
 @if (TempData["Message"] != null)
 {
-    <div class="alert alert-success">@TempData["Message"]</div>
+    <div class="alert-success">@TempData["Message"]</div>
 }
 
 <a href="@Url.Action("AddOrEditPrize", "Admin")" class="btn btn-primary mb-4">Add New Prize</a>
@@ -26,7 +26,7 @@ else
                 <th>Description</th>
                 <th>Price</th>
                 <th>Category</th>
-                <th>Image</th> <!-- Added Image column -->
+                <th>Image</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -37,9 +37,16 @@ else
                     <td>@product.Name</td>
                     <td>@product.Description</td>
                     <td>@product.Price</td>
-                    <td>@product.CategoryId</td>
+                    <td>@product.CategoryId</td> @* This will show CategoryId, ideally you'd join to get Category Name *@
                     <td>
-                        <img src="@Url.Action("GetImage", "Product", new { id = product.ProductId })" alt="@product.Name" style="width: 50px; height: auto;" />
+                        @if (product.ImageData != null && product.ImageData.Length > 0)
+                        {
+                            <img src="@Url.Action("GetImage", "Product", new { id = product.ProductId })" alt="@product.Name" style="width: 50px; height: auto;" />
+                        }
+                        else
+                        {
+                            <span>No Image</span>
+                        }
                     </td>
                     <td>
                         <a href="@Url.Action("AddOrEditPrize", "Admin", new { id = product.ProductId })" class="btn-action btn-edit">Edit</a>
