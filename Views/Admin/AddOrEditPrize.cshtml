@@ -1,21 +1,15 @@
-﻿@model GameCraft.Models.Product
+@model GameCraft.Models.Product
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = Model.ProductId == 0 ? "Add Prize" : "Edit Prize";
+    // ViewData["Title"] is set in the controller action
 }
 
 <h1>@ViewData["Title"]</h1>
 
-@if (TempData["Message"] != null)
-{
-    <script>
-        alert('@TempData["Message"]'); // Display the success message
-        window.location.href = '@Url.Action("ManagePrizes", "Admin")'; // Redirect to ManagePrizes
-    </script>
-}
-
-<form asp-action="AddOrEditPrize" method="post" enctype="multipart/form-data">
+<form asp-action="AddOrEditPrize" asp-controller="Admin" method="post" enctype="multipart/form-data" novalidate>
     <input type="hidden" asp-for="ProductId" />
+    @Html.AntiForgeryToken() @* Add anti-forgery token *@
+
     <div class="form-group">
         <label asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />
@@ -33,12 +27,49 @@
     </div>
     <div class="form-group">
         <label asp-for="CategoryId"></label>
-        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories"></select>
+        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+            <option value="">-- Select Category --</option>
+        </select>
         <span asp-validation-for="CategoryId" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label>Upload Image</label>
-        <input type="file" name="ImageUpload" accept="image/*" class="form-control" />
+        <input type="file" name="imageUpload" accept="image/*" class="form-control" onchange="previewImage(event)" />
+        <img id="imagePreview" src="#" alt="Image Preview" style="display:none; width: 100px; height: auto; margin-top: 10px;" />
+        @if (Model.ImageData != null && Model.ImageData.Length > 0)
+        {
+            <p>Current Image:</p>
+            <img src="@Url.Action("GetImage", "Product", new { id = Model.ProductId })" alt="Current Image" style="width: 100px; height: auto; margin-top: 10px;" />
+        }
+        <span asp-validation-for="ImageData" class="text-danger"></span> @* For image validation errors *@
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
+
+<script>
+    function previewImage(event) {
+        const imagePreview = document.getElementById('imagePreview');
+        if (event.target.files && event.target.files[0]) {
+            imagePreview.src = URL.createObjectURL(event.target.files[0]);
+            imagePreview.style.display = 'block';
+        } else {
+            imagePreview.style.display = 'none';
+            imagePreview.src = '#';
+        }
+    }
+
+    // If editing, and there's an existing image, display it on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const imagePreview = document.getElementById('imagePreview');
+        // Only try to set src if it's an existing product with image data
+        const currentImageSrc = '@(Model.ProductId != 0 && Model.ImageData != null && Model.ImageData.Length > 0 ? Url.Action("GetImage", "Product", new { id = Model.ProductId }) : "")';
+        if (currentImageSrc) {
+            imagePreview.src = currentImageSrc;
+            imagePreview.style.display = 'block';
+        }
+    });
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
