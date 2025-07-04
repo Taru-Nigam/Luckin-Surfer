@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -6,7 +6,7 @@
     <title>@ViewData["Title"] - Employee Dashboard</title>
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/employee.css" />
-    <link rel="stylesheet" href="~/css/admin.css" /> <!-- Include admin CSS -->
+    <link rel="stylesheet" href="~/css/admin.css" />
 </head>
 <body>
     <header class="employee-header">
@@ -37,7 +37,11 @@
             }
 
             <div class="employee-auth">
-                <a href="@Url.Action("Login", "Employee")" class="employee-logout-button">Logout</a>
+                <form asp-controller="Employee" asp-action="Logout" method="post" id="logoutForm">
+                    @* IMPORTANT: Add this for security (anti-forgery token) *@
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="employee-logout-button">Logout</button>
+                </form>
             </div>
         </div>
     </header>
