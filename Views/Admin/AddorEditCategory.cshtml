@@ -1,13 +1,15 @@
-﻿@model GameCraft.Models.Category
+@model GameCraft.Models.Category
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = Model.CategoryId == 0 ? "Add Category" : "Edit Category";
+    // ViewData["Title"] is set in the controller action
 }
 
 <h1>@ViewData["Title"]</h1>
 
-<form asp-action="AddOrEditCategory" method="post">
+<form asp-action="AddOrEditCategory" asp-controller="Admin" method="post">
     <input type="hidden" asp-for="CategoryId" />
+    @Html.AntiForgeryToken() @* Add anti-forgery token *@
+
     <div class="form-group">
         <label asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />
@@ -15,3 +17,7 @@
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
