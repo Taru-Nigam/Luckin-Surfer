@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -6,7 +6,7 @@
     <title>@ViewData["Title"] - Employee Dashboard</title>
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/employee.css" />
-    <link rel="stylesheet" href="~/css/admin.css" />
+    @* Removed admin.css as employee.css will be the primary stylesheet for all employee/admin pages *@
 </head>
 <body>
     <header class="employee-header">
@@ -21,24 +21,16 @@
                     <li><a href="@Url.Action("PrizeStock", "Employee")">Prize Stock</a></li>
                     <li><a href="@Url.Action("RedeemedPrizes", "Employee")">Redeemed Prizes</a></li>
                     <li><a href="@Url.Action("AuditLog", "Employee")">Audit Log</a></li>
+                    @* Admin Navigation Section - Only show if IsAdmin is true *@
+                    @if (ViewBag.IsAdmin != null && (bool)ViewBag.IsAdmin)
+                    {
+                        <li><a href="@Url.Action("Index", "Admin")">Admin Portal</a></li>
+                    }
                 </ul>
             </nav>
 
-            @* Admin Navigation Section *@
-            @if (ViewBag.IsAdmin != null && (bool)ViewBag.IsAdmin)
-            {
-                <nav class="admin-nav">
-                    <ul>
-                        <li><a href="@Url.Action("ManageUsers", "Admin")">Manage Users</a></li>
-                        <li><a href="@Url.Action("ManagePrizes", "Admin")">Manage Prizes</a></li>
-                        <li><a href="@Url.Action("ManageCategories", "Admin")">Manage Categories</a></li>
-                    </ul>
-                </nav>
-            }
-
             <div class="employee-auth">
                 <form asp-controller="Employee" asp-action="Logout" method="post" id="logoutForm">
-                    @* IMPORTANT: Add this for security (anti-forgery token) *@
                     @Html.AntiForgeryToken()
                     <button type="submit" class="employee-logout-button">Logout</button>
                 </form>
