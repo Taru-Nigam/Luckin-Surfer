@@ -36,6 +36,9 @@
                         setTimeout(function() {
                             $('.cart-icon').removeClass('bounce'); // Remove bounce class after animation
                         }, 700); // Duration of the bounce animation
+                    } else if (data.redirectToLogin) {
+                        // Redirect to login page if not authenticated
+                        window.location.href = '@Url.Action("Login", "Account")?ReturnUrl=' + encodeURIComponent('@Url.Action("Details", "Product", new { id = Model.ProductId })');
                     } else {
                         alert(data.message); // Show error message if any
                     }
