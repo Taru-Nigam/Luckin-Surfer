@@ -63,14 +63,6 @@ namespace GameCraft.Controllers
             }
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear(); // Clear the session
-            return RedirectToAction("Index", "Home"); // Redirect to the login page
-        }
-
         // GET: /Admin/Index (Admin Dashboard)
         public IActionResult Index()
         {
