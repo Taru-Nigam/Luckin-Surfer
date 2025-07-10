@@ -108,8 +108,8 @@ else
 
                 $.post("/Cart/RemoveFromCart", { productId: productId }, function (data) {
                     if (data.success) {
-                        $('#cartItem_' + productId).remove(); 
-                        
+                        $('#cartItem_' + productId).remove();
+
                         if (typeof updateCartCount === 'function') {
                             updateCartCount(data.cartCount);
                         } else {
@@ -120,13 +120,13 @@ else
                                  cartCountSpan.style.display = data.cartCount > 0 ? 'block' : 'none';
                              }
                         }
-                        
+
                         if (data.cartCount === 0) {
                             $('.table-bordered').hide();
                             $('.d-flex.justify-content-between.mt-3').hide();
                             $('h2').after('<div class="alert alert-info" role="alert">Your cart is empty. <a href="/">Continue shopping!</a></div>');
                         } else {
-                            location.reload(); 
+                            location.reload();
                         }
                     } else {
                         alert("Failed to remove item.");
