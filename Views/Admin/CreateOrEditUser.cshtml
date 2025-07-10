@@ -1,7 +1,7 @@
-@model GameCraft.Models.Customer
+﻿@model GameCraft.Models.Customer
 @{
     Layout = "_AdminLayout";
-    // ViewData["Title"] is set in the controller action
+    ViewData["Title"] = Model.CustomerId == 0 ? "Create User" : "Edit User";
 }
 
 <h1 class="mb-6">@ViewData["Title"]</h1>
@@ -48,11 +48,29 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="UserType">User Role / Permissions</label>
-            <select asp-for="UserType" class="form-select" asp-items="ViewBag.UserTypes">
+            <label asp-for="UserType">User  Role / Permissions</label>
+            <select asp-for="UserType" class="form-select" asp-items="ViewBag.UserTypes" id="userTypeSelect">
                 <option value="">-- Select Role --</option>
             </select>
             <span asp-validation-for="UserType" class="text-error"></span>
+        </div>
+
+        <div class="form-group" id="adminKeyGroup" style="display:@(Model.UserType == 0 ? "block" : "none")">
+            <label asp-for="AdminKey">Admin Key</label>
+            <input asp-for="AdminKey" class="form-input" readonly />
+            <span asp-validation-for="AdminKey" class="text-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PrizePoints">Prize Points</label>
+            <input asp-for="PrizePoints" class="form-input" />
+            <span asp-validation-for="PrizePoints" class="text-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="GameCraftCardNumber">GameCraft Card Number</label>
+            <input asp-for="GameCraftCardNumber" class="form-input" />
+            <span asp-validation-for="GameCraftCardNumber" class="text-error"></span>
         </div>
 
         <div class="form-group">
@@ -75,4 +93,29 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('userTypeSelect').addEventListener('change', function() {
+            const adminKeyGroup = document.getElementById('adminKeyGroup');
+            const adminKeyInput = document.getElementById('AdminKey');
+
+            if (this.value == "0") { // Assuming "0" is the value for Admin UserType
+                // Generate a random admin key
+                const randomAdminKey = generateRandomAdminKey();
+                adminKeyInput.value = randomAdminKey; // Set the generated key
+                adminKeyGroup.style.display = 'block'; // Show the admin key input
+            } else {
+                adminKeyInput.value = ''; // Clear the admin key input
+                adminKeyGroup.style.display = 'none'; // Hide the admin key input
+            }
+        });
+
+        function generateRandomAdminKey(length = 16) {
+            const validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += validChars.charAt(Math.floor(Math.random() * validChars.length));
+            }
+            return result;
+        }
+    </script>
 }

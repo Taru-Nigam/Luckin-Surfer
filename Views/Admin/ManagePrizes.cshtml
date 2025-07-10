@@ -1,4 +1,4 @@
-@model List<GameCraft.Models.Product>
+﻿@model List<GameCraft.Models.Product>
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Manage Prizes";
@@ -34,20 +34,21 @@ else
             @foreach (var product in Model)
             {
                 <tr>
-                    <td>@product.Name</td>
-                    <td>@product.Description</td>
-                    <td>@product.Price</td>
-                    <td>@product.CategoryId</td> @* This will show CategoryId, ideally you'd join to get Category Name *@
                     <td>
                         @if (product.ImageData != null && product.ImageData.Length > 0)
                         {
-                            <img src="@Url.Action("GetImage", "Product", new { id = product.ProductId })" alt="@product.Name" style="width: 50px; height: auto;" />
+                            <img src="@Url.Action("GetImage", "Product", new { id = product.ProductId })" alt="@product.Name" />
                         }
                         else
                         {
                             <span>No Image</span>
                         }
                     </td>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price</td>
+                    <td>@product.CategoryId</td> @* This will show CategoryId, ideally you'd join to get Category Name *@
+
                     <td>
                         <a href="@Url.Action("AddOrEditPrize", "Admin", new { id = product.ProductId })" class="btn-action btn-edit">Edit</a>
                         <form asp-action="DeletePrize" asp-controller="Admin" method="post" class="inline-form" onsubmit="return confirm('Are you sure you want to delete this product?');" style="display:inline;">
