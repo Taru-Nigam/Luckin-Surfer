@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims; // Required for Claims
-using Microsoft.AspNetCore.Authentication; // Required for HttpContext.SignInAsync
+﻿using Microsoft.AspNetCore.Authentication; // Required for HttpContext.SignInAsync
 using Microsoft.AspNetCore.Authentication.Cookies; // Required for CookieAuthenticationDefaults
 using Microsoft.AspNetCore.Authorization; // Required for [Authorize]
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims; // Required for Claims
+using GameCraft.Data;
+using GameCraft.Models;
+using Microsoft.EntityFrameworkCore;
 
 // You'll need your DbContext if you're checking credentials against a database
 // using GameCraft.Data; // Example: assuming your DbContext is in GameCraft.Data
@@ -12,6 +15,13 @@ namespace GameCraft.Controllers
 {
     public class EmployeeController : Controller
     {
+
+        private readonly GameCraftDbContext _context;
+
+        public EmployeeController(GameCraftDbContext context)
+        {
+            _context = context;
+        }
         private const string ValidAdminKey = "YourSecureAdminKey123"; // Make sure this is a secure, secret key
 
         // If you are using a database for employees, uncomment and inject your DbContext here
@@ -95,32 +105,46 @@ namespace GameCraft.Controllers
             // Log the admin key for debugging (REMOVE THIS IN PRODUCTION!)
             Console.WriteLine($"Admin Key Entered: {adminKey}");
 
+            // Check if the entered admin key matches the static valid admin key
             if (adminKey == ValidAdminKey)
             {
                 var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, "Admin"), // Name for the authenticated Admin
-                    new Claim(ClaimTypes.Role, "Admin"), // Assign the "Admin" role
-                };
+        {
+            new Claim(ClaimTypes.Name, "Admin"), // Name for the authenticated Admin
+            new Claim(ClaimTypes.Role, "Admin"), // Assign the "Admin" role
+        };
 
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
                 {
                     IsPersistent = true,
                     ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60)
                 };
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                if (Url.IsLocalUrl(returnUrl))
+                return RedirectToAction("Index", "Admin"); // Redirect to the admin dashboard
+            }
+
+            // Check if the entered admin key matches the stored admin key in the database
+            var adminUser = await _context.Customers.FirstOrDefaultAsync(c => c.AdminKey == adminKey);
+            if (adminUser != null)
+            {
+                var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, adminUser .Name), // Use the admin's name
+            new Claim(ClaimTypes.Role, "Admin"), // Assign the "Admin" role
+        };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
                 {
-                    return Redirect(returnUrl);
-                }
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60)
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
                 return RedirectToAction("Index", "Admin"); // Redirect to the admin dashboard
             }
             else
@@ -129,6 +153,7 @@ namespace GameCraft.Controllers
                 return View("Login"); // Return to the login view if key is incorrect
             }
         }
+
 
         [HttpPost] // Logout action
         public async Task<IActionResult> Logout()
