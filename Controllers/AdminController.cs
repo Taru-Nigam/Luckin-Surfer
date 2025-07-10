@@ -1,12 +1,14 @@
-using GameCraft.Data;
+﻿using GameCraft.Data;
 using GameCraft.Helpers;
 using GameCraft.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore; // Ensure this is included for FirstOrDefault
 using System.Collections.Generic;
-using System.Linq;
 using System.IO; // For MemoryStream and FileStream
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace GameCraft.Controllers
 {
@@ -44,11 +46,29 @@ namespace GameCraft.Controllers
                 HttpContext.Session.SetString("UserName", "Admin");
                 return RedirectToAction("Index");
             }
+
+            // Check if the entered admin key matches the stored admin key in the database
+            var adminUser = _context.Customers.FirstOrDefault(c => c.AdminKey == adminKey);
+            if (adminUser != null)
+            {
+                HttpContext.Session.SetString("IsAdmin", "true");
+                HttpContext.Session.SetString("UserName", adminUser.Name); // Store the admin's name or any other relevant info
+                return RedirectToAction("Index");
+            }
+
             else
             {
                 ModelState.AddModelError("", "Invalid admin key.");
                 return View();
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // Clear the session
+            return RedirectToAction("Index", "Home"); // Redirect to the login page
         }
 
         // GET: /Admin/Index (Admin Dashboard)
@@ -88,21 +108,31 @@ namespace GameCraft.Controllers
             }
         }
 
-        // POST: /Admin/CreateOrEditUser
+        // Method to generate a random admin key
+        private string GenerateRandomAdminKey(int length = 16)
+        {
+            const string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            StringBuilder result = new StringBuilder(length);
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                byte[] randomBytes = new byte[length];
+                rng.GetBytes(randomBytes);
+                for (int i = 0; i < length; i++)
+                {
+                    result.Append(validChars[randomBytes[i] % validChars.Length]);
+                }
+            }
+            return result.ToString();
+        }
+
+        // POST: /Admin/CreateOrEditUser   
         [HttpPost]
         [ValidateAntiForgeryToken] // Good practice for POST methods
         public IActionResult CreateOrEditUser(Customer user)
         {
-            // The framework automatically checks ModelState.IsValid before entering the action method
-            // If ModelState.IsValid is false, the method will be re-executed with the invalid model
-            // and validation errors will be available in the view.
-            // So, we don't need an explicit 'if (ModelState.IsValid)' block here.
-
             // Repopulate ViewBag.UserTypes for the view in case of validation errors
             ViewBag.UserTypes = GetUserTypes();
 
-            // If validation fails, the view will be returned automatically with errors
-            // If validation passes, proceed to save
             if (user.CustomerId == 0) // New user
             {
                 // Hash password only for new users or if password is explicitly changed for existing
@@ -114,9 +144,14 @@ namespace GameCraft.Controllers
                 }
                 else
                 {
-                    // If creating a new user, password is required. Add a model error if not provided.
                     ModelState.AddModelError("PasswordHash", "Password is required for new users.");
                     return View(user); // Return to view with error
+                }
+
+                // Generate a random admin key if the user is an admin
+                if (user.UserType == 0) // UserType 0 indicates Admin
+                {
+                    user.AdminKey = GenerateRandomAdminKey(); // Generate and assign the admin key
                 }
 
                 _context.Customers.Add(user);
@@ -153,18 +188,18 @@ namespace GameCraft.Controllers
             }
             catch (DbUpdateException ex)
             {
-                // Log the exception details (e.g., to a file or monitoring system)
+                // Log the exception details
                 Console.WriteLine($"Database update error: {ex.Message}");
                 if (ex.InnerException != null)
                 {
                     Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
                 }
                 ModelState.AddModelError("", "An error occurred while saving the user. Please try again.");
-                // Re-populate ViewBag.UserTypes before returning the view
                 ViewBag.UserTypes = GetUserTypes();
                 return View(user); // Return to the form with error message
             }
         }
+
 
         // POST: /Admin/DeleteUser/{id}
         [HttpPost]
