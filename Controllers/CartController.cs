@@ -50,9 +50,12 @@ namespace GameCraft.Controllers
         {
             var customerEmail = HttpContext.Session.GetString("Email");
             var customer = _context.Customers.FirstOrDefault(c => c.Email == customerEmail);
+
             if (customer == null)
             {
-                return NotFound(new { success = false, message = "User  not found." });
+                // Store the current URL to redirect back after login
+                TempData["ReturnUrl"] = Url.Action("Details", "Product", new { id = productId });
+                return Json(new { success = false, redirectToLogin = true, message = "Please log in to add items to cart." });
             }
 
             var product = _context.Products.FirstOrDefault(p => p.ProductId == productId);
@@ -85,7 +88,7 @@ namespace GameCraft.Controllers
 
             _context.SaveChanges(); // Save changes to the database
 
-            // Update session cart as well
+            // Update session cart as well (though database is primary for logged-in users)
             var cart = GetCart();
             var sessionItem = cart.FirstOrDefault(item => item.ProductId == productId);
             if (sessionItem != null)
@@ -117,7 +120,7 @@ namespace GameCraft.Controllers
             if (customer == null)
             {
                 TempData["ReturnUrl"] = Url.Action("Cart", "Cart");
-                TempData["ErrorMessage"] = "Please log in to view your cart.";
+                TempData["ErrorMessage"] = "Please log in to view your cart."; // Keep this message for direct cart access
                 return RedirectToAction("Login", "Account");
             }
 
@@ -135,7 +138,7 @@ namespace GameCraft.Controllers
 
             if (customer == null)
             {
-                return NotFound(new { success = false, message = "User  not found." });
+                return NotFound(new { success = false, message = "User not found." });
             }
 
             var itemToRemove = _context.CartItems
@@ -167,7 +170,7 @@ namespace GameCraft.Controllers
 
             if (customer == null)
             {
-                return NotFound(new { success = false, message = "User  not found." });
+                return NotFound(new { success = false, message = "User not found." });
             }
 
             var itemToUpdate = _context.CartItems
