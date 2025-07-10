@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication; // Required for HttpContext.SignInAsync
+﻿using GameCraft.Data;
+using GameCraft.Helpers;
+using GameCraft.Models;
+using Microsoft.AspNetCore.Authentication; // Required for HttpContext.SignInAsync
 using Microsoft.AspNetCore.Authentication.Cookies; // Required for CookieAuthenticationDefaults
 using Microsoft.AspNetCore.Authorization; // Required for [Authorize]
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims; // Required for Claims
-using GameCraft.Data;
-using GameCraft.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims; // Required for Claims
 
 // You'll need your DbContext if you're checking credentials against a database
 // using GameCraft.Data; // Example: assuming your DbContext is in GameCraft.Data
@@ -23,13 +24,6 @@ namespace GameCraft.Controllers
             _context = context;
         }
         private const string ValidAdminKey = "YourSecureAdminKey123"; // Make sure this is a secure, secret key
-
-        // If you are using a database for employees, uncomment and inject your DbContext here
-        // private readonly ApplicationDbContext _context; // Replace ApplicationDbContext with your actual DbContext name
-        // public EmployeeController(ApplicationDbContext context)
-        // {
-        //     _context = context;
-        // }
 
         [HttpGet]
         public IActionResult Login()
@@ -50,46 +44,53 @@ namespace GameCraft.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password, string returnUrl = null)
+        public async Task<IActionResult> Login(string username, string email, string password, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
 
-            // --- IMPORTANT: This is for demonstration. In a real app, fetch from DB and hash passwords ---
-            // Example: Simple "employee" username and "password" for employee login
-            if (username == "employee" && password == "password")
+            // Fetch user from the database based on username or email
+            var user = await _context.Customers
+                .FirstOrDefaultAsync(u => u.Email == email || u.Name == username); // Corrected LINQ query
+
+            // Check if user exists and verify password
+            if (user == null || !PasswordHelper.VerifyPassword(password, user.PasswordHash, user.Salt)) // Verify password
+            {
+                ModelState.AddModelError("", "Invalid username or password.");
+                return View();
+            }
+
+            // Check if the user has the appropriate UserType (e.g., UserType 2 for employees)
+            if (user.UserType == 2) // Assuming 2 is the UserType for employees
             {
                 var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, "Employee"), // Assign the "Employee" role
-                    // You could add a ClaimTypes.NameIdentifier here if you had an EmployeeId from a DB
-                };
+        {
+            new Claim(ClaimTypes.Email, user.Email), // Use the user's email
+            new Claim(ClaimTypes.Name, user.Name), // Use the user's name
+            new Claim(ClaimTypes.Role, "Employee"), // Assign the "Employee" role
+        };
 
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = true, // Keep user logged in across browser sessions
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60) // Cookie expiration (adjust as needed)
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60)
                 };
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                // Redirect to the original URL they tried to access, or to the Dashboard
                 if (Url.IsLocalUrl(returnUrl))
                 {
                     return Redirect(returnUrl);
                 }
-                return RedirectToAction("Dashboard"); // Redirect to your employee dashboard
+                return RedirectToAction("Dashboard"); // Redirect to the employee dashboard
             }
-
-            ModelState.AddModelError("", "Invalid username or password.");
-            return View();
+            else
+            {
+                ModelState.AddModelError("", "You do not have permission to access this area.");
+                return View();
+            }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> AdminLogin(string adminKey, string returnUrl = null)
