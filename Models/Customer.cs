@@ -40,5 +40,8 @@ namespace GameCraft.Models
         public int PrizePoints { get; set; } = 0;
         public string? GameCraftCardNumber { get; set; }
 
+        // New property for Admin Key
+        public string? AdminKey { get; set; }
+
     }
 }
