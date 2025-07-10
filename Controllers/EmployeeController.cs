@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims; // Required for Claims
 using Microsoft.AspNetCore.Authentication; // Required for HttpContext.SignInAsync
 using Microsoft.AspNetCore.Authentication.Cookies; // Required for CookieAuthenticationDefaults
@@ -27,9 +27,13 @@ namespace GameCraft.Controllers
             // Fix for CS8602: Check if User.Identity is not null before accessing IsAuthenticated
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                if (User.IsInRole("Employee") || User.IsInRole("Admin"))
+                if (User.IsInRole("Employee"))
                 {
                     return RedirectToAction("Dashboard");
+                }
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Index", "Admin");
                 }
             }
             return View(); // Display your Login.cshtml view
@@ -117,7 +121,7 @@ namespace GameCraft.Controllers
                 {
                     return Redirect(returnUrl);
                 }
-                return RedirectToAction("Dashboard"); // Redirect to the admin dashboard
+                return RedirectToAction("Index", "Admin"); // Redirect to the admin dashboard
             }
             else
             {
