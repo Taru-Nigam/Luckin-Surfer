@@ -1,4 +1,4 @@
-﻿﻿ /* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 a.navbar-brand {
     white-space: normal;
@@ -47,6 +47,71 @@ button.accept-policy {
     line-height: 60px;
 }
 
+/* Header Styles (Moved from site.css) */
+header.main-header .gamecraft-navbar {
+    background-color: #1a1a1a;
+    border-bottom: 2px solid #00ffcc;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    padding: 15px 20px;
+    flex-wrap: nowrap;
+    position: relative;
+    z-index: 10;
+}
+
+.top-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.main-nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+    .main-nav-links .nav-item {
+        margin: 0 40px;
+    }
+
+    .main-nav-links .nav-link {
+        color: #00ffcc;
+        text-decoration: none;
+        padding: 10px 15px;
+        display: block;
+        font-weight: bold;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .main-nav-links .nav-link:hover {
+            background-color: rgba(0, 255, 204, 0.2);
+            color: #00ffcc;
+            border-radius: 5px;
+        }
+
+.auth-buttons {
+    flex-shrink: 0;
+}
+
+    .auth-buttons button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s;
+    }
+
+        .auth-buttons button:hover {
+            background-color: #0056b3;
+        }
+
 /* Cart icon container */
 .cart-icon {
     position: relative;
@@ -75,15 +140,38 @@ button.accept-policy {
     right: 0;
     top: 35px;
     width: 300px;
-    background: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    background: #222; /* Changed to match site.css */
+    border: 1px solid #00ffcc; /* Changed to match site.css */
+    box-shadow: 0 2px 5px rgba(0, 255, 204, 0.5); /* Changed to match site.css */
     padding: 10px;
     z-index: 1000;
-    color: #333;
+    color: #e0e0e0; /* Changed to match site.css */
     border-radius: 5px;
 }
 
     .cart-preview p {
         margin: 0;
     }
+
+/* Responsive adjustments (Moved from site.css) */
+@media (max-width: 768px) {
+    .main-nav-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
+        .main-nav-links .nav-item {
+            margin: 10px 0;
+        }
+
+    .auth-buttons {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+        .auth-buttons button {
+            width: 100%;
+        }
+}
