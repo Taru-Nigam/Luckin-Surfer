@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GameCraft.Models
@@ -21,6 +21,8 @@ namespace GameCraft.Models
 
         [Required]
         public int CategoryId { get; set; }
+
+        public int Quantity { get; set; }
 
         public byte[] ImageData { get; set; } // Change from ImageUrl to ImageData
 
