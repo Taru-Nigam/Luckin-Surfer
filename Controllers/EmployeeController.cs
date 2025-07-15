@@ -1,34 +1,33 @@
-﻿using GameCraft.Data;
+using GameCraft.Data;
 using GameCraft.Helpers;
 using GameCraft.Models;
-using Microsoft.AspNetCore.Authentication; // Required for HttpContext.SignInAsync
-using Microsoft.AspNetCore.Authentication.Cookies; // Required for CookieAuthenticationDefaults
-using Microsoft.AspNetCore.Authorization; // Required for [Authorize]
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims; // Required for Claims
-
-// You'll need your DbContext if you're checking credentials against a database
-// using GameCraft.Data; // Example: assuming your DbContext is in GameCraft.Data
-// using GameCraft.Models; // Example: assuming your Employee/Admin models are in GameCraft.Models
+using Microsoft.EntityFrameworkCore; // Required for ToListAsync, FirstOrDefaultAsync
+using System.Security.Claims;
+using System.Collections.Generic; // Required for List<Claim>
+using System.Linq; // Required for .FirstOrDefaultAsync
+using System.Threading.Tasks; // Required for Task<IActionResult> and async/await
+using System; // Required for Console.WriteLine, Exception
 
 namespace GameCraft.Controllers
 {
     public class EmployeeController : Controller
     {
-
         private readonly GameCraftDbContext _context;
 
         public EmployeeController(GameCraftDbContext context)
         {
             _context = context;
         }
+
         private const string ValidAdminKey = "YourSecureAdminKey123"; // Make sure this is a secure, secret key
 
         [HttpGet]
         public IActionResult Login()
         {
-            // Fix for CS8602: Check if User.Identity is not null before accessing IsAuthenticated
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 if (User.IsInRole("Employee"))
@@ -48,26 +47,23 @@ namespace GameCraft.Controllers
         {
             ViewData["ReturnUrl"] = returnUrl;
 
-            // Fetch user from the database based on username or email
             var user = await _context.Customers
-                .FirstOrDefaultAsync(u => u.Email == email || u.Name == username); // Corrected LINQ query
+                .FirstOrDefaultAsync(u => u.Email == email || u.Name == username);
 
-            // Check if user exists and verify password
-            if (user == null || !PasswordHelper.VerifyPassword(password, user.PasswordHash, user.Salt)) // Verify password
+            if (user == null || !PasswordHelper.VerifyPassword(password, user.PasswordHash, user.Salt))
             {
                 ModelState.AddModelError("", "Invalid username or password.");
                 return View();
             }
 
-            // Check if the user has the appropriate UserType (e.g., UserType 2 for employees)
-            if (user.UserType == 2) // Assuming 2 is the UserType for employees
+            if (user.UserType == 2)
             {
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Email, user.Email), // Use the user's email
-            new Claim(ClaimTypes.Name, user.Name), // Use the user's name
-            new Claim(ClaimTypes.Role, "Employee"), // Assign the "Employee" role
-        };
+                {
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Role, "Employee"),
+                };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
@@ -82,7 +78,7 @@ namespace GameCraft.Controllers
                 {
                     return Redirect(returnUrl);
                 }
-                return RedirectToAction("Dashboard"); // Redirect to the employee dashboard
+                return RedirectToAction("Dashboard");
             }
             else
             {
@@ -100,20 +96,18 @@ namespace GameCraft.Controllers
             if (string.IsNullOrWhiteSpace(adminKey))
             {
                 ModelState.AddModelError("", "Admin key is required.");
-                return View("Login"); // Return to the login view if key is empty
+                return View("Login");
             }
 
-            // Log the admin key for debugging (REMOVE THIS IN PRODUCTION!)
             Console.WriteLine($"Admin Key Entered: {adminKey}");
 
-            // Check if the entered admin key matches the static valid admin key
             if (adminKey == ValidAdminKey)
             {
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, "Admin"), // Name for the authenticated Admin
-            new Claim(ClaimTypes.Role, "Admin"), // Assign the "Admin" role
-        };
+                {
+                    new Claim(ClaimTypes.Name, "Admin"),
+                    new Claim(ClaimTypes.Role, "Admin"),
+                };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
@@ -124,18 +118,17 @@ namespace GameCraft.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                return RedirectToAction("Index", "Admin"); // Redirect to the admin dashboard
+                return RedirectToAction("Index", "Admin");
             }
 
-            // Check if the entered admin key matches the stored admin key in the database
             var adminUser = await _context.Customers.FirstOrDefaultAsync(c => c.AdminKey == adminKey);
             if (adminUser != null)
             {
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, adminUser .Name), // Use the admin's name
-            new Claim(ClaimTypes.Role, "Admin"), // Assign the "Admin" role
-        };
+                {
+                    new Claim(ClaimTypes.Name, adminUser .Name),
+                    new Claim(ClaimTypes.Role, "Admin"),
+                };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
@@ -146,40 +139,85 @@ namespace GameCraft.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                return RedirectToAction("Index", "Admin"); // Redirect to the admin dashboard
+                return RedirectToAction("Index", "Admin");
             }
             else
             {
                 ModelState.AddModelError("", "Invalid admin key.");
-                return View("Login"); // Return to the login view if key is incorrect
+                return View("Login");
             }
         }
 
 
-        [HttpPost] // Logout action
+        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login"); // Redirect back to the employee login page after logout
+            return RedirectToAction("Login");
         }
 
         // --- SECURED ACTIONS ---
-        // These actions will now only be accessible to authenticated users with "Employee" or "Admin" roles
 
-        [Authorize(Roles = "Employee,Admin")] // Requires "Employee" OR "Admin" role
+        [Authorize(Roles = "Employee,Admin")]
         public IActionResult Dashboard()
         {
-            // You can still use ViewBag.IsAdmin if your view needs to render different UI
-            // based on whether it's an admin or a regular employee
             ViewBag.IsAdmin = User.IsInRole("Admin");
             return View();
         }
 
         [Authorize(Roles = "Employee,Admin")]
-        public IActionResult PrizeStock()
+        public async Task<IActionResult> PrizeStock() // <-- This action was updated
         {
-            return View();
+            // Fetch all products from the database, ordered by ProductId
+            var products = await _context.Products
+                                       .OrderBy(p => p.ProductId)
+                                       .ToListAsync();
+
+            // Pass the list of Product models to the view
+            return View(products); // <-- Correctly passing the data to the view
         }
+
+        // API Endpoint for updating product quantity <-- This action was added
+        [HttpPost("api/prizes/updatequantity")]
+        [Authorize(Roles = "Employee,Admin")]
+        public async Task<IActionResult> UpdatePrizeQuantity([FromBody] UpdateQuantityRequest request)
+        {
+            if (request == null)
+            {
+                return BadRequest("Invalid request data.");
+            }
+
+            var productToUpdate = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == request.Id);
+
+            if (productToUpdate == null)
+            {
+                return NotFound($"Product with ID {request.Id} not found.");
+            }
+
+            if (request.Quantity < 0)
+            {
+                return BadRequest("Quantity cannot be negative.");
+            }
+
+            productToUpdate.Quantity = request.Quantity;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new { success = true, message = "Quantity updated successfully!", newQuantity = productToUpdate.Quantity });
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.Error.WriteLine($"Database update error for ProductId {request.Id}: {ex.Message}");
+                return StatusCode(500, new { success = false, message = "Error saving changes to the database.", detailedError = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"An unexpected error occurred for ProductId {request.Id}: {ex.Message}");
+                return StatusCode(500, new { success = false, message = "An unexpected error occurred.", detailedError = ex.Message });
+            }
+        }
+
 
         [Authorize(Roles = "Employee,Admin")]
         public IActionResult AddPrize()
@@ -188,23 +226,12 @@ namespace GameCraft.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Employee,Admin")] // Don't forget to protect POST actions too!
+        [Authorize(Roles = "Employee,Admin")]
         public IActionResult AddPrize(string prizeName, int quantity, string imageUrl, decimal ticketCost)
         {
-            // Your prize adding logic goes here (e.g., saving to database)
-            // Example if you uncommented DbContext:
-            // var newPrize = new GameCraft.Models.Prize // Replace with your actual Prize model name
-            // {
-            //     Name = prizeName,
-            //     Quantity = quantity,
-            //     ImageUrl = imageUrl,
-            //     Price = ticketCost // Assuming 'Price' field for ticket cost
-            // };
-            // _context.Prizes.Add(newPrize);
-            // _context.SaveChanges();
-
+            // Placeholder for AddPrize logic
             ViewBag.Message = "Prize '" + prizeName + "' added successfully!";
-            return View(); // Or RedirectToAction("ManagePrizes") to show updated list
+            return View();
         }
 
         [Authorize(Roles = "Employee,Admin")]
@@ -218,12 +245,12 @@ namespace GameCraft.Controllers
         {
             return View();
         }
+    }
 
-        // Optional: An Access Denied page for when a user is authenticated but lacks the required role
-        // [HttpGet]
-        // public IActionResult AccessDenied()
-        // {
-        //    return View();
-        // }
+    // This DTO (Data Transfer Object) is used to receive data from the JavaScript fetch request.
+    public class UpdateQuantityRequest
+    {
+        public int Id { get; set; }
+        public int Quantity { get; set; }
     }
 }
