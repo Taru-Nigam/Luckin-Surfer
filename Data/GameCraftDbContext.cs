@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using GameCraft.Models;
 using System.Collections.Generic;
 using System.IO;
@@ -46,7 +46,7 @@ namespace GameCraft.Data
                 new Category { CategoryId = 5, Name = "Gift Cards" }
             );
 
-            // Seed Products (Prizes)
+            // Seed Products (Prizes) - ADD QUANTITY HERE
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
@@ -55,7 +55,8 @@ namespace GameCraft.Data
                     Description = "Experience premium sound and ultimate freedom with our High-End Wireless Earbuds. Enjoy crystal-clear audio, comfortable fit, and intuitive controls for an immersive listening experience on the go.",
                     Price = 2200.00m,
                     CategoryId = 1,
-                    ImageData = LoadImageData("wwwroot/images/prizes/highend wireless earbuds.jpg") // Load image data
+                    ImageData = LoadImageData("wwwroot/images/prizes/highend wireless earbuds.jpg"),
+                    Quantity = 20 // ADD INITIAL QUANTITY HERE
                 },
                 new Product
                 {
@@ -64,7 +65,8 @@ namespace GameCraft.Data
                     Description = "Test your steady hand and strategic thinking with Jenga! Pull blocks from the tower and place them on top without making it tumble. A classic game of skill and suspense for all ages.",
                     Price = 1800.00m,
                     CategoryId = 4,
-                    ImageData = LoadImageData("wwwroot/images/prizes/jenga boardgame.jpg") // Load image data
+                    ImageData = LoadImageData("wwwroot/images/prizes/jenga boardgame.jpg"),
+                    Quantity = 15 // ADD INITIAL QUANTITY HERE
                 },
                 new Product
                 {
@@ -73,7 +75,8 @@ namespace GameCraft.Data
                     Description = "Meet our incredibly soft and cuddly Plush Giant Bear! Perfect for big hugs and comforting snuggles, this lovable companion is ready to be your best friend. A timeless gift that brings joy to all ages.",
                     Price = 1500.00m,
                     CategoryId = 2,
-                    ImageData = LoadImageData("wwwroot/images/prizes/plush giant bear.jpg") // Load image data
+                    ImageData = LoadImageData("wwwroot/images/prizes/plush giant bear.jpg"),
+                    Quantity = 10 // ADD INITIAL QUANTITY HERE
                 },
                 new Product
                 {
@@ -82,7 +85,8 @@ namespace GameCraft.Data
                     Description = "Simplify your charging with our versatile Multicable Charger. Featuring multiple connectors, it's the perfect all-in-one solution to power up all your devices with just one cable.",
                     Price = 500.00m,
                     CategoryId = 1,
-                    ImageData = LoadImageData("wwwroot/images/prizes/multicable charger.jpg") // Load image data
+                    ImageData = LoadImageData("wwwroot/images/prizes/multicable charger.jpg"),
+                    Quantity = 50 // ADD INITIAL QUANTITY HERE
                 },
                 new Product
                 {
@@ -91,7 +95,8 @@ namespace GameCraft.Data
                     Description = "Carry a little bit of alien mischief with you everywhere! This adorable Stitch keychain features everyone's favorite mischievous blue alien, perfect for adding a touch of fun to your keys or bag.",
                     Price = 300.00m,
                     CategoryId = 2,
-                    ImageData = LoadImageData("wwwroot/images/prizes/stitch keychain.jpeg") // Load image data
+                    ImageData = LoadImageData("wwwroot/images/prizes/stitch keychain.jpeg"),
+                    Quantity = 30 // ADD INITIAL QUANTITY HERE
                 },
                 new Product
                 {
@@ -100,7 +105,8 @@ namespace GameCraft.Data
                     Description = "Dive into next-gen gaming with the PlayStation 5 console. Experience lightning-fast loading, immersive haptic feedback, adaptive triggers, and incredible 3D audio, bringing game worlds to life like never before.",
                     Price = 1000.00m,
                     CategoryId = 4,
-                    ImageData = LoadImageData("wwwroot/images/prizes/PS5 console.jpg") // Load image data
+                    ImageData = LoadImageData("wwwroot/images/prizes/PS5 console.jpg"),
+                    Quantity = 5 // ADD INITIAL QUANTITY HERE
                 }
             );
 
@@ -116,8 +122,8 @@ namespace GameCraft.Data
                     City = "AdminCity",
                     PostCode = "12345",
                     UserType = 0,
-                    PasswordHash = "hashedpassword1",
-                    Salt = "salt1",
+                    PasswordHash = "hashedpassword1", // Remember to actually hash passwords in a real app
+                    Salt = "salt1", // Remember to generate unique salts in a real app
                     AvatarUrl = null,
                     PrizePoints = 1000,
                 },
@@ -157,10 +163,15 @@ namespace GameCraft.Data
         // Helper method to load image data from file
         private byte[] LoadImageData(string filePath)
         {
-            if (File.Exists(filePath))
+            // Using Path.Combine for better cross-platform compatibility
+            string fullPath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+
+            if (File.Exists(fullPath))
             {
-                return File.ReadAllBytes(filePath);
+                return File.ReadAllBytes(fullPath);
             }
+            // Optionally, log an error if the file is not found
+            System.Diagnostics.Debug.WriteLine($"WARNING: Image file not found at {fullPath}");
             return null; // Return null if the file does not exist
         }
     }
