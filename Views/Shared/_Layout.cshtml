@@ -113,7 +113,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
-                // Get references to the cart preview elements
+        // Get references to the cart preview elements
         const cartIcon = document.querySelector('.cart-icon');
         const cartPreviewBox = document.getElementById('cartPreviewBox'); // Using the new ID
         const cartPreviewMessage = document.getElementById('cartPreviewMessage'); // Using the new ID
@@ -127,7 +127,6 @@
                 cartPreviewBox.style.display = 'none';
             });
         }
-
 
         // Function to update cart count display AND the preview message
         function updateCartCount(count) {
@@ -181,6 +180,15 @@
                 $.post("/Cart/AddToCart", { productId: productId, quantity: 1 }, function(data) {
                     if (data.success) {
                         updateCartCount(data.cartCount); // Update the number next to the cart icon AND the preview message
+                    } else if (data.redirectToLogin) {
+                        // Retrieve ReturnUrl from a data attribute or a global JS variable set by Razor
+                        // This is the correct way to pass server-side data to client-side JS
+                        var returnUrl = $('#returnUrlForLogin').data('return-url');
+                        if (returnUrl) {
+                            window.location.href = '@Url.Action("Login", "Account")?ReturnUrl=' + encodeURIComponent(returnUrl);
+                        } else {
+                            window.location.href = '@Url.Action("Login", "Account")'; // Fallback
+                        }
                     } else {
                         // Handle server-side errors
                         alert("Error adding item to cart: " + data.message);
@@ -195,5 +203,11 @@
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Hidden element to pass ReturnUrl from server to client-side JS -->
+    <!-- This element should be placed after the main content, but before the closing </body> tag -->
+    <!-- It will be populated by the controller action that sets TempData["ReturnUrl"] -->
+    <div id="returnUrlForLogin" data-return-url="@(TempData["ReturnUrl"]?.ToString())" style="display:none;"></div>
+
 </body>
 </html>
