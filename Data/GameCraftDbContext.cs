@@ -117,6 +117,15 @@ namespace GameCraft.Data
                 }
             );
 
+                        // Load default avatar image data once
+            byte[] defaultAvatarData = LoadImageData("wwwroot/images/default-avatar.png");
+            if (defaultAvatarData == null)
+            {
+                // Handle case where default-avatar.png is not found
+                // You might want to log an error or use a fallback empty byte array
+                Console.WriteLine("Warning: default-avatar.png not found. Default avatars will be null.");
+            }
+
             // Seed Customers (these are static initial users and should remain)
             modelBuilder.Entity<Customer>().HasData(
                 new Customer
@@ -131,7 +140,7 @@ namespace GameCraft.Data
                     UserType = 0,
                     PasswordHash = "hashedpassword1", // Remember to actually hash passwords in a real app
                     Salt = "salt1", // Remember to generate unique salts in a real app
-                    AvatarImageData = null,
+                    AvatarImageData = defaultAvatarData,
                     PrizePoints = 1000,
                     // AdminKey = "your_admin_db_key" // Add if you want a specific admin key in DB
                 },
@@ -147,7 +156,7 @@ namespace GameCraft.Data
                     UserType = 1,
                     PasswordHash = "hashedpassword2",
                     Salt = "salt2",
-                    AvatarImageData = null,
+                    AvatarImageData = defaultAvatarData,
                     PrizePoints = 100,
                 },
                 new Customer
@@ -162,7 +171,7 @@ namespace GameCraft.Data
                     UserType = 2,
                     PasswordHash = "hashedpassword3",
                     Salt = "salt3",
-                    AvatarImageData = null,
+                    AvatarImageData = defaultAvatarData,
                     PrizePoints = 500,
                 }
             );
