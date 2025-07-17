@@ -26,7 +26,7 @@ namespace GameCraft.Models
         [StringLength(20)]
         public string? PostCode { get; set; }
 
-        [Range (0, 2)]
+        [Range(0, 2)]
         public int UserType { get; set; } // 0 = Admin, 1 = Customer, 2 = Employee
 
         [Required]
@@ -35,13 +35,14 @@ namespace GameCraft.Models
         [Required]
         public string Salt { get; set; }
 
-        public string? AvatarUrl { get; set; }
-        [Range (0, 1000000)]
+        public byte[]? AvatarImageData { get; set; }
+
+        [Range(0, 1000000)]
         public int PrizePoints { get; set; } = 0;
+
         public string? GameCraftCardNumber { get; set; }
 
         // New property for Admin Key
         public string? AdminKey { get; set; }
-
     }
 }

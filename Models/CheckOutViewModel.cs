@@ -35,5 +35,8 @@ namespace GameCraft.Models
         [StringLength(10)]
         [Display(Name = "Post Code")]
         public string ShippingPostCode { get; set; }
+
+        // Add this property to hold cart items
+        public List<CartItem> CartItems { get; set; } = new List<CartItem>();
     }
 }
