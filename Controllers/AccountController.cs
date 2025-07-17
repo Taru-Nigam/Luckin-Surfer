@@ -1,20 +1,78 @@
-﻿using GameCraft.Data;
+﻿// FileName: /Controllers/AccountController.cs
+using GameCraft.Data;
 using GameCraft.Helpers;
 using GameCraft.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Linq;
+using Microsoft.EntityFrameworkCore; // For async operations
+using Microsoft.AspNetCore.Hosting; // For IWebHostEnvironment
+using System.IO; // For FileStream, Path
 
 namespace GameCraft.Controllers
 {
     public class AccountController : Controller
     {
         private readonly GameCraftDbContext _context;
+        private readonly IWebHostEnvironment _env; // Inject IWebHostEnvironment
 
-        public AccountController(GameCraftDbContext context)
+        public AccountController(GameCraftDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
+
+        // Helper to get default avatar image data
+        private async Task<byte[]> GetDefaultAvatarImageData()
+        {
+            var defaultAvatarPath = Path.Combine(_env.WebRootPath, "images", "default-avatar.png");
+            if (System.IO.File.Exists(defaultAvatarPath))
+            {
+                return await System.IO.File.ReadAllBytesAsync(defaultAvatarPath);
+            }
+            return null; // Or throw an exception if default avatar is mandatory
+        }
+
+        // Action to serve avatar image data from the database
+        [HttpGet]
+        public async Task<IActionResult> GetAvatarImage(int customerId)
+        {
+            var customer = await _context.Customers.FindAsync(customerId);
+            if (customer?.AvatarImageData != null && customer.AvatarImageData.Length > 0)
+            {
+                // Attempt to determine content type (basic check)
+                string contentType = "image/png"; // Default to PNG
+                if (customer.AvatarImageData.Length > 4)
+                {
+                    if (customer.AvatarImageData[0] == 0xFF && customer.AvatarImageData[1] == 0xD8)
+                        contentType = "image/jpeg";
+                    else if (customer.AvatarImageData[0] == 0x89 && customer.AvatarImageData[1] == 0x50 && customer.AvatarImageData[2] == 0x4E && customer.AvatarImageData[3] == 0x47)
+                        contentType = "image/png";
+                    // Add more checks for other formats if needed
+                }
+                return File(customer.AvatarImageData, contentType);
+            }
+            // Serve default avatar if no specific avatar is found or data is empty
+            var defaultAvatarData = await GetDefaultAvatarImageData();
+            if (defaultAvatarData != null)
+            {
+                return File(defaultAvatarData, "image/png"); // Assuming default is PNG
+            }
+            return NotFound(); // Fallback if no image can be served
+        }
+
+        // Action to serve the default avatar image directly
+        [HttpGet]
+        public async Task<IActionResult> GetDefaultAvatar()
+        {
+            var defaultAvatarData = await GetDefaultAvatarImageData();
+            if (defaultAvatarData != null)
+            {
+                return File(defaultAvatarData, "image/png"); // Assuming default is PNG
+            }
+            return NotFound();
+        }
+
 
         // GET: /Account/Register
         [HttpGet]
@@ -25,12 +83,12 @@ namespace GameCraft.Controllers
 
         // POST: /Account/Register
         [HttpPost]
-        public IActionResult Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
                 // Check if the email is already registered
-                var existingCustomer = _context.Customers.FirstOrDefault(c => c.Email == model.Email);
+                var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == model.Email);
                 if (existingCustomer != null)
                 {
                     ModelState.AddModelError("Email", "Email is already registered.");
@@ -40,6 +98,9 @@ namespace GameCraft.Controllers
                 // Hash + Salt
                 string passwordHash, salt;
                 (passwordHash, salt) = PasswordHelper.HashPassword(model.Password);
+
+                // Get default avatar image data
+                byte[] defaultAvatarData = await GetDefaultAvatarImageData();
 
                 var customer = new Customer
                 {
@@ -51,17 +112,19 @@ namespace GameCraft.Controllers
                     Address = "",
                     City = "",
                     PostCode = "",
-                    UserType = 1 // Set UserType to 1 for regular users
+                    UserType = 1, // Set UserType to 1 for regular users
+                    AvatarImageData = defaultAvatarData // Set default avatar data
                 };
 
                 _context.Customers.Add(customer);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
                 // Automatically log in the user after registration using session
                 HttpContext.Session.SetString("UserName", customer.Name);
                 HttpContext.Session.SetString("Email", customer.Email);
                 HttpContext.Session.SetString("PrizePoints", customer.PrizePoints.ToString()); // Initialize PrizePoints if needed
-                HttpContext.Session.SetString("AvatarUrl", customer.AvatarUrl ?? "/images/default-avatar.png");
+                // Store a URL to the avatar image, not the raw data
+                HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = customer.CustomerId }));
 
                 ViewBag.RegistrationSuccess = true;
 
@@ -87,7 +150,7 @@ namespace GameCraft.Controllers
 
         // POST: /Account/Login
         [HttpPost]
-        public IActionResult Login(string login, string password)
+        public async Task<IActionResult> Login(string login, string password)
         {
             if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
             {
@@ -98,11 +161,11 @@ namespace GameCraft.Controllers
             // Simple check: if input contains '@' and '.', assume it's an email
             if (login.Contains("@") && login.Contains("."))
             {
-                customer = _context.Customers.FirstOrDefault(c => c.Email == login);
+                customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == login);
             }
             else
             {
-                customer = _context.Customers.FirstOrDefault(c => c.Name == login);
+                customer = await _context.Customers.FirstOrDefaultAsync(c => c.Name == login);
             }
             // Check if the customer exists
             if (customer == null)
@@ -120,7 +183,9 @@ namespace GameCraft.Controllers
             HttpContext.Session.SetString("UserName", customer.Name);
             HttpContext.Session.SetString("Email", customer.Email);
             HttpContext.Session.SetString("PrizePoints", customer.PrizePoints.ToString());
-            HttpContext.Session.SetString("AvatarUrl", customer.AvatarUrl ?? "/images/default-avatar.png");
+            // Store a URL to the avatar image, not the raw data
+            HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = customer.CustomerId }));
+
             CookieOptions options = new CookieOptions
             {
                 Expires = DateTimeOffset.Now.AddDays(7),
@@ -143,7 +208,7 @@ namespace GameCraft.Controllers
 
         // GET: /Account/MyAccount
         [HttpGet]
-        public IActionResult MyAccount()
+        public async Task<IActionResult> MyAccount()
         {
             // Retrieve the customer data from the session
             var userName = HttpContext.Session.GetString("UserName");
@@ -154,7 +219,7 @@ namespace GameCraft.Controllers
                 return RedirectToAction("Login"); // Redirect to login if not authenticated
             }
 
-            var customer = _context.Customers.FirstOrDefault(c => c.Email == email);
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == email);
             if (customer == null)
             {
                 return RedirectToAction("Login"); // Redirect to login if customer not found
@@ -171,21 +236,21 @@ namespace GameCraft.Controllers
 
         // POST: /Account/ConnectAccount
         [HttpPost]
-        public IActionResult ConnectAccount(string cardNumber, string username)
+        public async Task<IActionResult> ConnectAccount(string cardNumber, string username)
         {
             // Check if the username already exists
-            var existingCustomer = _context.Customers.FirstOrDefault(c => c.Name == username);
+            var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.Name == username);
             if (existingCustomer != null)
             {
                 // Update existing user with the GameCraft card number
                 existingCustomer.GameCraftCardNumber = cardNumber;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
                 // Automatically log in the existing user
                 HttpContext.Session.SetString("UserName", existingCustomer.Name);
                 HttpContext.Session.SetString("Email", existingCustomer.Email ?? "email@gamecraft.com");
                 HttpContext.Session.SetString("PrizePoints", existingCustomer.PrizePoints.ToString());
-                HttpContext.Session.SetString("AvatarUrl", existingCustomer.AvatarUrl ?? "/images/default-avatar.png");
+                HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = existingCustomer.CustomerId }));
 
                 Response.Cookies.Append("UserToken", existingCustomer.CustomerId.ToString(), new CookieOptions
                 {
@@ -203,7 +268,8 @@ namespace GameCraft.Controllers
             }
 
             // Create a new user with placeholder email
-            var Customer = new Customer
+            var defaultAvatarData = await GetDefaultAvatarImageData();
+            var customer = new Customer
             {
                 Name = username,
                 Email = "email@gamecraft.com",
@@ -214,19 +280,20 @@ namespace GameCraft.Controllers
                 Phone = "",
                 Address = "",
                 City = "",
-                PostCode = ""
+                PostCode = "",
+                AvatarImageData = defaultAvatarData // Set default avatar data
             };
 
-            _context.Customers.Add(Customer);
-            _context.SaveChanges();
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
 
             // Full authentication setup (same as Register)
-            HttpContext.Session.SetString("UserName", Customer.Name);
-            HttpContext.Session.SetString("Email", Customer.Email);
-            HttpContext.Session.SetString("PrizePoints", Customer.PrizePoints.ToString());
-            HttpContext.Session.SetString("AvatarUrl", Customer.AvatarUrl ?? "/images/default-avatar.png");
+            HttpContext.Session.SetString("UserName", customer.Name);
+            HttpContext.Session.SetString("Email", customer.Email);
+            HttpContext.Session.SetString("PrizePoints", customer.PrizePoints.ToString());
+            HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = customer.CustomerId }));
 
-            Response.Cookies.Append("UserToken", Customer.CustomerId.ToString(), new CookieOptions
+            Response.Cookies.Append("UserToken", customer.CustomerId.ToString(), new CookieOptions
             {
                 Expires = DateTimeOffset.Now.AddDays(7),
                 IsEssential = true
@@ -236,72 +303,137 @@ namespace GameCraft.Controllers
             {
                 success = true,
                 message = "A new account has been created with the username: " + username + " and default password" + "You are logged in, Please Update your password in My Account -> Change password",
-                customerId = Customer.CustomerId,
+                customerId = customer.CustomerId,
                 redirectUrl = Url.Action("Index", "Home")  // Add redirect URL
             });
         }
 
-
-
-
         // POST: /Account/UpdateAccount
         [HttpPost]
-        public IActionResult UpdateAccount(Customer customer)
+        public async Task<IActionResult> UpdateAccount(Customer customer, IFormFile avatarFile)
         {
-            
-            if (!ModelState.IsValid)
-            {
-                return View("MyAccount", customer);
-            }
-
-            // check whether email been taken
-            var existingEmail = _context.Customers
-                .FirstOrDefault(c => c.Email == customer.Email && c.CustomerId != customer.CustomerId);
-            if (existingEmail != null)
-            {
-                ModelState.AddModelError("Email", "This email is already in use.");
-                return View("MyAccount", customer);
-            }
-
-            // check username been taken
-            var existingName = _context.Customers
-                .FirstOrDefault(c => c.Name == customer.Name && c.CustomerId != customer.CustomerId);
-            if (existingName != null)
-            {
-                ModelState.AddModelError("Name", "This username is already taken.");
-                return View("MyAccount", customer);
-            }
-
-            // keep hidden data not be replaced by null
-            var existingCustomer = _context.Customers.FirstOrDefault(c => c.CustomerId == customer.CustomerId);
+            // Re-fetch the existing customer to ensure we don't overwrite PasswordHash, Salt, etc.
+            var existingCustomer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId);
             if (existingCustomer == null)
             {
                 return NotFound();
             }
 
-            // update data
-            existingCustomer.Name = customer.Name;
-            existingCustomer.Email = customer.Email;
-            existingCustomer.Phone = customer.Phone;
-            existingCustomer.Address = customer.Address;
-            existingCustomer.City = customer.City;
-            existingCustomer.PostCode = customer.PostCode;
-            existingCustomer.AvatarUrl = customer.AvatarUrl;
+            // Manually set the non-editable fields from the existing customer
+            customer.PasswordHash = existingCustomer.PasswordHash;
+            customer.Salt = existingCustomer.Salt;
+            customer.UserType = existingCustomer.UserType;
+            customer.PrizePoints = existingCustomer.PrizePoints;
+            customer.GameCraftCardNumber = existingCustomer.GameCraftCardNumber;
+            customer.AdminKey = existingCustomer.AdminKey;
 
-            _context.Customers.Update(existingCustomer);
-            _context.SaveChanges();
+            // Handle avatar file upload
+            if (avatarFile != null && avatarFile.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await avatarFile.CopyToAsync(memoryStream);
+                    customer.AvatarImageData = memoryStream.ToArray(); // Update the AvatarImageData
+                }
+            }
+            else
+            {
+                // Retain existing image data if no new image is uploaded
+                customer.AvatarImageData = existingCustomer.AvatarImageData;
+            }
 
-            // update Session
-            HttpContext.Session.SetString("UserName", existingCustomer.Name);
-            HttpContext.Session.SetString("Email", existingCustomer.Email);
-            HttpContext.Session.SetString("AvatarUrl", existingCustomer.AvatarUrl ?? "/images/default-avatar.png");
+            // Validate the model after manually setting properties
+            if (!ModelState.IsValid)
+            {
+                // If validation fails, return to the view with the model and errors
+                // Ensure AvatarImageData is set back for display
+                customer.AvatarImageData = existingCustomer.AvatarImageData; // Or the newly uploaded one if it was the issue
+                return View("MyAccount", customer);
+            }
+
+            // Check if the email is already taken by another user
+            var existingEmailUser = await _context.Customers
+                .FirstOrDefaultAsync(c => c.Email == customer.Email && c.CustomerId != customer.CustomerId);
+            if (existingEmailUser != null)
+            {
+                ModelState.AddModelError("Email", "This email is already in use by another account.");
+                return View("MyAccount", customer);
+            }
+
+            // Check if the username is already taken by another user
+            var existingNameUser = await _context.Customers
+                .FirstOrDefaultAsync(c => c.Name == customer.Name && c.CustomerId != customer.CustomerId);
+            if (existingNameUser != null)
+            {
+                ModelState.AddModelError("Name", "This username is already taken by another account.");
+                return View("MyAccount", customer);
+            }
+
+            // Attach the updated customer entity and mark it as modified
+            _context.Entry(customer).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            // Update Session
+            HttpContext.Session.SetString("UserName", customer.Name);
+            HttpContext.Session.SetString("Email", customer.Email);
+            HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = customer.CustomerId }));
 
             TempData["SuccessMessage"] = "Account updated successfully.";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("MyAccount", new { activeSection = "accountDetails" });
         }
 
+        // New action to handle avatar updates specifically from the modal
         [HttpPost]
-        public IActionResult ChangePassword(string newPassword, string confirmPassword)
+        public async Task<IActionResult> UpdateAvatar(IFormFile? avatarFile, string? selectedAvatarPath)
+        {
+            var email = HttpContext.Session.GetString("Email");
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+
+            if (customer == null)
+            {
+                return Json(new { success = false, message = "User not found." });
+            }
+
+            byte[] newAvatarData = null;
+
+            if (avatarFile != null && avatarFile.Length > 0)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    await avatarFile.CopyToAsync(ms);
+                    newAvatarData = ms.ToArray();
+                }
+            }
+            else if (!string.IsNullOrEmpty(selectedAvatarPath))
+            {
+                // Read the pre-set avatar image from wwwroot
+                var fullPath = Path.Combine(_env.WebRootPath, selectedAvatarPath.TrimStart('/'));
+                if (System.IO.File.Exists(fullPath))
+                {
+                    newAvatarData = await System.IO.File.ReadAllBytesAsync(fullPath);
+                }
+            }
+            else
+            {
+                // If neither file nor pre-set path is provided, keep current avatar
+                // Or you could explicitly set it to default if that's desired behavior.
+                // For now, if no new input, we don't update AvatarImageData.
+                return Json(new { success = false, message = "No new avatar selected or uploaded." });
+            }
+
+            customer.AvatarImageData = newAvatarData;
+            _context.Customers.Update(customer);
+            await _context.SaveChangesAsync();
+
+            // Update session avatar URL
+            HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = customer.CustomerId }));
+
+            return Json(new { success = true, newAvatarUrl = Url.Action("GetAvatarImage", "Account", new { customerId = customer.CustomerId }) });
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(string newPassword, string confirmPassword)
         {
             if (newPassword != confirmPassword)
             {
@@ -309,10 +441,10 @@ namespace GameCraft.Controllers
             }
 
             var email = HttpContext.Session.GetString("Email");
-            var customer = _context.Customers.FirstOrDefault(c => c.Email == email);
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == email);
             if (customer == null)
             {
-                return Json(new { success = false, message = "User  not found." });
+                return Json(new { success = false, message = "User not found." });
             }
 
             // Hash the new password
@@ -324,12 +456,9 @@ namespace GameCraft.Controllers
             customer.Salt = salt;
 
             _context.Customers.Update(customer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Json(new { success = true, message = "Password changed successfully." });
         }
     }
 }
-
-
-       
