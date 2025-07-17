@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using GameCraft.Models;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace GameCraft.Data
 {
@@ -21,6 +22,12 @@ namespace GameCraft.Data
         public DbSet<UserType> UserTypes { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
 
+        // --- NEW DBSETS ---
+        public DbSet<RedeemedPrize> RedeemedPrizes { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<DailyTicketCollection> DailyTicketCollections { get; set; }
+        // --- END NEW DBSETS ---
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -30,14 +37,14 @@ namespace GameCraft.Data
                 .Property(u => u.Id)
                 .ValueGeneratedNever();
 
-            // Seed UserTypes
+            // Seed UserTypes (these are static and should remain)
             modelBuilder.Entity<UserType>().HasData(
                 new UserType { Id = 0, Name = "Admin" },
                 new UserType { Id = 1, Name = "User " },
                 new UserType { Id = 2, Name = "Employee" }
             );
 
-            // Seed Categories
+            // Seed Categories (these are static and should remain)
             modelBuilder.Entity<Category>().HasData(
                 new Category { CategoryId = 1, Name = "Electronics" },
                 new Category { CategoryId = 2, Name = "Toys" },
@@ -46,7 +53,7 @@ namespace GameCraft.Data
                 new Category { CategoryId = 5, Name = "Gift Cards" }
             );
 
-            // Seed Products (Prizes) - ADD QUANTITY HERE
+            // Seed Products (Prizes) - these are relatively static and should remain
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
@@ -56,7 +63,7 @@ namespace GameCraft.Data
                     Price = 2200.00m,
                     CategoryId = 1,
                     ImageData = LoadImageData("wwwroot/images/prizes/highend wireless earbuds.jpg"),
-                    Quantity = 20 // ADD INITIAL QUANTITY HERE
+                    Quantity = 20
                 },
                 new Product
                 {
@@ -66,7 +73,7 @@ namespace GameCraft.Data
                     Price = 1800.00m,
                     CategoryId = 4,
                     ImageData = LoadImageData("wwwroot/images/prizes/jenga boardgame.jpg"),
-                    Quantity = 15 // ADD INITIAL QUANTITY HERE
+                    Quantity = 15
                 },
                 new Product
                 {
@@ -76,7 +83,7 @@ namespace GameCraft.Data
                     Price = 1500.00m,
                     CategoryId = 2,
                     ImageData = LoadImageData("wwwroot/images/prizes/plush giant bear.jpg"),
-                    Quantity = 10 // ADD INITIAL QUANTITY HERE
+                    Quantity = 10
                 },
                 new Product
                 {
@@ -86,7 +93,7 @@ namespace GameCraft.Data
                     Price = 500.00m,
                     CategoryId = 1,
                     ImageData = LoadImageData("wwwroot/images/prizes/multicable charger.jpg"),
-                    Quantity = 50 // ADD INITIAL QUANTITY HERE
+                    Quantity = 50
                 },
                 new Product
                 {
@@ -96,7 +103,7 @@ namespace GameCraft.Data
                     Price = 300.00m,
                     CategoryId = 2,
                     ImageData = LoadImageData("wwwroot/images/prizes/stitch keychain.jpeg"),
-                    Quantity = 30 // ADD INITIAL QUANTITY HERE
+                    Quantity = 30
                 },
                 new Product
                 {
@@ -106,11 +113,11 @@ namespace GameCraft.Data
                     Price = 1000.00m,
                     CategoryId = 4,
                     ImageData = LoadImageData("wwwroot/images/prizes/PS5 console.jpg"),
-                    Quantity = 5 // ADD INITIAL QUANTITY HERE
+                    Quantity = 5
                 }
             );
 
-            // Seed Customers
+            // Seed Customers (these are static initial users and should remain)
             modelBuilder.Entity<Customer>().HasData(
                 new Customer
                 {
@@ -124,8 +131,9 @@ namespace GameCraft.Data
                     UserType = 0,
                     PasswordHash = "hashedpassword1", // Remember to actually hash passwords in a real app
                     Salt = "salt1", // Remember to generate unique salts in a real app
-                    AvatarUrl = null,
+                    AvatarImageData = null,
                     PrizePoints = 1000,
+                    // AdminKey = "your_admin_db_key" // Add if you want a specific admin key in DB
                 },
                 new Customer
                 {
@@ -139,7 +147,7 @@ namespace GameCraft.Data
                     UserType = 1,
                     PasswordHash = "hashedpassword2",
                     Salt = "salt2",
-                    AvatarUrl = null,
+                    AvatarImageData = null,
                     PrizePoints = 100,
                 },
                 new Customer
@@ -154,10 +162,16 @@ namespace GameCraft.Data
                     UserType = 2,
                     PasswordHash = "hashedpassword3",
                     Salt = "salt3",
-                    AvatarUrl = null,
+                    AvatarImageData = null,
                     PrizePoints = 500,
                 }
             );
+
+            // --- REMOVED SEED DATA FOR DYNAMIC TABLES (AuditLogs, RedeemedPrizes, DailyTicketCollections) ---
+            // These tables should be populated by your application's runtime logic (e.g., controller actions)
+            // if you want their data to be truly dynamic.
+            // Keeping them in HasData with dynamic DateTime values causes the "model changes" error.
+            // --- END REMOVED SEED DATA ---
         }
 
         // Helper method to load image data from file
