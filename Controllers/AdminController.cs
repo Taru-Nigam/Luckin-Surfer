@@ -240,8 +240,12 @@ namespace GameCraft.Controllers
                 var existingUser = _context.Customers.FirstOrDefault(c => c.CustomerId == user.CustomerId);
                 if (existingUser == null) return NotFound();
 
-                // Update UserType
+                // Update UserType and other properties
                 existingUser.UserType = user.UserType;
+                existingUser.Phone = user.Phone; // Update phone number
+                existingUser.Address = user.Address; // Update address
+                existingUser.PrizePoints = user.PrizePoints; // Update prize points
+                existingUser.GameCraftCardNumber = user.GameCraftCardNumber; // Update GameCraft card number
 
                 // Only update password if a new one is provided
                 if (!string.IsNullOrEmpty(user.PasswordHash))
@@ -291,6 +295,7 @@ namespace GameCraft.Controllers
                 return View(user); // Return to the form with error message
             }
         }
+
 
         // POST: /Admin/DeleteUser/{id}
         [HttpPost]
