@@ -8,7 +8,7 @@
 
 <div class="account-page-container">
     <div class="sidebar">
-        <img src="@(Model.AvatarUrl ?? "/images/default-avatar.png")" alt="User Avatar" class="profile-header-avatar" id="profileHeaderAvatar" />
+        <img src="@(Model.AvatarImageData != null ? Url.Action("GetAvatarImage", "Account", new { customerId = Model.CustomerId }) : Url.Action("GetDefaultAvatar", "Account"))" alt="User Avatar" class="profile-header-avatar" id="profileHeaderAvatar" />
         <ul>
             <li><a href="#" class="sidebar-link @(activeSection == "dashboard" ? "active" : "")" id="sidebarDashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
             <li><a href="#" class="sidebar-link @(activeSection == "accountDetails" ? "active" : "")" id="sidebarAccountDetails"><i class="fas fa-user-circle"></i> Account Details</a></li>
@@ -56,7 +56,6 @@
             <input type="hidden" asp-for="PrizePoints" />
             <input type="hidden" asp-for="PasswordHash" />
             <input type="hidden" asp-for="Salt" />
-            <input type="hidden" asp-for="AvatarUrl" id="hiddenAvatarUrl" /> @* Hidden field to submit selected avatar URL *@
 
 
             <div class="form-group">
@@ -125,12 +124,16 @@
             {
                 var avatarPath = $"/images/avatar-00{i}.png";
                 <label style="margin-right: 10px; cursor: pointer;">
-                    <input type="radio" name="AvatarUrlSelection" value="@avatarPath"
-                                   @(Model.AvatarUrl == avatarPath ? "checked" : "")
-                                   class="avatar-radio" />
+                    <input type="radio" name="AvatarSelection" value="@avatarPath"
+                           class="avatar-radio" data-avatar-path="@avatarPath" />
                     <img src="@avatarPath" style="width: 48px; height: 48px; border-radius: 50%;" class="avatar-image" />
                 </label>
             }
+            <label style="margin-right: 10px; cursor: pointer;">
+                <input type="radio" name="AvatarSelection" value="/images/default-avatar.png"
+                       class="avatar-radio" data-avatar-path="/images/default-avatar.png" />
+                <img src="/images/default-avatar.png" style="width: 48px; height: 48px; border-radius: 50%;" class="avatar-image" />
+            </label>
         </div>
 
         <div class="form-group" style="margin-top: 20px;">
@@ -202,10 +205,21 @@
             // Handle clicking the main profile avatar
             $('#profileHeaderAvatar').click(function() {
                 $('#avatarModal').show();
-                const currentAvatarUrl = $('#profileHeaderAvatar').attr('src');
-                $('.avatar-radio').prop('checked', false);
-                $(`.avatar-radio[value="${currentAvatarUrl}"]`).prop('checked', true);
-                $('#avatarFile').val('');
+                const currentAvatarSrc = $('#profileHeaderAvatar').attr('src');
+                $('.avatar-radio').prop('checked', false); // Uncheck all radios
+
+                // Check if the current avatar matches any pre-set avatar
+                $('.avatar-radio').each(function() {
+                    const dataPath = $(this).data('avatar-path');
+                    // Construct full URL for comparison, handling potential relative paths
+                    const fullPath = new URL(dataPath, window.location.origin).href;
+                    if (currentAvatarSrc.includes(fullPath)) { // Use includes for robustness
+                        $(this).prop('checked', true);
+                        return false; // Break loop
+                    }
+                });
+
+                $('#avatarFile').val(''); // Clear custom file input
             });
 
             // Close avatar modal
@@ -222,9 +236,9 @@
 
             // Update the main profile header avatar when a radio button is selected in modal
             $('.avatar-radio').change(function() {
-                $('#profileHeaderAvatar').attr('src', $(this).val());
-                $('#hiddenAvatarUrl').val($(this).val());
-                $('#avatarFile').val('');
+                const selectedPath = $(this).data('avatar-path');
+                $('#profileHeaderAvatar').attr('src', selectedPath);
+                $('#avatarFile').val(''); // Clear custom file input
             });
 
             // Handle custom avatar upload preview in modal
@@ -233,20 +247,53 @@
                     var reader = new FileReader();
                     reader.onload = function(e) {
                         $('#profileHeaderAvatar').attr('src', e.target.result);
-                        $('#hiddenAvatarUrl').val(e.target.result);
                     };
                     reader.readAsDataURL(this.files[0]);
-                    $('.avatar-radio').prop('checked', false);
+                    $('.avatar-radio').prop('checked', false); // Uncheck all radio buttons
                 }
             });
 
             // Save Avatar button in modal
             $('#saveAvatarButton').click(function() {
-                // If a file is selected, the form will handle the upload.
-                // If a radio button is selected, the hiddenAvatarUrl is already set.
-                // Submit the form to save the avatar.
-                $('#accountForm').submit(); // This will submit the form with the avatar data
-                $('#avatarModal').hide();
+                const formData = new FormData(); // Create new FormData object
+
+                const avatarFile = $('#avatarFile')[0].files[0];
+                const selectedAvatarPath = $('input[name="AvatarSelection"]:checked').data('avatar-path');
+
+                if (avatarFile) {
+                    formData.append('avatarFile', avatarFile);
+                } else if (selectedAvatarPath) {
+                    formData.append('selectedAvatarPath', selectedAvatarPath);
+                } else {
+                    // If neither file nor pre-set path is provided, do nothing or handle as "no change"
+                    alert("Please select an avatar or upload a custom one.");
+                    return;
+                }
+
+                // Send AJAX request to update avatar
+                $.ajax({
+                    url: '@Url.Action("UpdateAvatar", "Account")', // New action for avatar update
+                    type: 'POST',
+                    data: formData,
+                    processData: false, // Important: prevent jQuery from processing the data
+                    contentType: false, // Important: prevent jQuery from setting contentType
+                    success: function(response) {
+                        if (response.success) {
+                            alert("Avatar updated successfully!");
+                            // Update the avatar in the header if it's visible
+                            if (response.newAvatarUrl) {
+                                $('.user-info img').attr('src', response.newAvatarUrl);
+                            }
+                            $('#avatarModal').hide();
+                            location.reload(); // Reload to reflect changes in session/display
+                        } else {
+                            alert("Error updating avatar: " + response.message);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert("An error occurred while updating avatar: " + textStatus);
+                    }
+                });
             });
 
             // Sidebar navigation clicks
@@ -305,4 +352,4 @@
             });
         });
     </script>
-    }
+}

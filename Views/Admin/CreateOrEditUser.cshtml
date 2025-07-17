@@ -7,9 +7,39 @@
 <h1 class="mb-6">@ViewData["Title"]</h1>
 
 <div class="form-container">
-    <form asp-action="CreateOrEditUser" asp-controller="Admin" method="post" class="form-admin" novalidate>
+    <form asp-action="CreateOrEditUser" asp-controller="Admin" method="post" class="form-admin" enctype="multipart/form-data" novalidate>
         <input type="hidden" asp-for="CustomerId" />
         @Html.AntiForgeryToken() @* Add anti-forgery token *@
+
+        <div class="form-group">
+            <label>Current Avatar:</label>
+            <img id="currentAvatarPreview" src="@(Model.AvatarImageData != null ? Url.Action("GetAvatarImage", "Account", new { customerId = Model.CustomerId }) : Url.Action("GetDefaultAvatar", "Account"))" alt="Current Avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;" />
+        </div>
+
+        <div class="form-group">
+            <label>Choose Pre-set Avatar:</label>
+            <div class="avatar-selection-options">
+                @for (int i = 1; i <= 4; i++)
+                {
+                    var avatarPath = $"/images/avatar-00{i}.png";
+                    <label class="avatar-option-label">
+                        <input type="radio" name="SelectedAvatarPath" value="@avatarPath"
+                               class="avatar-radio-admin" data-avatar-path="@avatarPath" />
+                        <img src="@avatarPath" class="avatar-image-admin" />
+                    </label>
+                }
+                <label class="avatar-option-label">
+                    <input type="radio" name="SelectedAvatarPath" value="/images/default-avatar.png"
+                           class="avatar-radio-admin" data-avatar-path="/images/default-avatar.png" />
+                    <img src="/images/default-avatar.png" class="avatar-image-admin" />
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="avatarFile">Upload Custom Avatar:</label>
+            <input type="file" id="avatarFile" name="avatarFile" class="form-input" accept="image/*" />
+        </div>
 
         <div class="form-group">
             <label asp-for="Name"></label>
@@ -48,7 +78,7 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="UserType">User  Role / Permissions</label>
+            <label asp-for="UserType">User Role / Permissions</label>
             <select asp-for="UserType" class="form-select" asp-items="ViewBag.UserTypes" id="userTypeSelect">
                 <option value="">-- Select Role --</option>
             </select>
@@ -94,28 +124,59 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        document.getElementById('userTypeSelect').addEventListener('change', function() {
-            const adminKeyGroup = document.getElementById('adminKeyGroup');
-            const adminKeyInput = document.getElementById('AdminKey');
+        $(document).ready(function() {
+            // Handle pre-set avatar selection
+            $('.avatar-radio-admin').change(function() {
+                const selectedPath = $(this).data('avatar-path'); // Get path from data attribute
+                $('#currentAvatarPreview').attr('src', selectedPath);
+                $('#avatarFile').val(''); // Clear custom file input if a pre-set avatar is chosen
+            });
 
-            if (this.value == "0") { // Assuming "0" is the value for Admin UserType
-                // Generate a random admin key
-                const randomAdminKey = generateRandomAdminKey();
-                adminKeyInput.value = randomAdminKey; // Set the generated key
-                adminKeyGroup.style.display = 'block'; // Show the admin key input
-            } else {
-                adminKeyInput.value = ''; // Clear the admin key input
-                adminKeyGroup.style.display = 'none'; // Hide the admin key input
+            // Handle custom avatar upload preview
+            $('#avatarFile').change(function() {
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#currentAvatarPreview').attr('src', e.target.result);
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                    $('.avatar-radio-admin').prop('checked', false); // Uncheck all radio buttons
+                }
+            });
+
+            // Set initial checked state for pre-set avatars based on current image
+            const currentAvatarSrc = $('#currentAvatarPreview').attr('src');
+            $('.avatar-radio-admin').each(function() {
+                const dataPath = $(this).data('avatar-path');
+                const fullPath = new URL(dataPath, window.location.origin).href;
+                if (currentAvatarSrc.includes(fullPath)) {
+                    $(this).prop('checked', true);
+                    return false; // Break loop
+                }
+            });
+
+            document.getElementById('userTypeSelect').addEventListener('change', function() {
+                const adminKeyGroup = document.getElementById('adminKeyGroup');
+                const adminKeyInput = document.getElementById('AdminKey');
+
+                if (this.value == "0") { // Assuming "0" is the value for Admin UserType
+                    const randomAdminKey = generateRandomAdminKey();
+                    adminKeyInput.value = randomAdminKey;
+                    adminKeyGroup.style.display = 'block';
+                } else {
+                    adminKeyInput.value = '';
+                    adminKeyGroup.style.display = 'none';
+                }
+            });
+
+            function generateRandomAdminKey(length = 16) {
+                const validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                let result = '';
+                for (let i = 0; i < length; i++) {
+                    result += validChars.charAt(Math.floor(Math.random() * validChars.length));
+                }
+                return result;
             }
         });
-
-        function generateRandomAdminKey(length = 16) {
-            const validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += validChars.charAt(Math.floor(Math.random() * validChars.length));
-            }
-            return result;
-        }
     </script>
 }

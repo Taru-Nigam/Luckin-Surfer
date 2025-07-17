@@ -1,0 +1,36 @@
+﻿@model GameCraft.Models.OrderSummaryViewModel
+
+@{
+    ViewData["Title"] = "Payment Success";
+}
+
+<div class="container text-center mt-5">
+    <h2> Payment Successful!</h2>
+    <p>Thank you for your purchase.</p>
+
+    <div class="card mx-auto" style="max-width: 500px;">
+        <div class="card-body">
+            <h5 class="card-title">Order Details</h5>
+            <ul class="list-group">
+                <li class="list-group-item">Order ID: @Model.OrderId</li>
+                <li class="list-group-item">Name: @Model.ShippingName</li>
+                <li class="list-group-item">Email: @Model.ShippingEmail</li>
+                <li class="list-group-item">Phone: @Model.ShippingPhone</li>
+                <li class="list-group-item">Address: @Model.ShippingAddress</li>
+                <li class="list-group-item">City: @Model.ShippingCity</li>
+                <li class="list-group-item">Postcode: @Model.ShippingPostCode</li>
+                <li class="list-group-item">Amount: $@Model.TotalAmount</li>
+            </ul>
+        </div>
+    </div>
+
+    <a class="btn btn-primary mt-3" href="/">Continue Shopping</a>
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                
+                fetchCartCount();
+            });
+        </script>
+    }
+</div>
