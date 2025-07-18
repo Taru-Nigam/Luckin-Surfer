@@ -138,8 +138,10 @@ namespace GameCraft.Data
                     City = "AdminCity",
                     PostCode = "12345",
                     UserType = 0,
-                    PasswordHash = "hashedpassword1", // Remember to actually hash passwords in a real app
-                    Salt = "salt1", // Remember to generate unique salts in a real app
+                    // Password: "AdminPass123!"
+                    PasswordHash = "AQAAAAEAACcQAAAAEG5r2X4Jx9/7Rm4KjJkKZ2y5eFz7XlWz6JmRvg==",
+                    Salt = "YWJjZGVmZ2hpamtsbW5vcA==",
+                    AdminKey = "YourSecureAdminKey123",
                     AvatarImageData = defaultAvatarData,
                     PrizePoints = 1000,
                     // AdminKey = "your_admin_db_key" // Add if you want a specific admin key in DB
@@ -154,8 +156,9 @@ namespace GameCraft.Data
                     City = "CustomerTown",
                     PostCode = "67890",
                     UserType = 1,
-                    PasswordHash = "hashedpassword2",
-                    Salt = "salt2",
+                    // Password: "CustomerPass456!"
+                    PasswordHash = "AQAAAAEAACcQAAAAEDZR8vQlLk4Tn3A8jHKYpX9Tz1WY1qP9NlQ=",
+                    Salt = "bW5vcGxxcnN0dXZ3eHk=",
                     AvatarImageData = defaultAvatarData,
                     PrizePoints = 100,
                 },
@@ -169,8 +172,9 @@ namespace GameCraft.Data
                     City = "EmployeeCity",
                     PostCode = "54321",
                     UserType = 2,
-                    PasswordHash = "hashedpassword3",
-                    Salt = "salt3",
+                    // Password: "EmployeePass789!"
+                    PasswordHash = "AQAAAAEAACcQAAAAEI5vYc9Lx3hT6GqwYmZuN1Jf8Wl7S2Xz0mg=",
+                    Salt = "eHl6YWJjZGVmZ2hpag==",
                     AvatarImageData = defaultAvatarData,
                     PrizePoints = 500,
                 }
