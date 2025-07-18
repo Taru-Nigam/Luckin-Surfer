@@ -1,130 +1,49 @@
-/* --- General Styles --- */
-body {
-    font-family: 'Raleway', sans-serif; /* Use a modern font */
+/* Global Styles */
+
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    /* Background now handled by a new pseudo-element for the image */
-    background-color: #1a1a1a; /* Fallback dark background */
-    color: #e0e0e0; /* Light text color for contrast */
+}
+
+body {
+    font-family: 'Raleway', sans-serif;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    position: relative; /* Needed for absolute positioning of background */
-    z-index: 1; /* Ensure body content is above the background image */
+    position: relative;
+    z-index: 1;
 }
 
-    /* New: Background image overlay for the login/register pages */
-    body::before {
-        content: '';
-        position: fixed; /* Fixed so it doesn't scroll with content */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        /* Replace with your actual background image path */
-        background-image: url('/Images/login-background.jpg'); /* YOU NEED TO REPLACE THIS WITH YOUR IMAGE PATH */
-        background-size: cover;
-        background-position: center;
-        filter: brightness(0.6) contrast(1.2) grayscale(0.2); /* Adjust for desired mood */
-        z-index: -1; /* Place it behind the content */
-    }
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.6) contrast(1.2) grayscale(0.2);
+    z-index: -1;
+}
 
 main {
     flex-grow: 1;
 }
 
 h2 {
-    color: #00ffcc; /* Neon color for headings */
+    color: #00ffcc;
 }
 
 .p {
     color: #00ffcc;
 }
 
-/* --- Header Styles --- */
-header.main-header .gamecraft-navbar {
-    background-color: #008080; /* Teal background */
-    border-bottom: 2px solid #00ffcc; /* Neon border */
-    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5); /* Neon glow effect */
-    padding: 15px 20px;
-    flex-wrap: nowrap;
-    position: relative; /* To ensure it sits above the main content's background */
-    z-index: 10;
-}
+/* Content Section Styles */
 
-/* Container for logo, nav, and auth buttons within the header */
-.top-header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
-
-/* Styling for the logo and brand name */
-.header-brand {
-    display: flex;
-    align-items: center;
-    font-weight: bold;
-    color: #00ffcc; /* Neon color */
-    text-decoration: none;
-    flex-shrink: 0;
-}
-
-    .header-brand .brand-logo {
-        height: 80px;
-        margin-right: 15px;
-    }
-
-/* Custom Navigation links */
-.main-nav-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-grow: 1;
-    justify-content: center;
-}
-
-    .main-nav-links .nav-item {
-        margin: 0 40px;
-    }
-
-    .main-nav-links .nav-link {
-        color: #00ffcc; /* Neon color */
-        text-decoration: none;
-        padding: 10px 15px;
-        display: block;
-        font-weight: bold;
-        transition: background-color 0.3s, color 0.3s;
-    }
-
-        .main-nav-links .nav-link:hover {
-            background-color: rgba(0, 255, 204, 0.2);
-            border-radius: 5px;
-            color: #fff; /* Change text color on hover */
-        }
-
-/* Login/Sign Up buttons */
-.auth-buttons {
-    flex-shrink: 0;
-}
-
-    .auth-buttons button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 18px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1em;
-        transition: background-color 0.3s;
-    }
-
-        .auth-buttons button:hover {
-            background-color: #0056b3; /* Darker blue on hover */
-        }
-
-/* Content Section Styling */
 .content-section {
     padding: 20px;
     box-sizing: border-box;
@@ -160,23 +79,38 @@ header.main-header .gamecraft-navbar {
         .hero .connect-account-button:hover {
             background-color: #0056b3; /* Darker blue on hover */
         }
+/* Section Headers */
 
-/* --- Section Headers --- */
 .section-title {
-    color: #00ffcc; /* Changed to neon for consistency */
-    font-size: 2.5em; /* Increased font size for emphasis */
+    color: #00ffcc;
+    font-size: 2.5em;
     margin-bottom: 25px;
     text-align: center;
 }
 
 .form-instruction {
     color: #ffffff;
-    font-size: 1.5em; /* Increased font size for emphasis */
+    font-size: 1.5em;
     margin-bottom: 25px;
     text-align: center;
 }
 
-/* --- Forms (Login & Register) - Updated to match image design --- */
+.header-brand {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    color: #00ffcc;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+    .header-brand .brand-logo {
+        height: 80px;
+        margin-right: 15px;
+    }
+
+/* Forms (Login & Register) */
+
 .login-section, .register-section {
     display: flex;
     align-items: center;
@@ -252,6 +186,8 @@ header.main-header .gamecraft-navbar {
         .login-section .welcome-text .social-icons a:hover {
             color: #00ffcc; /* Neon hover */
         }
+
+/* Right side content for Login page (the form part) */
 
 /* Right side content for Login page (the form part) */
 .login-section .login-content {
@@ -377,36 +313,35 @@ header.main-header .gamecraft-navbar {
         }
 
 
-/* --- Register Form - Updated to match the login card's aesthetic --- */
-/* For register, let's assume a similar layout to the login card, perhaps without the left image part
-   or with a simplified version. For now, let's make it a single card. */
+/* Register Form */
+
 .register-section .container {
-    flex-direction: column; /* Stack sections vertically for register */
-    background-color: rgba(0, 0, 0, 0.7); /* Same card background */
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.7);
     border-radius: 10px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-    padding: 40px; /* Padding for the single card */
-    max-width: 600px; /* Adjust max-width for register form */
+    padding: 40px;
+    max-width: 600px;
     text-align: center;
 }
 
-    .register-section .container h2 {
-        color: white;
-        font-size: 2.5em;
-        margin-bottom: 20px;
-    }
+.register-section .container h2 {
+    color: white;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
 
-    .register-section .container .form-instruction {
-        color: #ddd;
-        margin-bottom: 30px;
-    }
+.register-section .container .form-instruction {
+    color: #ddd;
+    margin-bottom: 30px;
+}
 
 .register-form .form-group {
     margin-bottom: 20px;
 }
 
 .register-form label {
-    display: block; /* Keep labels for register form for clarity */
+    display: block;
     color: white;
     margin-bottom: 8px;
     text-align: left;
@@ -426,19 +361,19 @@ header.main-header .gamecraft-navbar {
     transition: border-bottom-color 0.3s;
 }
 
-    .register-form input[type="text"]:focus,
-    .register-form input[type="email"]:focus,
-    .register-form input[type="password"]:focus {
-        border-bottom-color: #00ffcc;
-        outline: none;
-    }
+.register-form input[type="text"]:focus,
+.register-form input[type="email"]:focus,
+.register-form input[type="password"]:focus {
+    border-bottom-color: #00ffcc;
+    outline: none;
+}
 
 .register-form input::placeholder {
     color: rgba(255, 255, 255, 0.6);
 }
 
 .register-button {
-    background-color: #008080; /* Teal color for register button */
+    background-color: #008080;
     color: white;
     padding: 15px 20px;
     border: none;
@@ -451,10 +386,10 @@ header.main-header .gamecraft-navbar {
     font-weight: bold;
 }
 
-    .register-button:hover {
-        background-color: #006666; /* Darker teal on hover */
-        transform: scale(1.02);
-    }
+.register-button:hover {
+    background-color: #006666;
+    transform: scale(1.02);
+}
 
 .login-link {
     text-align: center;
@@ -462,62 +397,65 @@ header.main-header .gamecraft-navbar {
     color: rgba(255, 255, 255, 0.8);
 }
 
-    .login-link p {
-        margin: 0;
-    }
+.login-link p {
+    margin: 0;
+}
 
-    .login-link a {
-        color: #00ffcc;
-        text-decoration: none;
-        font-weight: bold;
-        transition: color 0.3s;
-    }
+.login-link a {
+    color: #00ffcc;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
 
-        .login-link a:hover {
-            color: white;
-        }
+.login-link a:hover {
+    color: white;
+}
 
-/* --- Error/Success Messages --- */
+/* Error/Success Messages */
+
 .alert {
     padding: 15px;
     border-radius: 5px;
     margin-bottom: 20px;
-    text-align: left; /* Align alert text left */
+    text-align: left;
 }
 
 .alert-danger {
-    background-color: rgba(231, 76, 60, 0.2); /* Red with transparency */
+    background-color: rgba(231, 76, 60, 0.2);
     color: #e74c3c;
     border: 1px solid #e74c3c;
 }
 
 .alert-success {
-    background-color: rgba(40, 167, 69, 0.2); /* Green with transparency */
+    background-color: rgba(40, 167, 69, 0.2);
     color: #28a745;
     border: 1px solid #28a745;
 }
 
-/* --- Change Password Section (Reused styles, adjust if needed) --- */
+/* Change Password Section */
+
 #changePasswordSection {
     margin-inline: auto;
-    background-color: #222; /* Dark background */
-    padding: 20px; /* Padding for the section */
-    border-radius: 5px; /* Rounded corners */
-    border: 1px solid #00ffcc; /* Neon border */
-    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5); /* Neon glow */
-    width: 100%; /* Adjust to fill account-content */
-    box-sizing: border-box; /* Include padding in width */
+    background-color: #222;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #00ffcc;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    width: 100%;
+    box-sizing: border-box;
 }
 
-    #changePasswordSection h3 {
-        color: #00ffcc; /* Neon color for section heading */
-    }
+#changePasswordSection h3 {
+    color: #00ffcc;
+}
 
-/* --- Messages (Reused styles, adjust if needed) --- */
+/* Messages */
+
 .login-form .error-message,
 .register-form .error-message,
 #error-message {
-    color: #e74c3c; /* Red color for error messages */
+    color: #e74c3c;
     margin-top: 10px;
     text-align: center;
 }
@@ -525,28 +463,29 @@ header.main-header .gamecraft-navbar {
 .login-form .success-message,
 .register-form .success-message,
 .account-section .success-message {
-    color: #28a745; /* Green color for success messages */
+    color: #28a745;
     margin-top: 10px;
     text-align: center;
 }
 
 /* Featured Prizes Section */
+
 .featured-prizes {
     padding: 30px 20px;
     text-align: center;
-    background-color: #222; /* Dark background */
-    border: 2px solid #00ffcc; /* Neon border */
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5); /* Neon glow */
+    background-color: #222;
+    border: 2px solid #00ffcc;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
 
-    .featured-prizes h2 {
-        border: solid;
-        display: block;
-        padding: 10px 0;
-        margin: 0 auto 25px auto;
-        border-radius: 5px;
-        color: #00ffcc; /* Neon color */
-    }
+.featured-prizes h2 {
+    border: solid;
+    display: block;
+    padding: 10px 0;
+    margin: 0 auto 25px auto;
+    border-radius: 5px;
+    color: #00ffcc;
+}
 
 .prize-list {
     display: flex;
@@ -562,58 +501,58 @@ header.main-header .gamecraft-navbar {
     border-radius: 8px;
     width: 200px;
     text-align: center;
-    background-color: #333; /* Dark background */
+    background-color: #333;
     flex-shrink: 0;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-    .prize-item:hover {
-        transform: scale(1.05); /* Slightly enlarge on hover */
-        box-shadow: 0 0 20px rgba(0, 255, 204, 0.5); /* Neon glow */
-    }
+.prize-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+}
 
-    .prize-item .prize-image {
-        height: 120px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 10px;
-    }
+.prize-item .prize-image {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
 
-        .prize-item .prize-image img {
-            width: 100%; /* Ensure uniform size */
-            height: 100%; /* Ensure uniform size */
-            object-fit: cover; /* Maintain aspect ratio */
-        }
+.prize-item .prize-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-    .prize-item .prize-name {
-        font-size: 1.1em;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #00ffcc; /* Neon color */
-    }
+.prize-item .prize-name {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #00ffcc;
+}
 
-    .prize-item .ticket-cost {
-        display: block;
-        margin-bottom: 10px;
-        color: #00ffcc; /* Neon color */
-        font-weight: bold;
-    }
+.prize-item .ticket-cost {
+    display: block;
+    margin-bottom: 10px;
+    color: #00ffcc;
+    font-weight: bold;
+}
 
-    .prize-item .quick-view-button {
-        background-color: #333;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 0.9em;
-        transition: background-color 0.3s;
-    }
+.prize-item .quick-view-button {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+}
 
-        .prize-item .quick-view-button:hover {
-            background-color: #555; /* Darker on hover */
-        }
+.prize-item .quick-view-button:hover {
+    background-color: #555;
+}
 
 .prizes-grid {
     display: grid;
@@ -635,7 +574,7 @@ header.main-header .gamecraft-navbar {
     padding: 15px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #222; /* Dark background */
+    background-color: #222;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -648,27 +587,28 @@ header.main-header .gamecraft-navbar {
     min-height: 2.4em;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #00ffcc; /* Neon color */
+    color: #00ffcc;
 }
 
 .prize-cost {
     font-weight: bold;
-    color: #00ffcc; /* Neon color */
+    color: #00ffcc;
     margin-bottom: 15px;
 }
 
 /* How It Works Section */
+
 .how-it-works {
-    background-color: #0d0d0d; /* Dark background */
+    background-color: #0d0d0d;
     padding: 30px 20px;
     text-align: center;
-    border: 2px solid #00ffcc; /* Neon border */
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5); /* Neon glow */
+    border: 2px solid #00ffcc;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
 
-    .how-it-works h2 {
-        color: #00ffcc; /* Neon color */
-    }
+.how-it-works h2 {
+    color: #00ffcc;
+}
 
 .steps {
     display: flex;
@@ -684,24 +624,24 @@ header.main-header .gamecraft-navbar {
     margin-bottom: 20px;
 }
 
-    .step .icon-image {
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 10px;
-    }
+.step .icon-image {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
 
-        .step .icon-image img {
-            max-width: 88%;
-            max-height: 88%;
-            object-fit: contain;
-        }
+.step .icon-image img {
+    max-width: 88%;
+    max-height: 88%;
+    object-fit: contain;
+}
 
-    .step p {
-        font-size: 0.9em;
-        color: #e0e0e0; /* Light text color */
-    }
+.step p {
+    font-size: 0.9em;
+    color: #e0e0e0;
+}
 
 .profile-section {
     display: flex;
@@ -709,115 +649,114 @@ header.main-header .gamecraft-navbar {
 }
 
 .prize-points {
-    margin-right: 10px; /* Space between points and profile icon */
+    margin-right: 10px;
     font-weight: bold;
-    color: #00ffcc; /* Neon color */
+    color: #00ffcc;
 }
 
 .profile-icon {
-    width: 40px; /* Adjust size as needed */
-    height: 40px; /* Adjust size as needed */
+    width: 40px;
+    height: 40px;
     cursor: pointer;
 }
 
 /* Style for the avatar at the top left of the sidebar */
+
 .profile-header-avatar {
-    width: 100px; /* Larger size for the top-left avatar */
+    width: 100px;
     height: 100px;
     border-radius: 50%;
-    object-fit: cover;
+    object-fit: cover ;
     margin-bottom: 20px;
-    border: 2px solid #00ffcc; /* Neon border */
-    cursor: pointer; /* Add cursor pointer to indicate it's clickable */
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transition for hover */
+    border: 2px solid #00ffcc;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-    .profile-header-avatar:hover {
-        transform: scale(1.05); /* Slightly enlarge on hover */
-        box-shadow: 0 0 15px #00ffcc; /* Add a subtle glow on hover */
-    }
+.profile-header-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #00ffcc;
+}
 
-/* Add these new styles for the account page layout */
+/* Account Page Layout */
+
 .account-page-container {
     display: flex;
-    gap: 30px; /* Space between sidebar and content */
-    padding: 30px 0; /* Vertical padding for the container */
-    max-width: 1200px; /* Max width to match typical page layouts */
-    margin: 0 auto; /* Center the container */
-    align-items: flex-start; /* Align items to the top */
+    gap: 30px;
+    padding: 30px 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: flex-start;
 }
 
 .sidebar {
-    flex: 0 0 250px; /* Fixed width for the sidebar */
-    background-color: #222; /* Dark background */
-    border: 1px solid #00ffcc; /* Neon border */
+    flex: 0 0 250px;
+    background-color: #222;
+    border: 1px solid #00ffcc;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-    .sidebar ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
-        .sidebar ul li {
-            margin-bottom: 10px;
-        }
+.sidebar ul li {
+    margin-bottom: 10px;
+}
 
-            .sidebar ul li a {
-                display: flex;
-                align-items: center;
-                padding: 10px 15px;
-                text-decoration: none;
-                color: #e0e0e0; /* Light text color */
-                font-weight: bold;
-                border-radius: 5px;
-                transition: background-color 0.3s, color 0.3s;
-            }
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #e0e0e0;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
 
-                .sidebar ul li a i {
-                    margin-right: 10px;
-                    font-size: 1.2em;
-                }
+.sidebar ul li a i {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
 
-                .sidebar ul li a.active,
-                .sidebar ul li a:hover {
-                    background-color: #008080; /* Teal background for active/hover */
-                    color: #fff;
-                }
+.sidebar ul li a.active,
+.sidebar ul li a:hover {
+    background-color: #008080;
+    color: #fff;
+}
 
 .account-content {
-    flex-grow: 1; /* Take remaining space */
-    max-width: 700px; /* Limit the width of the content form */
+    flex-grow: 1;
+    max-width: 700px;
     padding: 20px;
-    background-color: #222; /* Dark background for forms */
-    border: 1px solid #00ffcc; /* Neon border */
+    background-color: #222;
+    border: 1px solid #00ffcc;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-    /* Specific modifications to existing rules if needed, otherwise these will inherit from your general rules */
-    .account-content .section-title { /* More specific selector */
-        text-align: left; /* Align title to left as per image */
-    }
+.account-content .section-title {
+    text-align: left;
+}
 
 .form-group label {
-    /* Ensure labels use the neon color */
     color: #00ffcc;
 }
 
 .form-control {
-    /* Ensure input fields maintain consistent styling */
-    width: 100%; /* Ensure full width */
+    width: 100%;
     padding: 10px;
-    border: 1px solid #00ffcc; /* Neon border */
+    border: 1px solid #00ffcc;
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 1em;
-    background-color: #333; /* Dark background for input fields */
-    color: #e0e0e0; /* Light text color */
+    background-color: #333;
+    color: #e0e0e0;
 }
 
 .btn-secondary {
@@ -856,17 +795,8 @@ header.main-header .gamecraft-navbar {
     text-align: center;
 }
 
-/* Style for the avatar at the top left of the sidebar (already exists, but for clarity) */
-.profile-header-avatar {
-    width: 100px; /* Larger size for the top-left avatar */
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 20px;
-    border: 2px solid #00ffcc; /* Neon border */
-}
+/* Avatar Selection */
 
-/* These specific styles are already in your provided CSS but for completeness: */
 #selectAvatar {
     flex: auto;
     margin-right: 0px;
@@ -874,22 +804,23 @@ header.main-header .gamecraft-navbar {
 }
 
 #avatarPreview {
-    width: 48px; /* Standard avatar size */
+    width: 48px;
     height: 48px;
     border-radius: 50%;
 }
 
 /* Modal for avatar selection */
+
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1000; /* Sit on top */
+    display: none;
+    position: fixed;
+    z-index: 1000;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -904,7 +835,7 @@ header.main-header .gamecraft-navbar {
     width: 80%;
     max-width: 500px;
     position: relative;
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5); /* Neon glow */
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
 
 .close-button {
@@ -918,46 +849,37 @@ header.main-header .gamecraft-navbar {
     cursor: pointer;
 }
 
-    .close-button:hover,
-    .close-button:focus {
-        color: #00ffcc;
-        text-decoration: none;
-        cursor: pointer;
-    }
+.close-button:hover,
+.close-button:focus {
+    color: #00ffcc;
+    text-decoration: none;
+    cursor: pointer;
+}
 
 #avatarSelectionOptions .avatar-radio {
-    display: none; /* Hide the default radio button */
+    display: none;
 }
 
 #avatarSelectionOptions .avatar-image {
-    width: 48px; /* Standard avatar size */
+    width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 2px solid transparent; /* Default transparent border */
+    border: 2px solid transparent;
     transition: border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
     cursor: pointer;
 }
 
 #avatarSelectionOptions .avatar-radio:checked + .avatar-image {
-    border-color: #00ffcc; /* Neon border when selected */
-    transform: scale(1.1); /* Slightly larger when selected */
+    border-color: #00ffcc;
+    transform: scale(1.1);
 }
 
 #avatarSelectionOptions .avatar-image:hover {
-    transform: scale(1.05); /* Slightly larger on hover */
-    box-shadow: 0 0 8px rgba(0, 255, 204, 0.5); /* Subtle glow on hover */
+    transform: scale(1.05);
+    box-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
 }
 
-/* Ensure form-group labels and inputs are consistent */
-.form-group label {
-    color: #00ffcc; /* Ensure labels use the neon color */
-}
-
-.form-control {
-    background-color: #333; /* Dark background for input fields */
-    color: #e0e0e0; /* Light text color */
-    border: 1px solid #00ffcc; /* Neon border */
-}
+/* Dashboard Section */
 
 .dashboard-section {
     display: grid;
@@ -971,14 +893,15 @@ header.main-header .gamecraft-navbar {
     border-radius: 8px;
     padding: 20px;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     color: #fff;
+    margin: 10px; /* Add margin for spacing */
 }
 
-    .dashboard-card h3 {
-        color: #00ffcc;
-        margin-bottom: 10px;
-    }
+.dashboard-card h3 {
+    color: #00ffcc;
+    margin-bottom: 10px;
+}
 
 .dashboard-value {
     font-size: 2.5em;
@@ -986,21 +909,337 @@ header.main-header .gamecraft-navbar {
     color: #fff;
 }
 
-.activity-list {
+.order-history-list {
     list-style: none;
     padding: 0;
-    text-align: left;
+    margin: 0;
 }
 
-    .activity-list li {
-        background-color: #333;
+    .order-history-list li {
+        background-color: #333; /* Dark background for order history */
         margin-bottom: 8px;
         padding: 10px;
         border-radius: 5px;
         color: #eee;
     }
 
+.activity-list {
+    list-style: none;
+    padding: 0;
+    text-align: left; /* Align text to the left */
+}
+
+    .activity-list li {
+        background-color: #333; /* Dark background for activity */
+        margin-bottom: 8px;
+        padding: 10px;
+        border-radius: 5px;
+        color: #eee;
+    }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-card {
+        margin: 10px 0; /* Adjust margin for smaller screens */
+    }
+}
+
+
+/* Product Catalog Section */
+
+.products-catalog-section {
+    padding: 20px;
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.products-filters-search {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.filter-group,
+.search-group {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.filter-group label,
+.search-group label {
+    color: #66ffcc;
+    font-weight: bold;
+}
+
+/* Prizes Grid */
+
+.prizes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.prize-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    background-color: #333;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.prize-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+}
+
+.prize-image-container {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.prize-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(102, 255, 204, 0.5);
+}
+
+.prize-name {
+    font-size: 1.2em;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #00ffcc;
+}
+
+.ticket-cost {
+    font-weight: bold;
+    color: #00ffcc;
+    margin-bottom: 15px;
+}
+
+/* Product Actions */
+
+.quick-view-button {
+    background-color: #66ffcc;
+    color: black;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.quick-view-button:hover {
+    background-color: #5cd6b3;
+}
+
+/* Cart message */
+
+#cart-message {
+    margin-top: 15px;
+    color: #00ffcc;
+    text-align: center;
+}
+
+/* Product Details Section */
+
+.product-details-section {
+    padding: 20px;
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.product-name {
+    font-size: 2.5em;
+    color: #00ffcc;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.product-image {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.product-image img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(102, 255, 204, 0.5);
+}
+
+.product-info {
+    text-align: center;
+}
+
+.product-description {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
+
+.ticket-cost {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #00ffcc;
+    margin-bottom: 20px;
+}
+
+.product-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.add-to-cart-button,
+.buy-now-button {
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+.add-to-cart-button {
+    background-color: #66ffcc;
+    color: black;
+}
+
+.add-to-cart-button:hover {
+    background-color: #5cd6b3;
+}
+
+.buy-now-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.buy-now-button:hover {
+    background-color: #0056b3;
+}
+
+/* Checkout Section */
+
+.cartItem {
+    padding: 20px;
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+h2.mb-4 {
+    font-size: 2.5em;
+    color: #00ffcc;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.alert-danger {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+/* Shipping Information Form */
+
+form {
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.form-label {
+    color: #66ffcc;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #00ffcc;
+    border-radius: 5px;
+    background-color: #333;
+    color: #e0e0e0;
+    margin-bottom: 15px;
+}
+
+/* Order Summary Table */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #1a1a1a;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.table th,
+.table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid #333;
+    font-size: 1rem;
+}
+
+.table th {
+    background-color: #222;
+    font-weight: 600;
+    color: #66ffcc;
+}
+
+/* Button Styles */
+.btn-action,
+.btn-delete {
+    border: none; /* removes any border */
+    padding: 10px 15px; /* adjust padding as needed */
+    background-color: #e6005c; /* add background color */
+    color: white; /* text color */
+    border-radius: 5px; /* edges rounded */
+    cursor: pointer; /* pointer cursor on hover */
+    font-size: 1em; /* font size */
+    transition: background-color 0.3s; /* smooth transition for hover */
+}
+
+    /* Adjust hover effect */
+    .btn-action:hover,
+    .btn-delete:hover {
+        background-color: #cc004c; /* darker shade on hover */
+    }
+
+.btn {
+    box-sizing: border-box; /* ensures border-box model is used */
+    line-height: normal; /* ensures line height isn't adding extra space */
+}
+
+/* Cart message */
+
+#cart-message {
+    margin-top: 15px;
+    color: #00ffcc;
+    text-align: center;
+}
+
 /* Footer */
+
 .site-footer {
     text-align: center;
     padding: 20px;
@@ -1009,62 +1248,22 @@ header.main-header .gamecraft-navbar {
     font-size: 0.9em;
     margin-top: auto;
     flex-shrink: 0;
-    position: relative; /* Ensure footer is above the body's pseudo-element */
+    position: relative;
     z-index: 10;
 }
 
-    .site-footer .container-fluid {
-        padding-left: 15px;
-        padding-right: 15px;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        margin-top: auto;
-        flex-shrink: 0;
-    }
-
-/* Cart icon container */
-.cart-icon {
-    position: relative;
-    margin-left: 20px;
-    cursor: pointer;
+.site-footer .container-fluid {
+    padding-left: 15px;
+    padding-right: 15px;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin-top: auto;
+    flex-shrink: 0;
 }
-
-/* Number badge on cart icon */
-.cart-count {
-    position: absolute;
-    top: -5px; /* Adjust this value to position the badge */
-    right: -10px; /* Adjust this value to position the badge */
-    background: red;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 12px;
-    font-weight: bold;
-    display: none; /* Initially hidden */
-}
-
-/* Cart preview popup */
-.cart-preview {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 35px;
-    width: 300px;
-    background: #222; /* Dark background for the preview */
-    border: 1px solid #00ffcc; /* Neon border */
-    box-shadow: 0 2px 5px rgba(0, 255, 204, 0.5); /* Neon glow */
-    padding: 10px;
-    z-index: 1000;
-    color: #e0e0e0; /* Light text color */
-    border-radius: 5px;
-}
-
-    .cart-preview p {
-        margin: 0;
-    }
 
 /* Alert styles */
+
 .alert {
     padding: 15px;
     border-radius: 5px;
@@ -1076,16 +1275,6 @@ header.main-header .gamecraft-navbar {
     color: #0d6efd;
     border: 1px solid rgba(0, 123, 255, 0.2);
 }
-
-/* General button styles */
-.btn {
-    border-radius: 5px;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-    .btn:hover {
-        transform: scale(1.05); /* Slight scale effect on hover */
-    }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -1113,24 +1302,4 @@ header.main-header .gamecraft-navbar {
         padding: 30px;
         border-radius: 0; /* No specific right-side rounding on small screens */
     }
-
-    .main-nav-links {
-        flex-direction: column;
-        align-items: center;
-    }
-
-        .main-nav-links .nav-item {
-            margin: 10px 0;
-        }
-
-    .auth-buttons {
-        margin-top: 15px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-        .auth-buttons button {
-            width: 100%;
-        }
 }

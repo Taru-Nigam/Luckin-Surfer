@@ -1,52 +1,81 @@
-﻿body {
-    background: #fafafa;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #4b5563;
+﻿/* --- General Styles --- */
+body {
+    background: #0e0e0e; /* Dark background for a gaming feel */
+    font-family: 'Orbitron', sans-serif; /* Futuristic font */
+    color: #e0e0e0; /* Light text color for contrast */
     min-height: 100vh;
     margin: 0;
 }
 
 .admin-main {
     max-width: 1100px;
+    margin: auto; /* Center the main content */
+    padding: 2rem;
 }
 
 h1 {
-    font-size: 2.8rem;
+    font-size: 3rem; /* Larger font size for headings */
     font-weight: 700;
-    color: #111827;
+    color: #66ffcc; /* Softer neon color for headings */
     margin-bottom: 2rem;
+    text-shadow: 0 0 5px rgba(102, 255, 204, 0.5); /* Reduced glow effect */
 }
 
+.content-section {
+    padding: 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Table Styles */
 .table-admin-list {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 2rem;
-    background: #fff;
+    margin-top: 20px;
+    background: #1a1a1a; /* Dark table background */
     border-radius: 0.75rem;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
-    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Deeper shadow for depth */
 }
 
     .table-admin-list th,
     .table-admin-list td {
         padding: 1rem 1.5rem;
         text-align: left;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid #333; /* Darker border for table */
         font-size: 1rem;
     }
 
     .table-admin-list th {
-        background-color: #f9fafb;
+        background-color: #222; /* Darker header background */
         font-weight: 600;
-        color: #374151;
+        color: #66ffcc; /* Softer neon color for table headers */
     }
 
+    /* Styles for images in the prize management table */
+    .table-admin-list img {
+        width: 100px; /* Set a fixed width for images */
+        height: auto; /* Maintain aspect ratio */
+        border-radius: 5px; /* Slightly rounded corners for images */
+        box-shadow: 0 0 10px rgba(102, 255, 204, 0.5); /* Neon glow effect */
+    }
+
+        .table-admin-list img.no-image {
+            width: 50px; /* Fixed width for "No Image" placeholder */
+            height: auto; /* Maintain aspect ratio */
+            background-color: #444; /* Dark background for no image placeholder */
+            color: #e0e0e0; /* Light text color */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px; /* Slightly rounded corners */
+        }
+
 .form-container {
-    background: #fff;
+    background: #1a1a1a; /* Dark background for forms */
     max-width: 600px;
     padding: 2.5rem;
     border-radius: 0.75rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .form-group {
@@ -55,7 +84,7 @@ h1 {
 
     .form-group label {
         display: block;
-        color: #374151;
+        color: #66ffcc; /* Softer neon color for labels */
         font-weight: 600;
         margin-bottom: 0.5rem;
     }
@@ -66,19 +95,20 @@ h1 {
     width: 100%;
     padding: 0.6rem 1rem;
     font-size: 1.1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid #444; /* Dark border */
     border-radius: 0.5rem;
-    color: #111827;
+    color: #e0e0e0; /* Light text color */
+    background: #222; /* Dark background for inputs */
     box-sizing: border-box;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
     .form-input:focus,
     .form-select:focus,
     .form-textarea:focus {
-        border-color: #2563eb;
+        border-color: #66ffcc; /* Softer neon border on focus */
         outline: none;
-        box-shadow: 0 0 0 3px rgb(59 130 246 / 0.3);
+        box-shadow: 0 0 0 3px rgba(102, 255, 204, 0.3); /* Reduced glow effect */
     }
 
 .form-textarea {
@@ -86,36 +116,59 @@ h1 {
     resize: vertical;
 }
 
+.admin-navbar {
+    background: rgba(10, 10, 26, 0.85); /* Dark background for navbar */
+    backdrop-filter: blur(8px); /* Blur effect */
+    border-bottom: 1px solid #66ffcc; /* Softer neon border */
+    box-shadow: 0 0 20px rgba(102, 255, 204, 0.5); /* Reduced glow effect */
+}
+
+.navbar-brand {
+    color: #66ffcc; /* Softer neon color for brand */
+    text-shadow: 0 0 5px rgba(102, 255, 204, 0.5); /* Reduced glow effect */
+}
+
+.nav-link {
+    color: #e0e0e0; /* Light text color for links */
+    transition: color 0.3s ease;
+}
+
+    .nav-link:hover {
+        color: #66ffcc; /* Softer neon color on hover */
+    }
+
 .btn-primary {
-    background-color: #2563eb;
-    color: white;
+    background-color: #66ffcc; /* Softer neon button color */
+    color: black; /* Dark text for contrast */
     font-weight: 700;
     padding: 0.8rem 2rem;
     border: none;
     border-radius: 0.6rem;
     cursor: pointer;
     font-size: 1.2rem;
+    transition: background-color 0.3s ease;
 }
 
     .btn-primary:hover {
-        background-color: #1d4ed8;
+        background-color: #5cd6b3; /* Slightly darker on hover */
     }
 
 .btn-secondary {
     background-color: transparent;
-    color: #6b7280;
-    border: 1.5px solid #6b7280;
+    color: #66ffcc; /* Softer neon color for secondary buttons */
+    border: 1.5px solid #66ffcc; /* Softer neon border */
     padding: 0.6rem 1.5rem;
     border-radius: 0.6rem;
     text-decoration: none;
     font-weight: 600;
     font-size: 1.05rem;
+    transition: background-color 0.3s;
 }
 
     .btn-secondary:hover {
-        background-color: #f3f4f6;
-        color: #374151;
-        border-color: #374151;
+        background-color: rgba(102, 255, 204, 0.1); /* Light neon background on hover */
+        color: #5cd6b3; /* Slightly darker text on hover */
+        border-color: #5cd6b3; /* Darker border on hover */
     }
 
 .btn-action {
@@ -130,22 +183,41 @@ h1 {
     user-select: none;
 }
 
-.btn-edit {
-    background-color: #2563eb;
+.submit-button {
+    background-color: #e6005c;
     color: white;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.2s;
+    font-weight: bold;
+}
+
+    .submit-button:hover {
+        background-color: #cc004c;
+        transform: scale(1.02);
+    }
+
+.btn-edit {
+    background-color: #66ffcc; /* Softer neon edit button */
+    color: black;
 }
 
     .btn-edit:hover {
-        background-color: #1d4ed8;
+        background-color: #5cd6b3; /* Darker on hover */
     }
 
 .btn-delete {
-    background-color: #dc2626;
+    background-color: #ff4d4d; /* Neon red for delete button */
     color: white;
 }
 
     .btn-delete:hover {
-        background-color: #b91c1c;
+        background-color: #e60000; /* Darker red on hover */
     }
 
 .inline-form {
@@ -153,15 +225,74 @@ h1 {
 }
 
 .text-error {
-    color: #b91c1c;
+    color: #ff4d4d; /* Red for error messages */
     font-size: 0.85rem;
 }
 
 .alert-success {
     margin-bottom: 1.5rem;
     padding: 1rem 1.5rem;
-    background-color: #d1fae5;
-    color: #065f46;
+    background-color: #1a1a1a; /* Dark background for alerts */
+    color: #66ffcc; /* Softer neon text color */
     border-radius: 0.5rem;
-    border: 1px solid #10b981;
+    border: 1px solid #66ffcc; /* Softer neon border */
+}
+
+/* Admin Avatar Selection Styles */
+.avatar-selection-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    justify-content: center; /* Center the avatars */
+}
+
+.avatar-option-label {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.avatar-radio-admin {
+    display: none; /* Hide the actual radio button */
+}
+
+.avatar-image-admin {
+    width: 60px; /* Larger size for admin view */
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid transparent; /* Thicker border for selection */
+    transition: border-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+}
+
+.avatar-radio-admin:checked + .avatar-image-admin {
+    border-color: #66ffcc; /* Neon border when selected */
+    transform: scale(1.1); /* Slightly enlarge when selected */
+    box-shadow: 0 0 15px rgba(102, 255, 204, 0.7); /* Stronger neon glow */
+}
+
+.avatar-image-admin:hover {
+    transform: scale(1.05); /* Slight enlarge on hover */
+    box-shadow: 0 0 10px rgba(102, 255, 204, 0.5); /* Neon glow on hover */
+}
+
+/* Adjustments for existing form-group to accommodate new avatar elements */
+.form-container .form-group img {
+    display: block; /* Ensure image takes its own line */
+    margin: 0 auto 10px auto; /* Center and add bottom margin */
+}
+
+.user-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+    justify-content: center; /* Center vertically */
+    margin: 0 auto; /* Center the container */
+    max-width: 1200px; /* Set a max width for the container */
+    border-radius: 10px; /* Optional: Rounded corners */
 }

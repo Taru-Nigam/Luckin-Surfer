@@ -71,19 +71,21 @@ body {
 
 /* Logout Button */
 .employee-logout-button {
-    background-color: #e74c3c;
+    background-color: #e74c3c; /* Keep the red background */
     color: white;
-    border: none;
+    border: 1px solid #c0392b; /* Add a slightly darker red border */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
     padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 0.9em;
-    transition: background-color 0.3s ease, transform 0.2s;
+    transition: background-color 0.3s ease, transform 0.2s, box-shadow 0.3s;
 }
 
     .employee-logout-button:hover {
         background-color: #c0392b;
-        transform: scale(1.05); /* Slight scale effect on hover */
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Enhance shadow on hover */
     }
 
 /* --- Main Content Area --- */
@@ -373,6 +375,16 @@ body {
                 .admin-options ul li a:hover {
                     color: #2980b9; /* Darker shade on hover */
                 }
+
+
+.form-admin {
+    background-color: #f9f9f9; /* Light background for contrast */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+    .form-admin label {
+        color: #34495e;
+    }
 
 /* Return Home Link */
 .return-home-link {
