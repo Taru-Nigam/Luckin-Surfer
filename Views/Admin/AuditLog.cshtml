@@ -1,0 +1,54 @@
+﻿@model List<GameCraft.Models.AuditLog>
+
+@{
+    ViewData["Title"] = "Audit Log";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="mb-6">Audit Log</h1>
+
+<table class="table-admin-list">
+    <thead>
+        <tr>
+            <th>Log ID</th>
+            <th>Action</th>
+            <th>User Name</th>
+            <th>User Role</th>
+            <th>Timestamp</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td>@log.Id</td>
+                    <td>@log.Action</td>
+                    <td>@log.UserName</td>
+                    <td>@log.UserRole</td>
+                    <td>@log.Timestamp.ToString("yyyy-MM-dd hh:mm tt")</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(log.Details))
+                        {
+                            <div id="details-@log.Id" class="log-details-content">
+                                <pre>@log.Details</pre>
+                            </div>
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">No audit logs found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
