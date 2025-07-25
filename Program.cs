@@ -1,8 +1,8 @@
 using GameCraft.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using GameCraft.DbInitializers; // <--- ADD THIS USING DIRECTIVE
-using Microsoft.Extensions.Logging; 
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +21,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddAuthorization(); // This was already there, keep it
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(options => // Add options for session, especially IsEssential
 {

@@ -14,7 +14,7 @@ namespace GameCraft.Controllers
         private readonly GameCraftDbContext _context;
 
         public HomeController(ILogger<HomeController> logger, GameCraftDbContext context)
-            : base(context)
+            :base(context)
         {
             _logger = logger;
             _context = context; // Initialize the context

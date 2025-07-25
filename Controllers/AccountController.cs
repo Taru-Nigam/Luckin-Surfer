@@ -1,13 +1,13 @@
-﻿// FileName: /Controllers/AccountController.cs
-using GameCraft.Data;
+﻿using GameCraft.Data;
 using GameCraft.Helpers;
 using GameCraft.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using System.Linq;
-using Microsoft.EntityFrameworkCore; // For async operations
 using Microsoft.AspNetCore.Hosting; // For IWebHostEnvironment
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore; // For async operations
 using System.IO; // For FileStream, Path
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GameCraft.Controllers
 {
@@ -48,7 +48,6 @@ namespace GameCraft.Controllers
                         contentType = "image/jpeg";
                     else if (customer.AvatarImageData[0] == 0x89 && customer.AvatarImageData[1] == 0x50 && customer.AvatarImageData[2] == 0x4E && customer.AvatarImageData[3] == 0x47)
                         contentType = "image/png";
-                    // Add more checks for other formats if needed
                 }
                 return File(customer.AvatarImageData, contentType);
             }
@@ -72,7 +71,6 @@ namespace GameCraft.Controllers
             }
             return NotFound();
         }
-
 
         // GET: /Account/Register
         [HttpGet]
@@ -135,6 +133,19 @@ namespace GameCraft.Controllers
                 };
                 Response.Cookies.Append("UserToken", customer.CustomerId.ToString(), options);
 
+                // Log the registration activity
+                var auditLog = new AuditLog
+                {
+                    UserId = customer.CustomerId.ToString(),
+                    UserName = customer.Name,
+                    Action = "Registered",
+                    Details = "User  registered successfully.",
+                    Timestamp = DateTime.UtcNow,
+                    UserRole = "Customer"
+                };
+                _context.AuditLogs.Add(auditLog);
+                await _context.SaveChangesAsync();
+
                 // Redirect to home page after successful registration and login
                 return RedirectToAction("Index", "Home");
             }
@@ -142,6 +153,7 @@ namespace GameCraft.Controllers
             return View(model);
         }
 
+        // GET: /Account/Login
         [HttpGet]
         public IActionResult Login()
         {
@@ -170,7 +182,7 @@ namespace GameCraft.Controllers
             // Check if the customer exists
             if (customer == null)
             {
-                ModelState.AddModelError("", "User does not exist."); // Add error message
+                ModelState.AddModelError("", "User  does not exist."); // Add error message
                 return View(); // Return to the login view with the error
             }
             // Verify the password
@@ -192,9 +204,22 @@ namespace GameCraft.Controllers
                 IsEssential = true
             };
             Response.Cookies.Append("UserToken", customer.CustomerId.ToString(), options);
+
+            // Log the login activity
+            var auditLog = new AuditLog
+            {
+                UserId = customer.CustomerId.ToString(),
+                UserName = customer.Name,
+                Action = "Logged In",
+                Details = "User  logged in successfully.",
+                Timestamp = DateTime.UtcNow,
+                UserRole = "Customer"
+            };
+            _context.AuditLogs.Add(auditLog);
+            await _context.SaveChangesAsync();
+
             return RedirectToAction("Index", "Home");
         }
-
 
         // GET: /Account/Logout
         [HttpGet]
@@ -203,6 +228,21 @@ namespace GameCraft.Controllers
             // Clear the session
             HttpContext.Session.Clear();
             Response.Cookies.Delete("UserToken");
+
+            // Log the logout activity
+            var userName = HttpContext.Session.GetString("UserName");
+            var userId = HttpContext.Session.GetString("Email"); // Assuming Email is used as UserId
+            var auditLog = new AuditLog
+            {
+                UserId = userId,
+                UserName = userName,
+                Action = "Logged Out",
+                Details = "User  logged out successfully.",
+                Timestamp = DateTime.UtcNow,
+                UserRole = "Customer"
+            };
+            _context.AuditLogs.Add(auditLog);
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -232,80 +272,6 @@ namespace GameCraft.Controllers
                 customer.PrizePoints = prizePoints; // Set the PrizePoints in the customer object
             }
             return View(customer);
-        }
-
-        // POST: /Account/ConnectAccount
-        [HttpPost]
-        public async Task<IActionResult> ConnectAccount(string cardNumber, string username)
-        {
-            // Check if the username already exists
-            var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.Name == username);
-            if (existingCustomer != null)
-            {
-                // Update existing user with the GameCraft card number
-                existingCustomer.GameCraftCardNumber = cardNumber;
-                await _context.SaveChangesAsync();
-
-                // Automatically log in the existing user
-                HttpContext.Session.SetString("UserName", existingCustomer.Name);
-                HttpContext.Session.SetString("Email", existingCustomer.Email ?? "email@gamecraft.com");
-                HttpContext.Session.SetString("PrizePoints", existingCustomer.PrizePoints.ToString());
-                HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = existingCustomer.CustomerId }));
-
-                Response.Cookies.Append("UserToken", existingCustomer.CustomerId.ToString(), new CookieOptions
-                {
-                    Expires = DateTimeOffset.Now.AddDays(7),
-                    IsEssential = true
-                });
-
-                return Json(new
-                {
-                    success = true,
-                    message = "GameCraft card number added to existing account.",
-                    customerId = existingCustomer.CustomerId,
-                    redirectUrl = Url.Action("Index", "Home")  // Add redirect URL
-                });
-            }
-
-            // Create a new user with placeholder email
-            var defaultAvatarData = await GetDefaultAvatarImageData();
-            var customer = new Customer
-            {
-                Name = username,
-                Email = "email@gamecraft.com",
-                PasswordHash = PasswordHelper.HashPassword("password").Item1,
-                Salt = PasswordHelper.HashPassword("password").Item2,
-                GameCraftCardNumber = cardNumber,
-                UserType = 1,
-                Phone = "",
-                Address = "",
-                City = "",
-                PostCode = "",
-                AvatarImageData = defaultAvatarData // Set default avatar data
-            };
-
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
-
-            // Full authentication setup (same as Register)
-            HttpContext.Session.SetString("UserName", customer.Name);
-            HttpContext.Session.SetString("Email", customer.Email);
-            HttpContext.Session.SetString("PrizePoints", customer.PrizePoints.ToString());
-            HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = customer.CustomerId }));
-
-            Response.Cookies.Append("UserToken", customer.CustomerId.ToString(), new CookieOptions
-            {
-                Expires = DateTimeOffset.Now.AddDays(7),
-                IsEssential = true
-            });
-
-            return Json(new
-            {
-                success = true,
-                message = "A new account has been created with the username: " + username + " and default password" + "You are logged in, Please Update your password in My Account -> Change password",
-                customerId = customer.CustomerId,
-                redirectUrl = Url.Action("Index", "Home")  // Add redirect URL
-            });
         }
 
         // POST: /Account/UpdateAccount
@@ -378,6 +344,19 @@ namespace GameCraft.Controllers
             HttpContext.Session.SetString("Email", customer.Email);
             HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = customer.CustomerId }));
 
+            // Log the account update activity
+            var auditLog = new AuditLog
+            {
+                UserId = customer.CustomerId.ToString(),
+                UserName = customer.Name,
+                Action = "Update Account",
+                Details = $"User  updated account details. New: [Email: {customer.Email}, Username: {customer.Name}].",
+                Timestamp = DateTime.UtcNow,
+                UserRole = "Customer"
+            };
+            _context.AuditLogs.Add(auditLog);
+            await _context.SaveChangesAsync();
+
             TempData["SuccessMessage"] = "Account updated successfully.";
             return RedirectToAction("MyAccount", new { activeSection = "accountDetails" });
         }
@@ -391,7 +370,7 @@ namespace GameCraft.Controllers
 
             if (customer == null)
             {
-                return Json(new { success = false, message = "User not found." });
+                return Json(new { success = false, message = "User  not found." });
             }
 
             byte[] newAvatarData = null;
@@ -416,8 +395,6 @@ namespace GameCraft.Controllers
             else
             {
                 // If neither file nor pre-set path is provided, keep current avatar
-                // Or you could explicitly set it to default if that's desired behavior.
-                // For now, if no new input, we don't update AvatarImageData.
                 return Json(new { success = false, message = "No new avatar selected or uploaded." });
             }
 
@@ -428,9 +405,21 @@ namespace GameCraft.Controllers
             // Update session avatar URL
             HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = customer.CustomerId }));
 
+            // Log the avatar update activity
+            var auditLog = new AuditLog
+            {
+                UserId = customer.CustomerId.ToString(),
+                UserName = customer.Name,
+                Action = "Change Avatar",
+                Details = "User  changed their avatar.",
+                Timestamp = DateTime.UtcNow,
+                UserRole = "Customer"
+            };
+            _context.AuditLogs.Add(auditLog);
+            await _context.SaveChangesAsync();
+
             return Json(new { success = true, newAvatarUrl = Url.Action("GetAvatarImage", "Account", new { customerId = customer.CustomerId }) });
         }
-
 
         [HttpPost]
         public async Task<IActionResult> ChangePassword(string newPassword, string confirmPassword)
@@ -444,7 +433,7 @@ namespace GameCraft.Controllers
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == email);
             if (customer == null)
             {
-                return Json(new { success = false, message = "User not found." });
+                return Json(new { success = false, message = "User  not found." });
             }
 
             // Hash the new password
@@ -456,6 +445,19 @@ namespace GameCraft.Controllers
             customer.Salt = salt;
 
             _context.Customers.Update(customer);
+            await _context.SaveChangesAsync();
+
+            // Log the password change activity
+            var auditLog = new AuditLog
+            {
+                UserId = customer.CustomerId.ToString(),
+                UserName = customer.Name,
+                Action = "Change Password",
+                Details = "User  changed their password.",
+                Timestamp = DateTime.UtcNow,
+                UserRole = "Customer"
+            };
+            _context.AuditLogs.Add(auditLog);
             await _context.SaveChangesAsync();
 
             return Json(new { success = true, message = "Password changed successfully." });

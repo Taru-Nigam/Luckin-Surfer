@@ -44,5 +44,7 @@ namespace GameCraft.Models
 
         // New property for Admin Key
         public string? AdminKey { get; set; }
+
+        public List<Order> Order { get; set; }
     }
 }

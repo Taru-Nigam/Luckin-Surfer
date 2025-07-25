@@ -109,6 +109,20 @@ namespace GameCraft.Controllers
             SaveCart(cart); // Save updated cart to session
 
             return Json(new { success = true, cartCount = _context.CartItems.Count(ci => ci.CustomerId == customer.CustomerId) });
+
+            // Log the user creation activity
+            var auditLog = new AuditLog
+            {
+                UserId = customer.CustomerId.ToString(),
+                UserName = customer.Name,
+                Action = "Add to Cart",
+                Details = $"{customer.Name} added {product.Name} to cart",
+                Timestamp = DateTime.UtcNow,
+                UserRole = "Admin"
+            };
+            _context.AuditLogs.Add(auditLog);
+            _context.SaveChangesAsync();
+            return RedirectToAction("Cart");
         }
 
         // GET: /Cart/Cart
