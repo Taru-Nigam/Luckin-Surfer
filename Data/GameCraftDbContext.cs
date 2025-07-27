@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using GameCraft.Models;
 using System.Collections.Generic;
 using System.IO;
-using System;
+using GameCraft.Helpers;
 
 namespace GameCraft.Data
 {
@@ -22,29 +22,44 @@ namespace GameCraft.Data
         public DbSet<UserType> UserTypes { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
 
-        // --- NEW DBSETS ---
         public DbSet<RedeemedPrize> RedeemedPrizes { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<DailyTicketCollection> DailyTicketCollections { get; set; }
-        // --- END NEW DBSETS ---
+        public DbSet<Promotion> Promotions { get; set; }
+
+        public DbSet<Icon> Icons { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Seed initial data for Icons (example)
+            modelBuilder.Entity<Icon>().HasData(
+                new Icon { IconId = 1, Name = "Play & Earn", Description = "Win Tickets playing games!", ImageData = File.ReadAllBytes("wwwroot/images/play&earn icon.png"), Order = 1 },
+                new Icon { IconId = 2, Name = "Connect Account", Description = "Link your arcade ID online", ImageData = File.ReadAllBytes("wwwroot/images/link icon.png"), Order = 2 },
+                new Icon { IconId = 3, Name = "Browse Prizes", Description = "See all cool rewards.", ImageData = File.ReadAllBytes("wwwroot/images/prize icon.png"), Order = 3 },
+                new Icon { IconId = 4, Name = "Redeem", Description = "Choose and claim your prize!", ImageData = File.ReadAllBytes("wwwroot/images/redeem icon.png"), Order = 4 }
+            );
+            // Seed initial data for Promotions (example)
+            modelBuilder.Entity<Promotion>().HasData(
+                new Promotion { PromotionId = 1, Title = "GameCraft Card", Description = "Get your official GameCraft card!", ImageData = File.ReadAllBytes("wwwroot/images/GameCard card.png"), Price = 10.00m, BackgroundColor = "#007bff", TextColor = "#ffffff" },
+                new Promotion { PromotionId = 2, Title = "Bonus Tickets!", Description = "Get 500 bonus tickets with any purchase over $50!", ImageData = File.ReadAllBytes("wwwroot/images/Bonus-tickets.png"), Price = 0.00m, BackgroundColor = "#28a745", TextColor = "#ffffff" }
+            );
 
             modelBuilder.Entity<UserType>().HasKey(u => u.Id);
             modelBuilder.Entity<UserType>()
                 .Property(u => u.Id)
                 .ValueGeneratedNever();
 
-            // Seed UserTypes (these are static and should remain)
+            // Seed UserTypes
             modelBuilder.Entity<UserType>().HasData(
                 new UserType { Id = 0, Name = "Admin" },
                 new UserType { Id = 1, Name = "User " },
                 new UserType { Id = 2, Name = "Employee" }
             );
 
-            // Seed Categories (these are static and should remain)
+            // Seed Categories
             modelBuilder.Entity<Category>().HasData(
                 new Category { CategoryId = 1, Name = "Electronics" },
                 new Category { CategoryId = 2, Name = "Toys" },
@@ -53,7 +68,7 @@ namespace GameCraft.Data
                 new Category { CategoryId = 5, Name = "Gift Cards" }
             );
 
-            // Seed Products (Prizes) - these are relatively static and should remain
+            // Seed Products (Prizes)
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
@@ -62,8 +77,7 @@ namespace GameCraft.Data
                     Description = "Experience premium sound and ultimate freedom with our High-End Wireless Earbuds. Enjoy crystal-clear audio, comfortable fit, and intuitive controls for an immersive listening experience on the go.",
                     Price = 2200.00m,
                     CategoryId = 1,
-                    ImageData = LoadImageData("wwwroot/images/prizes/highend wireless earbuds.jpg"),
-                    Quantity = 20
+                    ImageData = LoadImageData("wwwroot/images/prizes/highend wireless earbuds.jpg") // Load image data
                 },
                 new Product
                 {
@@ -72,8 +86,7 @@ namespace GameCraft.Data
                     Description = "Test your steady hand and strategic thinking with Jenga! Pull blocks from the tower and place them on top without making it tumble. A classic game of skill and suspense for all ages.",
                     Price = 1800.00m,
                     CategoryId = 4,
-                    ImageData = LoadImageData("wwwroot/images/prizes/jenga boardgame.jpg"),
-                    Quantity = 15
+                    ImageData = LoadImageData("wwwroot/images/prizes/jenga boardgame.jpg") // Load image data
                 },
                 new Product
                 {
@@ -82,8 +95,7 @@ namespace GameCraft.Data
                     Description = "Meet our incredibly soft and cuddly Plush Giant Bear! Perfect for big hugs and comforting snuggles, this lovable companion is ready to be your best friend. A timeless gift that brings joy to all ages.",
                     Price = 1500.00m,
                     CategoryId = 2,
-                    ImageData = LoadImageData("wwwroot/images/prizes/plush giant bear.jpg"),
-                    Quantity = 10
+                    ImageData = LoadImageData("wwwroot/images/prizes/plush giant bear.jpg") // Load image data
                 },
                 new Product
                 {
@@ -92,8 +104,7 @@ namespace GameCraft.Data
                     Description = "Simplify your charging with our versatile Multicable Charger. Featuring multiple connectors, it's the perfect all-in-one solution to power up all your devices with just one cable.",
                     Price = 500.00m,
                     CategoryId = 1,
-                    ImageData = LoadImageData("wwwroot/images/prizes/multicable charger.jpg"),
-                    Quantity = 50
+                    ImageData = LoadImageData("wwwroot/images/prizes/multicable charger.jpg") // Load image data
                 },
                 new Product
                 {
@@ -102,8 +113,7 @@ namespace GameCraft.Data
                     Description = "Carry a little bit of alien mischief with you everywhere! This adorable Stitch keychain features everyone's favorite mischievous blue alien, perfect for adding a touch of fun to your keys or bag.",
                     Price = 300.00m,
                     CategoryId = 2,
-                    ImageData = LoadImageData("wwwroot/images/prizes/stitch keychain.jpeg"),
-                    Quantity = 30
+                    ImageData = LoadImageData("wwwroot/images/prizes/stitch keychain.jpeg") // Load image data
                 },
                 new Product
                 {
@@ -112,12 +122,11 @@ namespace GameCraft.Data
                     Description = "Dive into next-gen gaming with the PlayStation 5 console. Experience lightning-fast loading, immersive haptic feedback, adaptive triggers, and incredible 3D audio, bringing game worlds to life like never before.",
                     Price = 1000.00m,
                     CategoryId = 4,
-                    ImageData = LoadImageData("wwwroot/images/prizes/PS5 console.jpg"),
-                    Quantity = 5
+                    ImageData = LoadImageData("wwwroot/images/prizes/PS5 console.jpg") // Load image data
                 }
             );
 
-                        // Load default avatar image data once
+            // Load default avatar image data once
             byte[] defaultAvatarData = LoadImageData("wwwroot/images/default-avatar.png");
             if (defaultAvatarData == null)
             {
@@ -126,12 +135,11 @@ namespace GameCraft.Data
                 Console.WriteLine("Warning: default-avatar.png not found. Default avatars will be null.");
             }
 
-            // Seed Customers (these are static initial users and should remain)
             modelBuilder.Entity<Customer>().HasData(
                 new Customer
                 {
                     CustomerId = 1,
-                    Name = "Admin User",
+                    Name = "Admin",
                     Email = "admin@example.com",
                     Phone = "555-1234",
                     Address = "123 Admin St",
@@ -144,12 +152,11 @@ namespace GameCraft.Data
                     AdminKey = "YourSecureAdminKey123",
                     AvatarImageData = defaultAvatarData,
                     PrizePoints = 1000,
-                    // AdminKey = "your_admin_db_key" // Add if you want a specific admin key in DB
                 },
                 new Customer
                 {
                     CustomerId = 2,
-                    Name = "Regular Customer",
+                    Name = "Customer",
                     Email = "customer@example.com",
                     Phone = "555-5678",
                     Address = "456 Customer Ave",
@@ -161,44 +168,17 @@ namespace GameCraft.Data
                     Salt = "bW5vcGxxcnN0dXZ3eHk=",
                     AvatarImageData = defaultAvatarData,
                     PrizePoints = 100,
-                },
-                new Customer
-                {
-                    CustomerId = 3,
-                    Name = "Employee User",
-                    Email = "employee@example.com",
-                    Phone = "555-8765",
-                    Address = "789 Employee Rd",
-                    City = "EmployeeCity",
-                    PostCode = "54321",
-                    UserType = 2,
-                    // Password: "EmployeePass789!"
-                    PasswordHash = "AQAAAAEAACcQAAAAEI5vYc9Lx3hT6GqwYmZuN1Jf8Wl7S2Xz0mg=",
-                    Salt = "eHl6YWJjZGVmZ2hpag==",
-                    AvatarImageData = defaultAvatarData,
-                    PrizePoints = 500,
                 }
             );
-
-            // --- REMOVED SEED DATA FOR DYNAMIC TABLES (AuditLogs, RedeemedPrizes, DailyTicketCollections) ---
-            // These tables should be populated by your application's runtime logic (e.g., controller actions)
-            // if you want their data to be truly dynamic.
-            // Keeping them in HasData with dynamic DateTime values causes the "model changes" error.
-            // --- END REMOVED SEED DATA ---
         }
 
         // Helper method to load image data from file
         private byte[] LoadImageData(string filePath)
         {
-            // Using Path.Combine for better cross-platform compatibility
-            string fullPath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
-
-            if (File.Exists(fullPath))
+            if (File.Exists(filePath))
             {
-                return File.ReadAllBytes(fullPath);
+                return File.ReadAllBytes(filePath);
             }
-            // Optionally, log an error if the file is not found
-            System.Diagnostics.Debug.WriteLine($"WARNING: Image file not found at {fullPath}");
             return null; // Return null if the file does not exist
         }
     }
