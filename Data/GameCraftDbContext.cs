@@ -41,13 +41,36 @@ namespace GameCraft.Data
                 new Icon { IconId = 3, Name = "Browse Prizes", Description = "See all cool rewards.", ImageData = File.ReadAllBytes("wwwroot/images/prize icon.png"), Order = 3 },
                 new Icon { IconId = 4, Name = "Redeem", Description = "Choose and claim your prize!", ImageData = File.ReadAllBytes("wwwroot/images/redeem icon.png"), Order = 4 }
             );
-            // Seed initial data for Promotions (example)
+
+            // Seed initial data for Promotions (ONLY THE FIRST TWO ARE KEPT)
+            // IMPORTANT: Replaced DateTime.UtcNow with static DateTime values
             modelBuilder.Entity<Promotion>().HasData(
-                new Promotion { PromotionId = 1, Title = "GameCraft Card", Description = "Get your official GameCraft card!", ImageData = File.ReadAllBytes("wwwroot/images/GameCard card.png"), Price = 10.00m, BackgroundColor = "#007bff", TextColor = "#ffffff" },
-                new Promotion { PromotionId = 2, Title = "Bonus Tickets!", Description = "Get 500 bonus tickets with any purchase over $50!", ImageData = File.ReadAllBytes("wwwroot/images/Bonus-tickets.png"), Price = 0.00m, BackgroundColor = "#28a745", TextColor = "#ffffff" }
+                new Promotion
+                {
+                    PromotionId = 1,
+                    Title = "Sign Up & Get 500 Bonus Tickets!",
+                    Description = "Join GameCraft today and kickstart your rewards with 500 FREE tickets!",
+                    ImageData = File.ReadAllBytes("wwwroot/images/Bonus-tickets.png"),
+                    ButtonText = "Register Now",
+                    ButtonUrl = "/Account/Register",
+                    BackgroundColor = "#FFD700", // Gold-like color
+                    TextColor = "#333333", // Dark text for contrast
+                },
+                new Promotion
+                {
+                    PromotionId = 2,
+                    Title = "Purchase Your GameCraft Card!",
+                    Description = "Get your official GameCraft card for seamless ticket tracking and exclusive perks!",
+                    ImageData = File.ReadAllBytes("wwwroot/images/GameCard card.png"),
+                    ButtonText = "Get Your Card",
+                    ButtonUrl = "Home/GetCard",
+                    BackgroundColor = "#00BFFF", // Deep Sky Blue
+                    TextColor = "#FFFFFF",
+                }
             );
 
-            modelBuilder.Entity<UserType>().HasKey(u => u.Id);
+
+        modelBuilder.Entity<UserType>().HasKey(u => u.Id);
             modelBuilder.Entity<UserType>()
                 .Property(u => u.Id)
                 .ValueGeneratedNever();
