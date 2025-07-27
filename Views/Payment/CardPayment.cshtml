@@ -1,0 +1,39 @@
+﻿@model GameCraft.Models.Promotion 
+@* Model is the Promotion object for the GameCraft Card *@
+
+@{
+    ViewData["Title"] = "Select Payment Method";
+}
+
+<div class="payment-selection-section content-section">
+    <h2 class="section-title">Select Payment Method</h2>
+    @* --- CRUCIAL FIX: Removed "Prize Points" from subtitle text --- *@
+    <p class="section-subtitle">You are purchasing: <strong>@Model.Title</strong> for <strong>$@Model.Price.ToString("F2")</strong></p>
+    @* --- END CRUCIAL FIX --- *@
+           
+            <h3><i class="fas fa-credit-card"></i> Debit Card</h3>
+            <p>Pay securely with your debit card.</p>
+            <a href="@Url.Action("Index", "Checkout", new { promotionId = Model.PromotionId, paymentMethod = "DebitCard" })" class="btn btn-primary payment-button">Pay with Debit Card</a>
+            @* --- END CRUCIAL FIX --- *@
+        </div>
+
+        <div class="payment-option-card">
+            <h3><i class="fab fa-paypal"></i> PayPal</h3>
+            <p>Pay easily and securely with your PayPal account.</p>
+            <a href="@Url.Action("Index", "Checkout", new { promotionId = Model.PromotionId, paymentMethod = "PayPal" })" class="btn btn-primary payment-button">Pay with PayPal</a>
+        </div>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" style="margin-top: 20px;">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // No JavaScript is needed on this page for payment selection.
+        // Ensure Font Awesome is linked in _Layout.cshtml for icons to display.
+        // E.g., <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    </script>
+}

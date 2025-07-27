@@ -3,9 +3,54 @@
     ViewBag.Title = "GameCraft - Redeem Your Arcade Tickets!";
 }
 
+@* Display Success Message from TempData *@
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-4 mx-auto max-w-4xl text-center p-3 rounded-lg shadow-lg" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
 <section class="hero content-section">
     <h1>TURN YOUR ARCADE TICKETS INTO AWESOME REWARDS!</h1>
     <button class="connect-account-button" onclick="location.href='/Home/ConnectAccount'">CONNECT YOUR ACCOUNT</button>
+</section>
+
+<section class="promotions-carousel content-section">
+    <h2>Current Promotions</h2>
+    <div class="carousel-container">
+        <div class="carousel-track">
+            @if (ViewBag.CarouselItems != null && ViewBag.CarouselItems.Count > 0)
+            {
+                foreach (var item in ViewBag.CarouselItems)
+                {
+                    if (item.Type == "Promotion")
+                    {
+                        <div class="carousel-slide">
+                            <div class="promo-card" style="background-color: @item.BackgroundColor; color: @item.TextColor;">
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="data:image/png;base64,@item.ImageUrl" alt="@item.Title" onerror="this.onerror=null;this.src='/Images/placeholder_product.png';" />
+                                }
+                                <h3>@item.Title</h3>
+                                <p>@item.Description</p>
+                                <a href="@item.ButtonUrl" class="promo-button" style="background-color: @item.TextColor; color: @item.BackgroundColor;" title="">@item.ButtonText</a>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+            else
+            {
+                <div class="carousel-slide">
+                    <div class="promo-card" style="border: none; box-shadow: none; background-color: transparent;">
+                        <p style="color: #eee; text-align: center; font-size: 1.2em;">No current promotions available.</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="carousel-dots"></div>
 </section>
 
 <section class="featured-prizes content-section">
@@ -35,29 +80,138 @@
 <section class="how-it-works content-section">
     <h2>How it works</h2>
     <div class="steps">
-        <div class="step">
-            <div class="icon-image">
-                <img src="~/Images/play&earn icon.png" alt="Play & Earn Icon" />
-            </div>
-            <p><b>Play &amp; Earn:</b> Win Tickets playing games!</p>
-        </div>
-        <div class="step">
-            <div class="icon-image">
-                <img src="~/Images/link icon.png" alt="Connect Account Icon" />
-            </div>
-            <p><b>Connect Account:</b> Link your arcade ID online</p>
-        </div>
-        <div class="step">
-            <div class="icon-image">
-                <img src="~/Images/prize icon.png" alt="Browse Prizes Icon" />
-            </div>
-            <p><b>Browse Prizes:</b> See all cool rewards.</p>
-        </div>
-        <div class="step">
-            <div class="icon-image">
-                <img src="~/Images/redeem icon.png" alt="Redeem Icon" />
-            </div>
-            <p><b>Redeem:</b> Choose and claim your prize!</p>
-        </div>
+        @if (ViewBag.HowItWorksIcons != null)
+        {
+            foreach (var icon in ViewBag.HowItWorksIcons)
+            {
+                <div class="step">
+                    <div class="icon-image">
+                        <img src="data:image/png;base64,@icon.ImageData" alt="@icon.Name" />
+                    </div>
+                    <p><b>@icon.Name:</b> @icon.Description</p>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No "How it works" steps available.</p>
+        }
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const carouselTrack = document.querySelector('.carousel-track');
+            const slides = Array.from(document.querySelectorAll('.carousel-slide'));
+            const dotsContainer = document.querySelector('.carousel-dots');
+
+            console.log("Fading Carousel script initialized.");
+            console.log("Number of slides found:", slides.length);
+
+            // Exit if no actual slides are found or only the fallback message is present
+            if (slides.length === 0 || (slides.length === 1 && slides[0].querySelector('p') && slides[0].querySelector('p').textContent.includes('No current promotions available'))) {
+                console.warn("No actual carousel slides found or only fallback message. Skipping fading carousel initialization.");
+                if (dotsContainer) {
+                    dotsContainer.style.display = 'none'; // Hide dots if no actual slides
+                }
+                return; // Exit the script
+            }
+
+            let slideIndex = 0;
+            let autoSlideInterval;
+            const intervalTime = 3000;
+            // Function to create navigation dots
+            const createDots = () => {
+                dotsContainer.innerHTML = '';
+                if (slides.length > 1) { // Only create dots if there's more than one slide
+                    dotsContainer.style.display = 'flex';
+                    for (let i = 0; i < slides.length; i++) {
+                        const dot = document.createElement('span');
+                        dot.classList.add('dot');
+                        dot.addEventListener('click', () => {
+                            currentSlide(i);
+                            resetAutoSlide();
+                        });
+                        dotsContainer.appendChild(dot);
+                    }
+                    console.log("[createDots] Dots created.");
+                } else {
+                    dotsContainer.style.display = 'none'; // Hide dots if only one slide
+                    console.log("[createDots] Only one slide, dots hidden.");
+                }
+            };
+
+            // Function to show a specific slide (and hide others)
+            const showSlides = (n) => {
+                let i;
+                const dots = document.querySelectorAll('.dot');
+
+                // Handle wrapping around for slide index
+                if (n >= slides.length) { slideIndex = 0; }
+                else if (n < 0) { slideIndex = slides.length - 1; }
+                else { slideIndex = n; }
+
+                // Hide all slides and remove active class
+                for (i = 0; i < slides.length; i++) {
+                    slides[i].style.display = "none";
+                    slides[i].classList.remove('active-slide', 'fade');
+                }
+
+                // Remove active class from all dots
+                for (i = 0; i < dots.length; i++) {
+                    dots[i].classList.remove("active");
+                }
+
+                // Show the current slide and add active/fade classes
+                slides[slideIndex].style.display = "flex"; // Use flex to center content
+                slides[slideIndex].classList.add('active-slide', 'fade');
+                if (dots[slideIndex]) { // Ensure dot exists before adding class
+                    dots[slideIndex].classList.add("active");
+                }
+                console.log(`[showSlides] Displaying slide index: ${slideIndex}`);
+            };
+
+            // Advance to the next slide
+            const plusSlides = (n) => {
+                showSlides(slideIndex + n);
+            };
+
+            // Go to a specific slide from dot click
+            const currentSlide = (n) => {
+                showSlides(n);
+            };
+
+            // Auto-advance function
+            const autoAdvance = () => {
+                plusSlides(1); // Move to the next slide
+            };
+
+            // Reset the auto-slide interval
+            const resetAutoSlide = () => {
+                clearInterval(autoSlideInterval);
+                if (slides.length > 1) { // Only start auto-slide if there's more than one slide
+                    autoSlideInterval = setInterval(autoAdvance, intervalTime);
+                    console.log("[resetAutoSlide] Auto-slide restarted.");
+                } else {
+                    console.log("[resetAutoSlide] Only one slide, auto-slide stopped.");
+                }
+            };
+
+            // Initial setup on DOMContentLoaded
+            createDots(); // Create dots based on initial slide count
+            showSlides(slideIndex); // Show the first slide
+            resetAutoSlide(); // Start auto-advancing
+
+            // Optional: Pause auto-slide on hover over the carousel container
+            const carouselContainer = document.querySelector('.carousel-container');
+            if (carouselContainer) {
+                carouselContainer.addEventListener('mouseenter', () => {
+                    clearInterval(autoSlideInterval);
+                    console.log("[Hover Event] Auto-slide paused on hover.");
+                });
+                carouselContainer.addEventListener('mouseleave', resetAutoSlide);
+            }
+        });
+    </script>
+}

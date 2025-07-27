@@ -22,18 +22,65 @@ namespace GameCraft.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
+            Debug.WriteLine("HomeController.Index() started.");
+
             // Check if the user is an admin
             var isAdmin = HttpContext.Session.GetString("IsAdmin");
             if (isAdmin != null)
             {
                 ViewBag.IsAdmin = true; // Indicate that the user is an admin
             }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId != null)
             {
-                var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == int.Parse(userId));
+                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == int.Parse(userId));
                 ViewBag.PrizePoints = customer?.PrizePoints ?? 0; // Pass prize points to the view
+                Debug.WriteLine($"User  ID: {userId}, Prize Points: {ViewBag.PrizePoints}");
             }
+
+            // Fetch "How it works" icons from the database
+            var howItWorksIcons = await _context.Icons
+                                                .OrderBy(i => i.Order)
+                                                .ToListAsync();
+
+            // Convert ImageData to Base64 string for each icon
+            var iconViewModels = howItWorksIcons.Select(icon => new
+            {
+                icon.IconId,
+                icon.Name,
+                icon.Description,
+                ImageData = Convert.ToBase64String(icon.ImageData) // Convert binary data to Base64 string
+            }).ToList();
+
+            ViewBag.HowItWorksIcons = iconViewModels;
+
+
+            // Fetch carousel items from the database
+            var carouselItems = new List<CarouselItemViewModel>();
+
+            // Add Promotions to carousel
+            var promotions = await _context.Promotions
+                                           .OrderBy(pr => pr.PromotionId) // Or by a specific display order field
+                                           .Take(2) // Example: take top 2 promotions
+                                           .ToListAsync();
+            foreach (var promotion in promotions)
+            {
+                carouselItems.Add(new CarouselItemViewModel
+                {
+                    Type = "Promotion",
+                    Title = promotion.Title,
+                    Description = promotion.Description,
+                    ImageUrl = Convert.ToBase64String(promotion.ImageData), // Convert binary data to Base64 string
+                    ButtonText = "Learn More",
+                    ButtonUrl = Url.Action("Details", "Promotion", new { id = promotion.PromotionId }),
+                    BackgroundColor = promotion.BackgroundColor,
+                    TextColor = promotion.TextColor
+                });
+            }
+
+            // Pass carousel items to the view
+            ViewBag.CarouselItems = carouselItems;
 
             // Retrieve 3 random products
             var randomProducts = await _context.Products
@@ -43,6 +90,14 @@ namespace GameCraft.Controllers
             ViewBag.RandomProducts = randomProducts; // Pass the random products to the view
 
             return View();
+        }
+
+
+
+        public IActionResult GetCard()
+        {
+        // This action simply returns the GetCard view.
+        return View();
         }
 
         public IActionResult ConnectAccount() 

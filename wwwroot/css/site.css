@@ -596,6 +596,433 @@ h2 {
     margin-bottom: 15px;
 }
 
+/* --- Carousel Specific Styles (Integrated into Featured Prizes Section) --- */
+
+.carousel-container {
+    position: relative;
+    width: 100%; /* Ensures it takes full width of its parent (.featured-prizes.content-section) */
+    max-width: 900px; /* Adjusted max-width for the container to give more room for cards */
+    height: 400px; /* Explicit height to contain absolutely positioned slides */
+    margin: 0 auto; /* Ensures the carousel container itself is horizontally centered */
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Re-added box-shadow */
+    background-color: #2a2a2a; /* Re-added background color */
+    padding: 10px;
+}
+
+.carousel-track {
+    position: relative; /* Essential for absolutely positioned slides */
+    width: 100%;
+    height: 100%; /* Fill the container height */
+}
+
+.carousel-slide {
+    position: absolute; /* Position slides on top of each other for fading */
+    top: 0;
+    left: 50%; /* Center the slide horizontally */
+    transform: translateX(-50%); /* Adjust for true centering */
+    width: 100%; /* Take full width of carousel-track */
+    height: 100%; /* Take full height of carousel-track */
+    display: none; /* Hidden by default, controlled by JavaScript */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* Ensures content (prize/promo card) is centered within the slide */
+    opacity: 0; /* Start hidden for fade-in */
+    transition: opacity 1.5s ease-in-out; /* Fade transition */
+    z-index: 1; /* Default z-index */
+}
+
+    /* Style for active (visible) slides in fading carousel */
+    .carousel-slide.active-slide {
+        display: flex; /* Show the active slide */
+        opacity: 1; /* Full opacity for active slides */
+        z-index: 2; /* Bring active slides slightly forward */
+    }
+
+    /* Prize Card Styling within the carousel (more specific override) */
+    .carousel-slide .prize-card {
+        background-color: #1a1a1a;
+        border: 1px solid #00ffcc;
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+        width: 90%; /* Adjusted width to fit within slide */
+        max-width: 950px; /* CHANGE: Increased max-width for prize cards (the glowing box) */
+        box-sizing: border-box;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .carousel-slide .prize-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.7);
+        }
+
+        .carousel-slide .prize-card img {
+            width: auto; /* CHANGE: Allow width to be determined by max-width */
+            max-width: 300px; /* CHANGE: Set a fixed max-width for the image itself */
+            height: 250px; /* Kept height for consistency, adjust if needed */
+            object-fit: contain;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            background-color: #333;
+            padding: 0;
+            display: block; /* CHANGE: Make it a block element to apply margin: auto */
+            margin: 0 auto 15px auto; /* CHANGE: Center the image horizontally within the card */
+        }
+
+        .carousel-slide .prize-card h3 {
+            color: #ffffff;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .carousel-slide .prize-card p {
+            color: #00ffcc;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+    .carousel-slide .quick-view-button {
+        background-color: #007bff;
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.9em;
+        transition: background-color 0.3s ease;
+    }
+
+        .carousel-slide .quick-view-button:hover {
+            background-color: #0056b3;
+        }
+
+/* --- New Promotional Card Styles --- */
+.promo-card {
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    width: 90%; /* Adjusted width to fit within slide */
+    max-width: 950px; /* CHANGE: Increased max-width for promo cards (the glowing box) */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px; /* Ensure consistent height with prize cards */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for promo cards */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .promo-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* Slight white glow on hover */
+    }
+
+    .promo-card img {
+        width: auto; /* CHANGE: Allow width to be determined by max-width */
+        max-width: 300px; /* CHANGE: Set a fixed max-width for the image itself */
+        height: 250px; /* Kept height for consistency, adjust if needed */
+        object-fit: contain;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        background-color: #333;
+        padding: 0;
+        display: block; /* CHANGE: Make it a block element to apply margin: auto */
+        margin: 0 auto 15px auto; /* CHANGE: Center the image horizontally within the card */
+    }
+
+    .promo-card h3 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+
+    .promo-card p {
+        font-size: 1em;
+        margin-bottom: 20px;
+    }
+
+    .promo-card .promo-button {
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: opacity 0.3s ease, transform 0.2s ease;
+    }
+
+        .promo-card .promo-button:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+
+/* --- Navigation Dots --- */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.dot {
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.6s ease;
+}
+
+    .dot.active {
+        background-color: #00ffcc;
+    }
+
+/* Fading animation */
+@keyframes fade {
+    from {
+        opacity: .4
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+/* Caption text */
+.text-caption {
+    color: #f2f2f2;
+    font-size: 15px;
+    padding: 8px 12px;
+    position: absolute;
+    bottom: 8px;
+    width: 100%;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 0 0 8px 8px;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+    color: #f2f2f2;
+    font-size: 12px;
+    padding: 8px 12px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 8px 0 8px 0;
+}
+
+
+/* --- Responsive Adjustments for Carousel --- */
+@media (max-width: 768px) {
+    .carousel-container {
+        height: 350px;
+    }
+
+    .carousel-slide .prize-card {
+        max-width: 750px; /* Adjusted max-width for prize cards on tablets */
+    }
+
+    .promo-card {
+        max-width: 750px; /* Adjusted max-width for promo cards on tablets */
+    }
+
+    .carousel-slide .prize-card img {
+        max-width: 250px; /* CHANGE: Adjusted max-width for images on tablets */
+        height: 180px;
+    }
+
+    .promo-card img {
+        max-width: 250px; /* CHANGE: Adjusted max-width for images on tablets */
+        height: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-container {
+        height: 300px;
+    }
+
+    .carousel-slide .prize-card {
+        max-width: 450px; /* Adjusted max-width for prize cards on mobile */
+    }
+
+    .promo-card {
+        max-width: 450px; /* Adjusted max-width for promo cards on mobile */
+    }
+
+    .carousel-slide .prize-card img {
+        max-width: 180px; /* CHANGE: Adjusted max-width for images on mobile */
+        height: 120px;
+    }
+
+    .promo-card img {
+        max-width: 180px; /* CHANGE: Adjusted max-width for images on mobile */
+        height: 120px;
+    }
+
+    .text-caption {
+        font-size: 11px
+    }
+}
+
+/* Get Your Card Page Styles - Aesthetic Enhancements */
+
+/* Keyframes for subtle background glow animation */
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 10px rgba(0, 255, 204, 0.2), 0 0 20px rgba(0, 255, 204, 0.1);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(0, 255, 204, 0.4), 0 0 40px rgba(0, 255, 204, 0.2);
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba(0, 255, 204, 0.2), 0 0 20px rgba(0, 255, 204, 0.1);
+    }
+}
+
+.get-card-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px); /* Adjust based on header/footer height */
+    background-color: transparent; /* Allows global body background to show */
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+    /* CHANGE: Added subtle background glow animation */
+    animation: pulse-glow 4s infinite alternate ease-in-out;
+}
+
+    .get-card-section .card-content-wrapper {
+        background-color: rgba(0, 0, 0, 0.5); /* Slightly darker transparent background for more contrast */
+        border-radius: 10px;
+        border: 2px solid #00ffcc; /* Neon border */
+        box-shadow: 0 0 25px rgba(0, 255, 204, 0.7); /* CHANGE: Increased neon glow for the card */
+        padding: 50px; /* CHANGE: Increased padding for more breathing room */
+        width: 90%;
+        max-width: 700px; /* CHANGE: Increased max-width for the content box */
+        text-align: center;
+        color: white; /* White text for all content inside */
+        transition: all 0.3s ease-in-out; /* Smooth transition for hover effects on the card itself */
+    }
+
+        .get-card-section .card-content-wrapper:hover {
+            transform: translateY(-5px); /* Subtle lift on hover */
+            box-shadow: 0 0 35px rgba(0, 255, 204, 0.9); /* Stronger glow on hover */
+        }
+
+    .get-card-section .gamecraft-card-image {
+        max-width: 300px; /* CHANGE: Slightly increased image size */
+        height: auto;
+        object-fit: contain;
+        margin-bottom: 40px; /* CHANGE: Increased margin below image */
+        border-radius: 8px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Stronger shadow for the image */
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .get-card-section .gamecraft-card-image:hover {
+            transform: scale(1.05); /* Slight zoom on image hover */
+        }
+
+    .get-card-section h2 {
+        font-size: 3em; /* CHANGE: Larger heading font size */
+        margin-bottom: 20px; /* CHANGE: Increased margin below heading */
+        color: #00ffcc; /* CHANGE: Set heading color to neon green */
+        text-shadow: 0 0 10px rgba(0, 255, 204, 0.8); /* CHANGE: Added neon text shadow */
+        font-weight: bold; /* Ensure bold text */
+    }
+
+    .get-card-section p {
+        font-size: 1.2em; /* CHANGE: Slightly larger paragraph font size */
+        line-height: 1.8; /* CHANGE: Increased line height for readability */
+        margin-bottom: 40px; /* CHANGE: Increased margin below paragraph */
+        color: #e0e0e0; /* Slightly lighter white for better contrast */
+    }
+
+    .get-card-section .get-card-button {
+        background-color: #e6005c; /* CHANGE: Pinkish-red button color for a pop */
+        color: white;
+        padding: 18px 40px; /* CHANGE: Larger padding for a more prominent button */
+        border: none;
+        border-radius: 8px; /* CHANGE: Slightly more rounded corners */
+        cursor: pointer;
+        font-size: 1.4em; /* CHANGE: Larger font size for button text */
+        font-weight: bold;
+        text-decoration: none;
+        transition: all 0.3s ease; /* Smooth transition for all button properties */
+        box-shadow: 0 0 15px rgba(230, 0, 92, 0.5); /* CHANGE: Pinkish-red glow for the button */
+    }
+
+        .get-card-section .get-card-button:hover {
+            background-color: #cc004c; /* Darker pinkish-red on hover */
+            transform: translateY(-3px) scale(1.02); /* More pronounced lift and slight scale */
+            box-shadow: 0 0 25px rgba(230, 0, 92, 0.8); /* Stronger glow on hover */
+        }
+
+/* Responsive adjustments for Get Your Card page */
+@media (max-width: 768px) {
+    .get-card-section .card-content-wrapper {
+        padding: 40px;
+        max-width: 95%;
+    }
+
+    .get-card-section .gamecraft-card-image {
+        max-width: 250px;
+        margin-bottom: 30px;
+    }
+
+    .get-card-section h2 {
+        font-size: 2.2em;
+        margin-bottom: 15px;
+    }
+
+    .get-card-section p {
+        font-size: 1.1em;
+        margin-bottom: 30px;
+    }
+
+    .get-card-section .get-card-button {
+        padding: 15px 30px;
+        font-size: 1.2em;
+    }
+}
+
+@media (max-width: 480px) {
+    .get-card-section .card-content-wrapper {
+        padding: 25px;
+    }
+
+    .get-card-section .gamecraft-card-image {
+        max-width: 180px;
+        margin-bottom: 25px;
+    }
+
+    .get-card-section h2 {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+    }
+
+    .get-card-section p {
+        font-size: 1em;
+        margin-bottom: 25px;
+    }
+
+    .get-card-section .get-card-button {
+        padding: 12px 25px;
+        font-size: 1.1em;
+    }
+}
+
 /* How It Works Section */
 
 .how-it-works {
@@ -1275,6 +1702,520 @@ form {
     color: #0d6efd;
     border: 1px solid rgba(0, 123, 255, 0.2);
 }
+
+/* --- Order History Container Styling --- */
+.order-history-card {
+    background-color: #222222; /* Dark background for the entire card */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5); /* Stronger neon glow */
+    overflow: hidden; /* Ensures rounded corners are respected by children */
+    padding: 0; /* Remove padding here, apply to header/list items */
+    margin-top: 30px; /* More spacing from elements above */
+    border: 2px solid #00ffcc; /* Neon border */
+}
+
+/* --- Header for the custom list/table --- */
+.order-history-header {
+    display: flex;
+    background-color: #0d0d0d; /* Even darker background for header */
+    padding: 15px 25px; /* More padding */
+    font-weight: bold;
+    color: #00ffcc; /* Accent color for headers */
+    border-bottom: 2px solid #00ffcc; /* Stronger neon separator */
+    text-transform: uppercase;
+    font-size: 0.9em; /* Slightly larger font */
+    letter-spacing: 0.5px; /* Add some letter spacing */
+}
+
+    .order-history-header div {
+        flex-shrink: 0; /* Prevent header columns from shrinking */
+        padding-right: 15px; /* Spacing between header columns */
+    }
+
+    /* Adjust header column widths to match content widths */
+    .order-history-header .header-col-id {
+        flex: 0 0 10%;
+    }
+
+    .order-history-header .header-col-date {
+        flex: 0 0 18%; /* Slightly more width for date */
+    }
+
+    .order-history-header .header-col-items {
+        flex: 1; /* Takes remaining space */
+    }
+
+    .order-history-header .header-col-total {
+        flex: 0 0 15%;
+        text-align: right;
+        padding-right: 0; /* No padding-right here as it's the last visible column */
+    }
+
+    /* REMOVED: Actions header */
+    .order-history-header .header-col-actions {
+        display: none; /* HIDE: Remove actions header */
+    }
+
+
+/* --- List Item (Table Row) Styling --- */
+.order-history-list {
+    list-style: none; /* Remove bullet points */
+    padding: 0;
+    margin: 0;
+}
+
+    .order-history-list .order-list-item {
+        background-color: #1a1a1a; /* Darker background for rows */
+        margin-bottom: 0;
+        padding: 15px 25px; /* More padding for the entire row content */
+        border-bottom: 1px solid #333; /* Subtle separator */
+        color: #ffffff; /* White text for content */
+        font-size: 0.95em;
+        box-shadow: none;
+        display: flex; /* Make the li a flex container */
+        align-items: center; /* Vertically align items */
+        position: relative; /* IMPORTANT: Needed for absolute positioning of the link overlay */
+        cursor: pointer; /* Indicate it's clickable */
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover transition */
+    }
+
+        /* Apply border-radius to the last list item for bottom corners */
+        .order-history-list .order-list-item:last-child {
+            border-bottom: none;
+            border-radius: 0 0 8px 8px; /* Rounded bottom corners for the last row */
+        }
+
+        /* --- Clickable Overlay (<a> tag covering the whole row) --- */
+        .order-history-list .order-list-item .order-detail-link-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1; /* Place it above content for clickability, but below any actual buttons if they were present */
+            /* background-color: rgba(0,255,204,0.05); /* Optional: Uncomment for visual debugging of the clickable area */
+        }
+
+        /* --- Content of the Order Row (the div containing Order ID, Date, Items, Total Cost) --- */
+        .order-history-list .order-list-item .order-row-content {
+            display: flex; /* Make the content div a flex container for its internal spans */
+            flex-grow: 1; /* Allow the content to take up all available space */
+            text-decoration: none; /* Ensure no default link underline if this were an <a> */
+            color: inherit; /* Inherit text color from the parent li */
+            align-items: flex-start; /* Align content at the top if items wrap */
+            z-index: 2; /* Ensure content is above the overlay */
+        }
+
+            /* Adjust data column widths within .order-row-content */
+            .order-history-list .order-list-item .order-row-content .order-id-cell {
+                flex: 0 0 10%;
+                font-weight: bold;
+                color: #00ccff; /* Blue accent for ID */
+            }
+
+            .order-history-list .order-list-item .order-row-content .order-date-cell {
+                flex: 0 0 18%;
+                color: #e0e0e0;
+            }
+
+            .order-history-list .order-list-item .order-row-content .order-items-cell {
+                flex: 1;
+                word-wrap: break-word;
+                color: #e0e0e0;
+            }
+
+            .order-history-list .order-list-item .order-row-content .order-total-cell {
+                flex: 0 0 15%;
+                text-align: right;
+                font-weight: bold;
+                color: #00ffcc; /* Neon green for total */
+            }
+
+
+        /* Hover effect for clickable rows */
+        .order-history-list .order-list-item:hover {
+            background-color: #2a2a2a; /* Slightly darker on hover */
+            transform: translateY(-3px); /* Subtle lift effect */
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.4); /* Subtle neon glow on hover */
+        }
+            /* If you want the text to change color on hover as well */
+            .order-history-list .order-list-item:hover .order-row-content .order-id-cell,
+            .order-history-list .order-list-item:hover .order-row-content .order-date-cell,
+            .order-history-list .order-list-item:hover .order-row-content .order-items-cell,
+            .order-history-list .order-list-item:hover .order-row-content .order-total-cell {
+                color: #fff; /* White text on hover for all cells */
+            }
+
+
+    /* REMOVED: Action buttons container */
+    .order-history-list .order-actions-container {
+        display: none; /* HIDE: Remove actions container */
+    }
+
+    /* Adjustments for the specific ul/li for products within the "Items" cell */
+    .order-history-list .order-list-item .order-row-content .order-items-cell ul {
+        list-style-type: none; /* Remove default list bullets */
+        padding: 0;
+        margin: 0;
+    }
+
+        .order-history-list .order-list-item .order-row-content .order-items-cell ul li {
+            padding: 0;
+            margin: 0;
+            line-height: 1.4; /* Adjust line height for stacked items */
+            display: block; /* Ensure each item is on its own line */
+            font-size: 0.9em; /* Slightly smaller font for individual items */
+            color: #ccc; /* Lighter color for item details */
+        }
+
+/* Style for "No orders yet" message */
+.no-orders-message {
+    color: #e0e0e0; /* Light grey color */
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    font-size: 1.1em;
+}
+
+
+/* Order Detail Page Styling (if not already defined or needs update) */
+.order-detail-page {
+    background-color: #222222; /* Dark background for the main content area */
+    color: #ffffff; /* White text for general content */
+    padding: 30px; /* More padding */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.7); /* Stronger neon glow */
+    max-width: 900px; /* Wider content box */
+    margin: 40px auto; /* Center the box horizontally and add vertical spacing */
+    box-sizing: border-box;
+    border: 2px solid #00ffcc; /* Neon border */
+}
+
+    /* Page Title (e.g., "Order Details - Order #1") */
+    .order-detail-page h2 {
+        color: #00ffcc; /* Accent color for the main heading */
+        border-bottom: 2px solid #00ffcc; /* Underline for emphasis */
+        padding-bottom: 15px; /* More padding */
+        margin-bottom: 30px; /* More margin */
+        text-align: center;
+        font-size: 2.8em; /* Larger font for the main title */
+        text-shadow: 0 0 10px rgba(0, 255, 204, 0.8); /* Neon text shadow */
+    }
+
+    /* Sub-headings (e.g., "Shipping Information", "Items Ordered") */
+    .order-detail-page h3 {
+        color: #00ccff; /* A different accent color for sub-headings */
+        border-bottom: 1px solid #444444; /* Subtle underline */
+        padding-bottom: 10px;
+        margin-top: 35px; /* More margin */
+        margin-bottom: 20px;
+        font-size: 1.8em; /* Larger font */
+        text-shadow: 0 0 5px rgba(0, 204, 255, 0.5); /* Subtle blue glow */
+    }
+
+/* General info paragraphs (Order ID, Date, Total Amount) */
+.order-info p,
+.shipping-info p {
+    margin-bottom: 10px; /* Spacing between info lines */
+    line-height: 1.8; /* More line height for readability */
+    font-size: 1.1em;
+}
+
+.order-info strong,
+.shipping-info strong {
+    color: #999999; /* Slightly lighter shade for labels */
+    display: inline-block;
+    min-width: 150px; /* Increased min-width to align values better */
+    font-weight: normal; /* Labels can be normal weight */
+}
+
+.order-info span,
+.shipping-info span {
+    color: #e0e0e0; /* Value color */
+    font-weight: bold; /* Values can be bold */
+}
+
+
+/* Styling for the Items Ordered table */
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px; /* More margin */
+    background-color: #1a1a1a; /* Darker background for the table body */
+    border-radius: 8px; /* Rounded corners for the table */
+    overflow: hidden; /* Ensures rounded corners */
+}
+
+    .items-table thead tr {
+        background-color: #0d0d0d; /* Even darker header for the table */
+        color: #00ffcc; /* Accent color for table headers */
+    }
+
+    .items-table th,
+    .items-table td {
+        padding: 15px 20px; /* More padding inside table cells */
+        text-align: left;
+        border-bottom: 1px solid #333333; /* Darker separator */
+    }
+
+    .items-table th {
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.95em; /* Slightly larger font */
+        letter-spacing: 0.5px;
+    }
+
+    .items-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .items-table tbody tr:nth-child(even) {
+        background-color: #2a2a2a; /* Slightly different background for even rows */
+    }
+
+    /* Align numeric columns to the right for better readability */
+    .items-table td:nth-child(2), /* Quantity */
+    .items-table td:nth-child(3), /* Price Each */
+    .items-table td:nth-child(4) { /* Subtotal */
+        text-align: right;
+        font-weight: bold;
+        color: #00ffcc; /* Neon green for numeric values */
+    }
+
+/* Back button styling */
+.back-button {
+    display: inline-block;
+    background-color: #007bff; /* A nice blue color */
+    color: white;
+    padding: 12px 25px; /* More padding */
+    border-radius: 8px; /* More rounded corners */
+    text-decoration: none;
+    margin-top: 30px; /* More margin */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+    .back-button:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .login-section .container, .register-section .container {
+        flex-direction: column;
+        max-width: 400px; /* Adjust for smaller screens */
+    }
+
+        .login-section .container > div, .register-section .container > div {
+            border-radius: 0; /* Remove specific border radius on inner divs */
+        }
+
+    .login-section .welcome-text {
+        padding: 30px;
+        text-align: center;
+        align-items: center;
+    }
+
+        .login-section .welcome-text h2 {
+            font-size: 2.5em;
+            text-align: center;
+        }
+
+    .login-section .login-content {
+        padding: 30px;
+        border-radius: 0; /* No specific right-side rounding on small screens */
+    }
+
+    /* Responsive adjustments for Order History */
+    .order-history-header,
+    .order-history-list .order-list-item .order-row-content {
+        flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+    }
+
+        .order-history-header div,
+        .order-history-list .order-list-item .order-row-content .order-id-cell,
+        .order-history-list .order-list-item .order-row-content .order-date-cell,
+        .order-history-list .order-list-item .order-row-content .order-total-cell {
+            flex: 0 0 50%; /* Each column takes 50% width on smaller screens */
+            margin-bottom: 5px; /* Add some vertical spacing */
+            text-align: left; /* Align text to left for smaller screens */
+        }
+
+        .order-history-header .header-col-total,
+        .order-history-list .order-list-item .order-row-content .order-total-cell {
+            text-align: right; /* Keep total aligned right */
+        }
+
+        .order-history-header .header-col-items,
+        .order-history-list .order-list-item .order-row-content .order-items-cell {
+            flex: 1 0 100%; /* Items column takes full width */
+            margin-bottom: 5px;
+        }
+
+    /* Responsive adjustments for Order Detail Page */
+    .order-detail-page {
+        padding: 20px;
+        margin: 20px auto;
+    }
+
+        .order-detail-page h2 {
+            font-size: 2em;
+        }
+
+        .order-detail-page h3 {
+            font-size: 1.5em;
+        }
+
+    .order-info p, .shipping-info p {
+        font-size: 1em;
+    }
+
+    .items-table th, .items-table td {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+
+        .items-table td:nth-child(2),
+        .items-table td:nth-child(3),
+        .items-table td:nth-child(4) {
+            text-align: left; /* Adjust alignment for smaller screens if needed */
+        }
+
+    .back-button {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .order-detail-page {
+        padding: 15px;
+        margin: 15px auto;
+    }
+
+        .order-detail-page h2 {
+            font-size: 1.5em;
+        }
+
+        .order-detail-page h3 {
+            font-size: 1.2em;
+        }
+}
+
+/* Styles for the new Payment Selection Page (Payment/Index.cshtml) */
+.payment-selection-section {
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.7); /* Strong neon glow */
+    padding: 40px;
+    max-width: 900px;
+    margin: 40px auto;
+    text-align: center;
+    border: 2px solid #00ffcc;
+    color: #e0e0e0;
+}
+
+    .payment-selection-section .section-title {
+        color: #00ffcc;
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        text-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
+    }
+
+    .payment-selection-section .section-subtitle {
+        font-size: 1.1em;
+        color: #ccc;
+        margin-bottom: 40px;
+    }
+
+        .payment-selection-section .section-subtitle strong {
+            color: #00ffcc;
+        }
+
+.payment-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    justify-content: center;
+}
+
+.payment-option-card {
+    background-color: #222222;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid #00ccff; /* Blue accent border */
+}
+
+    .payment-option-card:hover:not(.disabled) {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 30px rgba(0, 204, 255, 0.6); /* Stronger blue glow on hover */
+    }
+
+    .payment-option-card.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        border-color: #555;
+    }
+
+    .payment-option-card h3 {
+        color: #00ffcc;
+        font-size: 2em;
+        margin-bottom: 15px;
+    }
+
+        .payment-option-card h3 i {
+            margin-right: 10px;
+            color: #00ccff; /* Blue for icons */
+        }
+
+    .payment-option-card p {
+        color: #e0e0e0;
+        font-size: 1em;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .payment-option-card .current-points {
+        font-weight: bold;
+        color: #FFD700; /* Gold for points */
+        font-size: 1.1em;
+        margin-bottom: 25px;
+    }
+
+    .payment-option-card .payment-button {
+        padding: 12px 25px;
+        font-size: 1.1em;
+        font-weight: bold;
+        border-radius: 8px;
+        transition: background-color 0.3s ease, transform 0.2s;
+        text-decoration: none; /* For anchor tags */
+        display: inline-block; /* For anchor tags */
+    }
+
+    .payment-option-card .btn-primary {
+        background-color: #e6005c; /* Pinkish-red for primary button */
+        color: white;
+        border: none;
+        box-shadow: 0 0 10px rgba(230, 0, 92, 0.5);
+    }
+
+        .payment-option-card .btn-primary:hover {
+            background-color: #cc004c;
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(230, 0, 92, 0.8);
+        }
+
+    .payment-option-card .btn-secondary {
+        background-color: #555;
+        color: white;
+        border: none;
+        cursor: not-allowed;
+    }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

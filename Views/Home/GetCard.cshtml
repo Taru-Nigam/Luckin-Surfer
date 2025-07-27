@@ -1,0 +1,39 @@
+﻿@* Views/Home/GetCard.cshtml *@
+@{
+    ViewBag.Title = "GameCraft - Get Your Card!";
+
+    int gameCraftCardPromotionId = 2;
+    decimal gameCraftCardPrice = 10.00m; 
+}
+
+<section class="get-card-section content-section">
+    <div class="card-content-wrapper">
+        <img src="~/Images/GameCard Card.png" alt="GameCraft Welcome Card" class="gamecraft-card-image" onerror="this.onerror=null;this.src='https://placehold.co/300x200/333/fff?text=GameCraft+Card';" />
+        <h2>Purchase Your GameCraft Card!</h2>
+        <p>Get your official GameCraft card for seamless ticket tracking and exclusive perks!</p>
+
+        <div class="card-benefits-section">
+            <h3>Benefits of Your GameCraft Card:</h3>
+            <ul>
+                <li><i class="fas fa-ticket-alt"></i> **Seamless Ticket Tracking:** All your game tickets are digitally stored on your card.</li>
+                <li><i class="fas fa-gift"></i> **Exclusive Member Perks:** Access special discounts and offers available only to cardholders.</li>
+                <li><i class="fas fa-trophy"></i> **Earn & Redeem Points:** Accumulate prize points with every game and redeem them for awesome rewards.</li>
+                <li><i class="fas fa-calendar-alt"></i> **Early Access & Invites:** Get priority access to new games, events, and exclusive tournaments.</li>
+                <li><i class="fas fa-star"></i> **Level Up Your Fun:** The more you play, the more rewards and status you unlock!</li>
+            </ul>
+        </div>
+
+        <p class="card-price">Card Price: <strong>$@gameCraftCardPrice.ToString("F2")</strong></p>
+
+        @* --- CRUCIAL FIX: This link MUST point to "Payment" controller and "CardPayment" action --- *@
+        <a href="@Url.Action("CardPayment", "Payment", new { promotionId = gameCraftCardPromotionId })" class="get-card-button">Buy now</a>
+        @* --- END CRUCIAL FIX --- *@
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Ensure Font Awesome is linked in _Layout.cshtml for icons to display.
+        // E.g., <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    </script>
+}

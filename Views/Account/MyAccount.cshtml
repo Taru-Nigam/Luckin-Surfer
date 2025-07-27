@@ -11,6 +11,7 @@
         <ul>
             <li><a href="#" class="sidebar-link @(activeSection == "dashboard" ? "active" : "")" id="sidebarDashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
             <li><a href="#" class="sidebar-link @(activeSection == "accountDetails" ? "active" : "")" id="sidebarAccountDetails"><i class="fas fa-user-circle"></i> Account Details</a></li>
+            <li><a href="#" class="sidebar-link @(activeSection == "orderHistory" ? "active" : "")" id="sidebarOrderHistory"><i class="fas fa-history"></i> Order History</a></li>
             <li><a href="#" class="sidebar-link @(activeSection == "changePassword" ? "active" : "")" id="sidebarChangePassword"><i class="fas fa-key"></i> Change Password</a></li>
             <li><a href="@Url.Action("Logout", "Account")"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
@@ -19,6 +20,7 @@
     <section class="account-content">
         <h2 class="section-title" id="dashboardTitle" style="display:@(activeSection == "dashboard" ? "block" : "none");">Dashboard</h2>
         <h2 class="section-title" id="accountDetailsTitle" style="display:@(activeSection == "accountDetails" ? "block" : "none");">Account Settings</h2>
+        <h2 class="section-title" id="orderHistoryTitle" style="display:@(activeSection == "orderHistory" ? "block" : "none");">Order History</h2>
         <h2 class="section-title" id="changePasswordTitle" style="display:@(activeSection == "changePassword" ? "block" : "none");">Change Password</h2>
 
         @if (TempData["SuccessMessage"] != null)
@@ -97,6 +99,65 @@
             <button type="submit" class="btn btn-primary" id="saveButton" style="display:none;">Save Changes</button>
         </form>
 
+        @* Order History Section - NEW SECTION *@
+        <div id="orderHistorySection" class="account-section" style="display:@(activeSection == "orderHistory" ? "block" : "none");">
+            <h3 class="section-subtitle">Your Recent Orders</h3>
+            @if (Model.Order != null && Model.Order.Any())
+            {
+                <div class="order-history-card">
+                    <div class="order-history-header">
+                        <div class="header-col-id">Order ID</div>
+                        <div class="header-col-date">Date</div>
+                        <div class="header-col-items">Items</div>
+                        <div class="header-col-total">Total Cost</div>
+                        @* Removed: <div class="header-col-actions">Actions</div> *@
+                    </div>
+
+                    <ul class="order-history-list">
+                        @foreach (var order in Model.Order.OrderByDescending(o => o.OrderDate))
+                        {
+                            <li class="order-list-item">
+                                @* This <a> tag acts as a clickable overlay for the entire list item *@
+                                <a href="@Url.Action("OrderDetail", "Order", new { id = order.OrderId })" class="order-detail-link-overlay" title="View Order Details for Order #@order.OrderId"></a>
+
+                                <div class="order-row-content">
+                                    <span class="order-id-cell">#@order.OrderId</span>
+                                    <span class="order-date-cell">@order.OrderDate.ToShortDateString()</span>
+                                    <span class="order-items-cell">
+                                        @* Display each item in a separate line within the cell *@
+                                        @if (order.OrderDetails != null && order.OrderDetails.Any())
+                                        {
+                                            foreach (var item in order.OrderDetails)
+                                            {
+                                                <div>
+                                                    @item.Product.Name
+                                                    @if (item.Quantity > 1)
+                                                    {
+                                                        @Html.Raw($" (x{item.Quantity})")
+                                                    }
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div>No items listed</div>
+                                        }
+                                    </span>
+                                    <span class="order-total-cell">$@order.TotalAmount.ToString("F2")</span>
+                                </div>
+                                @* Action buttons are intentionally removed as per your request *@
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <p class="no-orders-message">You have no order history yet.</p>
+            }
+        </div>
+
+
         @* Change Password Section *@
         <div id="changePasswordSection" class="form-group" style="display:@(activeSection == "changePassword" ? "block" : "none"); margin-top: 20px;">
             <div class="form-group">
@@ -154,9 +215,11 @@
             function hideAllSections() {
                 $('#dashboardSection').hide();
                 $('#accountForm').hide();
+                $('#orderHistorySection').hide(); // NEW HIDE
                 $('#changePasswordSection').hide();
                 $('#dashboardTitle').hide();
                 $('#accountDetailsTitle').hide();
+                $('#orderHistoryTitle').hide(); // NEW HIDE TITLE
                 $('#changePasswordTitle').hide();
                 $('#saveButton').hide();
                 $('#editInfoButton').hide(); // Hide edit button initially for account details
@@ -175,6 +238,10 @@
                     $('#accountDetailsTitle').show();
                     setFormReadonly(); // Ensure form is readonly on display
                     $('#sidebarAccountDetails').addClass('active');
+                } else if (sectionName === 'orderHistory') { // NEW SHOW SECTION
+                    $('#orderHistorySection').show();
+                    $('#orderHistoryTitle').show();
+                    $('#sidebarOrderHistory').addClass('active');
                 } else if (sectionName === 'changePassword') {
                     $('#changePasswordSection').show();
                     $('#changePasswordTitle').show();
@@ -304,6 +371,11 @@
             $('#sidebarAccountDetails').click(function(e) {
                 e.preventDefault();
                 showSection('accountDetails');
+            });
+
+            $('#sidebarOrderHistory').click(function(e) { // NEW CLICK HANDLER
+                e.preventDefault();
+                showSection('orderHistory');
             });
 
             $('#sidebarChangePassword').click(function(e) {

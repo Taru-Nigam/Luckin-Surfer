@@ -1,0 +1,49 @@
+﻿@model GameCraft.Models.Order // Declare the model type
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="order-detail-page">
+    <h2>Order Details - Order #@Model.OrderId</h2>
+
+    <div class="order-info">
+        <p><strong>Order ID:</strong> @Model.OrderId</p>
+        <p><strong>Order Date:</strong> @Model.OrderDate.ToShortDateString()</p>
+        <p><strong>Total Amount:</strong> @Model.TotalAmount.ToString("F2")</p>
+        @* If you decide to add Status back, you can show it here *@
+        @* <p><strong>Status:</strong> @Model.Status</p> *@
+    </div>
+
+    <h3>Shipping Information</h3>
+    <div class="shipping-info">
+        <p><strong>Name:</strong> @Model.ShippingName</p>
+        <p><strong>Email:</strong> @Model.ShippingEmail</p>
+        <p><strong>Phone:</strong> @Model.ShippingPhone</p>
+        <p><strong>Address:</strong> @Model.ShippingAddress, @Model.ShippingCity, @Model.ShippingPostCode</p>
+    </div>
+
+    <h3>Items Ordered</h3>
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Product Name</th> <th>Quantity</th>
+                <th>Price Each</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var detail in Model.OrderDetails)
+            {
+                <tr>
+                    <td>@detail.Product.Name</td> 
+                    <td>@detail.Quantity</td>
+                    <td>@detail.UnitPrice.ToString("F2")</td>
+                    <td>@((detail.Quantity * detail.UnitPrice).ToString("F2"))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a href="@Url.Action("MyAccount", "Account")" class="back-button">Back to Order History</a>
+</div>

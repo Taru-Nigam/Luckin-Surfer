@@ -274,6 +274,80 @@ namespace GameCraft.Controllers
             return View(customer);
         }
 
+        // POST: /Account/ConnectAccount
+        [HttpPost]
+        public async Task<IActionResult> ConnectAccount(string cardNumber, string username)
+        {
+            // Check if the username already exists
+            var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.Name == username);
+            if (existingCustomer != null)
+            {
+                // Update existing user with the GameCraft card number
+                existingCustomer.GameCraftCardNumber = cardNumber;
+                await _context.SaveChangesAsync();
+
+                // Automatically log in the existing user
+                HttpContext.Session.SetString("UserName", existingCustomer.Name);
+                HttpContext.Session.SetString("Email", existingCustomer.Email ?? "email@gamecraft.com");
+                HttpContext.Session.SetString("PrizePoints", existingCustomer.PrizePoints.ToString());
+                HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = existingCustomer.CustomerId }));
+
+                Response.Cookies.Append("UserToken", existingCustomer.CustomerId.ToString(), new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddDays(7),
+                    IsEssential = true
+                });
+
+                return Json(new
+                {
+                    success = true,
+                    message = "GameCraft card number added to existing account.",
+                    customerId = existingCustomer.CustomerId,
+                    redirectUrl = Url.Action("Index", "Home")  // Add redirect URL
+                });
+            }
+
+            // Create a new user with placeholder email
+            var defaultAvatarData = await GetDefaultAvatarImageData();
+            var customer = new Customer
+            {
+                Name = username,
+                Email = "email@gamecraft.com",
+                PasswordHash = PasswordHelper.HashPassword("password").Item1,
+                Salt = PasswordHelper.HashPassword("password").Item2,
+                GameCraftCardNumber = cardNumber,
+                UserType = 1,
+                Phone = "",
+                Address = "",
+                City = "",
+                PostCode = "",
+                AvatarImageData = defaultAvatarData // Set default avatar data
+            };
+
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+
+            // Full authentication setup (same as Register)
+            HttpContext.Session.SetString("UserName", customer.Name);
+            HttpContext.Session.SetString("Email", customer.Email);
+            HttpContext.Session.SetString("PrizePoints", customer.PrizePoints.ToString());
+            HttpContext.Session.SetString("AvatarUrl", Url.Action("GetAvatarImage", "Account", new { customerId = customer.CustomerId }));
+
+            Response.Cookies.Append("UserToken", customer.CustomerId.ToString(), new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddDays(7),
+                IsEssential = true
+            });
+
+            return Json(new
+            {
+                success = true,
+                message = "A new account has been created with the username: " + username + " and default password" + "You are logged in, Please Update your password in My Account -> Change password",
+                customerId = customer.CustomerId,
+                redirectUrl = Url.Action("Index", "Home")  // Add redirect URL
+            });
+        }
+
         // POST: /Account/UpdateAccount
         [HttpPost]
         public async Task<IActionResult> UpdateAccount(Customer customer, IFormFile avatarFile)
