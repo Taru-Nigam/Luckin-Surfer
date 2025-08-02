@@ -1,5 +1,6 @@
 using GameCraft.Data;
-using GameCraft.DbInitializers; // <--- ADD THIS USING DIRECTIVE
+using GameCraft.DbInitializers;
+using GameCraft.Services; // Add this using directive
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,37 +11,38 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<GameCraftDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GameCraftDb")));
 
+// Register EmailService
+builder.Services.AddTransient<IEmailService, EmailService>(); // Add this line
+
 // *** IMPORTANT: ADD AUTHENTICATION SERVICES HERE ***
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Employee/Login"; // This is the URL where unauthorized users will be redirected
-        options.AccessDeniedPath = "/Employee/AccessDenied"; // Optional: A page for authenticated but unauthorized users
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // How long the authentication cookie lasts
-        options.SlidingExpiration = true; // Reset cookie expiration on each request
+        options.LoginPath = "/Employee/Login";
+        options.AccessDeniedPath = "/Employee/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.SlidingExpiration = true;
     });
 
-builder.Services.AddAuthorization(); // This was already there, keep it
+builder.Services.AddAuthorization();
 builder.Services.AddControllersWithViews();
-builder.Services.AddSession(options => // Add options for session, especially IsEssential
+builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true; // Crucial for session to work reliably
+    options.Cookie.IsEssential = true;
 });
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
 // --- START: Database Seeding Logic ---
-// This block should run once when the application starts
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<GameCraftDbContext>();
-        // Call your custom initializer to seed data
         await DbInitializer.Initialize(context);
     }
     catch (Exception ex)
@@ -68,13 +70,11 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Assuming MapStaticAssets is a custom extension method for static files/assets
-// If it's not custom, ensure it's placed correctly relative to UseStaticFiles
 app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets(); // If WithStaticAssets is also a custom extension
+    .WithStaticAssets();
 
 app.Run();
