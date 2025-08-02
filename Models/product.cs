@@ -24,7 +24,7 @@ namespace GameCraft.Models
 
         public int Quantity { get; set; }
 
-        public byte[] ImageData { get; set; } // Change from ImageUrl to ImageData
+        public byte[] ImageData { get; set; }
 
     }
 }

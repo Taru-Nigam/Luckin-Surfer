@@ -14,7 +14,8 @@ namespace GameCraft.Models
 
         [Required]
         public byte[] ImageData { get; set; } // Store image as binary data
-
+        public string ButtonText { get; set; }
+        public string ButtonUrl { get; set; }
         public string BackgroundColor { get; set; } // For carousel display
         public string TextColor { get; set; }       // For carousel display
 

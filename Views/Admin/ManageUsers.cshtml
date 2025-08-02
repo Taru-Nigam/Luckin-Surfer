@@ -1,4 +1,5 @@
-﻿@model List<GameCraft.Models.Customer>
+﻿@model GameCraft.ViewModels.UserManagementViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Manage Users";
@@ -11,24 +12,67 @@
     <div class="alert alert-success">@TempData["Message"]</div>
 }
 
-<a href="@Url.Action("CreateOrEditUser", "Admin")" class="btn-primary mb-4">Create New User</a>
+<div class="user-management-controls mb-4">
+    <form asp-action="ManageUsers" method="get" class="form-inline">
+        <div class="form-group mr-3">
+            <label for="searchQuery" class="sr-only">Search</label>
+            <input type="text" class="form-control" id="searchQuery" name="searchQuery" placeholder="Search by name, email, ID, card..." value="@Model.SearchQuery" />
+        </div>
+        <div class="form-group mr-3">
+            <label for="filterUserType" class="sr-only">User Role</label>
+            <select class="form-control" id="filterUserType" name="filterUserType">
+                <option value="">All Roles</option>
+                @foreach (var userType in ViewBag.UserTypes as List<SelectListItem>)
+                {
+                    <option value="@userType.Value" selected="@(Model.FilterUserType.HasValue && Model.FilterUserType.Value.ToString() == userType.Value)">@userType.Text</option>
+                }
+            </select>
+        </div>
+        <div class="form-group mr-3">
+            <label for="filterIsEmailVerified" class="sr-only">Email Verified</label>
+            <select class="form-control" id="filterIsEmailVerified" name="filterIsEmailVerified">
+                <option value="">All Verification Status</option>
+                <option value="true" selected="@(Model.FilterIsEmailVerified.HasValue && Model.FilterIsEmailVerified.Value == true)">Verified</option>
+                <option value="false" selected="@(Model.FilterIsEmailVerified.HasValue && Model.FilterIsEmailVerified.Value == false)">Unverified</option>
+            </select>
+        </div>
+        <div class="form-group mr-3">
+            <label for="minPrizePoints" class="sr-only">Min Points</label>
+            <input type="number" class="form-control" id="minPrizePoints" name="minPrizePoints" placeholder="Min Points" value="@Model.MinPrizePoints" />
+        </div>
+        <div class="form-group mr-3">
+            <label for="maxPrizePoints" class="sr-only">Max Points</label>
+            <input type="number" class="form-control" id="maxPrizePoints" name="maxPrizePoints" placeholder="Max Points" value="@Model.MaxPrizePoints" />
+        </div>
+        <button type="submit" class="btn btn-primary mr-2">Apply Filters</button>
+        <a asp-action="ManageUsers" class="btn btn-secondary">Clear Filters</a>
+    </form>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="@Url.Action("CreateOrEditUser", "Admin")" class="btn-primary">Create New User</a>
+    <button type="button" class="btn btn-danger" id="bulkDeleteBtn">Delete Selected Users</button> @* Bulk Delete Button *@
+</div>
+
 <div class="user-list-container">
 
-    @if (Model.Count == 0)
+    @if (Model.Users.Count == 0)
     {
-        <p>No users found.</p>
+        <p>No users found matching your criteria.</p>
     }
     else
     {
         <table class="table-admin-list">
             <thead>
                 <tr>
+                    <th><input type="checkbox" id="selectAllUsers" /></th> @* Checkbox for bulk select *@
                     <th>Customer ID</th>
                     <th>Avatar</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
                     <th>User Role</th>
+                    <th>Email Verified</th>
                     <th>Prize Points</th>
                     <th>GameCraft Card Number</th>
                     <th>Password</th>
@@ -37,9 +81,10 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var user in Model)
+                @foreach (var user in Model.Users)
                 {
                     <tr>
+                        <td><input type="checkbox" class="user-checkbox" value="@user.CustomerId" /></td> @* Individual user checkbox *@
                         <td>@user.CustomerId</td>
                         <td>
                             <img src="@(user.AvatarImageData != null ? Url.Action("GetAvatarImage", "Account", new { customerId = user.CustomerId }) : Url.Action("GetDefaultAvatar", "Account"))" alt="Avatar" style="width: 50px; height: 50px; border-radius: 50%;" />
@@ -52,17 +97,27 @@
                                                 ? ((List<SelectListItem>)ViewBag.UserTypes).FirstOrDefault(ut => ut.Value == user.UserType.ToString())?.Text ?? "Unknown"
                                                 : "Unknown")
                 </td>
-                <td>@user.PrizePoints</td>
-                <td>@user.GameCraftCardNumber</td>
                 <td>
-                    <input type="text" id="password_@user.CustomerId" class="form-control" value="@user.PasswordHash" readonly />
-                    <button type="button" class="btn btn-secondary" onclick="togglePassword('@user.CustomerId')">Show</button>
-                </td>
-                <td>
-                    @if (user.UserType == 0) // Assuming 0 is the value for Admin UserType
+                    @if (user.IsEmailVerified)
                             {
-                                <input type="password" id="adminKey_@user.CustomerId" class="form-control" value="@user.AdminKey" readonly />
-                                <button type="button" class="btn btn-secondary" onclick="toggleAdminKey('@user.CustomerId')">Show</button>
+                                <span class="badge bg-success">Verified</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Unverified</span>
+                            }
+                        </td>
+                        <td>@user.PrizePoints</td>
+                        <td>@user.GameCraftCardNumber</td>
+                        <td>
+                            <input type="password" id="password_@user.CustomerId" class="form-control" value="@user.PasswordHash" readonly style="width: 120px; display: inline-block;" />
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="togglePassword('@user.CustomerId')">Show</button>
+                        </td>
+                        <td>
+                            @if (user.UserType == 0)
+                            {
+                                <input type="password" id="adminKey_@user.CustomerId" class="form-control" value="@user.AdminKey" readonly style="width: 120px; display: inline-block;" />
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="toggleAdminKey('@user.CustomerId')">Show</button>
                             }
                             else
                             {
@@ -75,6 +130,7 @@
                                 <input type="hidden" name="id" value="@user.CustomerId" />
                                 <button type="submit" class="btn-action btn-delete">Delete</button>
                             </form>
+                            <a href="@Url.Action("UserAuditLog", "Admin", new { customerId = user.CustomerId })" class="btn-action btn-info btn-sm mt-1">Audit Log</a>
                         </td>
                     </tr>
                 }
@@ -102,5 +158,71 @@
                 adminKeyInput.type = "password";
             }
         }
+
+        async function resetPassword(userId, userEmail) {
+            if (confirm(`Are you sure you want to reset the password for user ${userEmail}? A new password will be sent to their email.`)) {
+                try {
+                    const response = await fetch('@Url.Action("ResetUserPassword", "Admin")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        body: JSON.stringify({ customerId: userId, email: userEmail })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert(result.message);
+                        location.reload();
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error resetting password:', error);
+                    alert('An error occurred while trying to reset the password.');
+                }
+            }
+        }
+
+        // Bulk Delete functionality
+        document.getElementById('selectAllUsers').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.user-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        document.getElementById('bulkDeleteBtn').addEventListener('click', async function() {
+            const selectedUserIds = Array.from(document.querySelectorAll('.user-checkbox:checked'))
+                                       .map(cb => parseInt(cb.value));
+
+            if (selectedUserIds.length === 0) {
+                alert('Please select at least one user to delete.');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete ${selectedUserIds.length} selected user(s)? This action cannot be undone.`)) {
+                try {
+                    const response = await fetch('@Url.Action("BulkDeleteUsers", "Admin")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        body: JSON.stringify(selectedUserIds)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert(result.message);
+                        location.reload(); // Reload page to reflect changes
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error during bulk delete:', error);
+                    alert('An error occurred during bulk deletion.');
+                }
+            }
+        });
     </script>
 }

@@ -3,6 +3,7 @@ using GameCraft.Models;
 using GameCraft.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -39,6 +40,10 @@ namespace GameCraft.Controllers
                 Debug.WriteLine($"User  ID: {userId}, Prize Points: {ViewBag.PrizePoints}");
             }
 
+            // Fetch logos from the database
+            var logos = await _context.Logos.ToListAsync();
+            ViewBag.Logos = logos;
+
             // Fetch "How it works" icons from the database
             var howItWorksIcons = await _context.Icons
                                                 .OrderBy(i => i.Order)
@@ -66,18 +71,20 @@ namespace GameCraft.Controllers
                                            .ToListAsync();
             foreach (var promotion in promotions)
             {
-                carouselItems.Add(new CarouselItemViewModel
-                {
-                    Type = "Promotion",
-                    Title = promotion.Title,
-                    Description = promotion.Description,
-                    ImageUrl = Convert.ToBase64String(promotion.ImageData), // Convert binary data to Base64 string
-                    ButtonText = "Learn More",
-                    ButtonUrl = Url.Action("Details", "Promotion", new { id = promotion.PromotionId }),
-                    BackgroundColor = promotion.BackgroundColor,
-                    TextColor = promotion.TextColor
-                });
+                    carouselItems.Add(new CarouselItemViewModel
+                    {
+                        Type = "Promotion",
+                        Title = promotion.Title,
+                        Description = promotion.Description,
+                        ImageUrl = Convert.ToBase64String(promotion.ImageData), // Convert binary data to Base64 string
+                        ButtonText = promotion.ButtonText,
+                        ButtonUrl = promotion.ButtonUrl,
+                        BackgroundColor = promotion.BackgroundColor,
+                        TextColor = promotion.TextColor
+                    });
+
             }
+
 
             // Pass carousel items to the view
             ViewBag.CarouselItems = carouselItems;
@@ -92,12 +99,26 @@ namespace GameCraft.Controllers
             return View();
         }
 
-
-
-        public IActionResult GetCard()
+        public async Task<IActionResult> GetLogo(int id)
         {
-        // This action simply returns the GetCard view.
-        return View();
+            var logo = await _context.Logos.FindAsync(id);
+            if (logo != null && logo.ImageData != null)
+            {
+                return File(logo.ImageData, "image/png"); // Adjust content type if necessary
+            }
+            return NotFound(); // Return 404 if logo not found
+        }
+
+        public async Task<IActionResult> GetCard()
+        {
+            // Retrieve the GameCraft card product from the database
+            var gameCraftCard = await _context.Products.FirstOrDefaultAsync(p => p.Name == "GameCraft Card");
+            if (gameCraftCard == null)
+            {
+                TempData["ErrorMessage"] = "GameCraft Card not found.";
+                return RedirectToAction("Index", "Home");
+            }
+            return View(gameCraftCard); // Pass the product to the view
         }
 
         public IActionResult ConnectAccount() 
@@ -130,7 +151,12 @@ namespace GameCraft.Controllers
             return View(); // You'll create MyAccount.cshtml
         }
 
-
+        // New action for the special registration page
+        [HttpGet]
+        public IActionResult SpecialRegister()
+        {
+            return View("~/Views/Account/SpecialRegister.cshtml", new RegisterViewModel());
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

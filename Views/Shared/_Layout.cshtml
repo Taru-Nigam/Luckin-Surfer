@@ -15,15 +15,9 @@
     <header class="main-header">
         <nav class="navbar navbar-expand-lg navbar-dark gamecraft-navbar">
             <div class="container-fluid top-header-content">
-                @if (TempData["SuccessMessage"] != null)
-                {
-                    <div class="alert alert-success">
-                        @TempData["SuccessMessage"]
-                    </div>
-                }
 
                 <a class="navbar-brand header-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/Images/GameCraft logo.png" alt="GameCraft Logo" class="brand-logo" />
+                    <img src="@Url.Action("GetLogo", "Home", new { id = 1 })" alt="GameCraft Logo" class="brand-logo" />
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -85,7 +79,7 @@
 
                 <div class="cart-icon" id="cart-icon">
                     <a class="nav-link" href="/Cart/Cart">
-                        <img src="~/Images/cart icon.png" alt="Cart Icon" style="width: 50px; height: 50px;" />
+                        <img src="@Url.Action("GetLogo", "Home", new { id = 2 })" alt="Cart Icon" style="width: 50px; height: 50px;" />
                         <span class="cart-count" id="cartCount">0</span>
                     </a>
                     <div class="cart-preview" id="cartPreviewBox" style="display: none;">

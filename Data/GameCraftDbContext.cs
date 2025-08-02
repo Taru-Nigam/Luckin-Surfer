@@ -28,11 +28,30 @@ namespace GameCraft.Data
         public DbSet<Promotion> Promotions { get; set; }
 
         public DbSet<Icon> Icons { get; set; }
+        public DbSet<Logo> Logos { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Seed initial data for Logos
+            modelBuilder.Entity<Logo>().HasData(
+                new Logo
+                {
+                    LogoId = 1,
+                    Name = "GameCraft Logo",
+                    Description = "Main website logo",
+                    ImageData = LoadImageData("wwwroot/images/GameCraft logo.png") // Load image data
+                },
+                new Logo
+                {
+                    LogoId = 2,
+                    Name = "Cart Icon",
+                    Description = "Shopping cart icon",
+                    ImageData = LoadImageData("wwwroot/images/cart icon.png") // Load image data
+                }
+            );
 
             // Seed initial data for Icons (example)
             modelBuilder.Entity<Icon>().HasData(
@@ -52,7 +71,7 @@ namespace GameCraft.Data
                     Description = "Join GameCraft today and kickstart your rewards with 500 FREE tickets!",
                     ImageData = File.ReadAllBytes("wwwroot/images/Bonus-tickets.png"),
                     ButtonText = "Register Now",
-                    ButtonUrl = "/Account/Register",
+                    ButtonUrl = "/Account/SpecialRegister",
                     BackgroundColor = "#FFD700", // Gold-like color
                     TextColor = "#333333", // Dark text for contrast
                 },
@@ -146,6 +165,15 @@ namespace GameCraft.Data
                     Price = 1000.00m,
                     CategoryId = 4,
                     ImageData = LoadImageData("wwwroot/images/prizes/PS5 console.jpg") // Load image data
+                },
+                new Product
+                {
+                    ProductId = 7,
+                    Name = "GameCraft Card",
+                    Price = 10.00m,
+                    Description = "Purchase your official GameCraft card for seamless ticket tracking and exclusive perks!",
+                    CategoryId = 5,
+                    ImageData = LoadImageData("wwwroot/images/GameCard card.png") // Load image data
                 }
             );
 

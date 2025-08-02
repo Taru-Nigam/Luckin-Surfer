@@ -1,16 +1,14 @@
-﻿@* Views/Home/GetCard.cshtml *@
-@{
-    ViewBag.Title = "GameCraft - Get Your Card!";
+﻿@model GameCraft.Models.Product
 
-    int gameCraftCardPromotionId = 2;
-    decimal gameCraftCardPrice = 10.00m; 
+@{
+    ViewData["Title"] = "GameCraft - Get Your Card!";
 }
 
 <section class="get-card-section content-section">
     <div class="card-content-wrapper">
-        <img src="~/Images/GameCard Card.png" alt="GameCraft Welcome Card" class="gamecraft-card-image" onerror="this.onerror=null;this.src='https://placehold.co/300x200/333/fff?text=GameCraft+Card';" />
-        <h2>Purchase Your GameCraft Card!</h2>
-        <p>Get your official GameCraft card for seamless ticket tracking and exclusive perks!</p>
+        <img src="data:image/png;base64,@(Convert.ToBase64String(Model.ImageData))" alt="@Model.Name" class="gamecraft-card-image" onerror="this.onerror=null;this.src='https://placehold.co/300x200/333/fff?text=GameCraft+Card';" />
+        <h2>@Model.Name</h2>
+        <p>@Model.Description</p>
 
         <div class="card-benefits-section">
             <h3>Benefits of Your GameCraft Card:</h3>
@@ -23,17 +21,17 @@
             </ul>
         </div>
 
-        <p class="card-price">Card Price: <strong>$@gameCraftCardPrice.ToString("F2")</strong></p>
+        <p class="card-price">Card Price: <strong>$@Model.Price.ToString("F2")</strong></p>
 
-        @* --- CRUCIAL FIX: This link MUST point to "Payment" controller and "CardPayment" action --- *@
-        <a href="@Url.Action("CardPayment", "Payment", new { promotionId = gameCraftCardPromotionId })" class="get-card-button">Buy now</a>
-        @* --- END CRUCIAL FIX --- *@
+        <form asp-action="StartProductCheckout" asp-controller="Payment" method="post">
+            <input type="hidden" name="productId" value="@Model.ProductId" />
+            <button type="submit" class="get-card-button">Buy now</button>
+        </form>
     </div>
 </section>
 
 @section Scripts {
     <script>
         // Ensure Font Awesome is linked in _Layout.cshtml for icons to display.
-        // E.g., <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     </script>
 }

@@ -1,0 +1,140 @@
+﻿@model GameCraft.Models.VerifyOtpViewModel
+@{
+    ViewBag.Title = "Verify OTP";
+}
+
+<link rel="stylesheet" href="~/css/verify-otp-styles.css" /> @* Link to the new CSS file *@
+
+<section class="verify-otp-section content-section">
+    <div class="container">
+        <h2 class="section-title">Mobile Phone Verification</h2>
+        <p class="form-instruction">Enter the 6-digit verification code that was sent to <strong>@Model.Email</strong>.</p>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        <form asp-action="VerifyOtp" method="post" class="otp-form" id="otpVerificationForm">
+            <input type="hidden" asp-for="Email" />
+            <input type="hidden" id="fullOtp" name="Otp" value="" /> @* Hidden input to store combined OTP *@
+
+            <div class="otp-input-group">
+                @for (int i = 0; i < 6; i++)
+                {
+                    <input type="text" id="otp-digit-@i" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="one-time-code" />
+                }
+            </div>
+
+            <button type="submit" class="verify-button">Verify Account</button>
+        </form>
+
+        <div class="resend-otp-link">
+            <p>Didn't receive code? <a href="#" id="resendOtpLink">Resend</a></p>
+            <div id="resendMessage" class="mt-2"></div>
+        </div>
+
+        <div class="login-link mt-4">
+            <p>Already verified? <a asp-action="Login">Login here</a></p>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const otpInputs = document.querySelectorAll('.otp-input-group .otp-input');
+            const fullOtpInput = document.getElementById('fullOtp');
+            const otpVerificationForm = document.getElementById('otpVerificationForm');
+
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', function () {
+                    if (this.value.length === 1 && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                    updateFullOtp();
+                });
+
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener('paste', function (e) {
+                    e.preventDefault();
+                    const pasteData = e.clipboardData.getData('text').trim();
+                    if (pasteData.length === otpInputs.length && /^\d+$/.test(pasteData)) {
+                        for (let i = 0; i < otpInputs.length; i++) {
+                            otpInputs[i].value = pasteData[i];
+                        }
+                        updateFullOtp();
+                        otpInputs[otpInputs.length - 1].focus(); // Focus last input after pasting
+                    }
+                });
+            });
+
+            function updateFullOtp() {
+                let combinedOtp = '';
+                otpInputs.forEach(input => {
+                    combinedOtp += input.value;
+                });
+                fullOtpInput.value = combinedOtp;
+            }
+
+            // Handle form submission to ensure fullOtp is set
+            otpVerificationForm.addEventListener('submit', function(e) {
+                updateFullOtp(); // Ensure the hidden input has the latest combined OTP
+            });
+
+
+            // Resend OTP link functionality
+            document.getElementById('resendOtpLink').addEventListener('click', async function (e) {
+                e.preventDefault();
+                const email = document.getElementById('Email').value;
+                const resendMessageDiv = document.getElementById('resendMessage');
+                resendMessageDiv.innerHTML = '<div class="alert alert-info">Sending new OTP...</div>';
+
+                try {
+                    const response = await fetch('@Url.Action("ResendOtp", "Account")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                        },
+                        body: `email=${encodeURIComponent(email)}`
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        resendMessageDiv.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+                        // Clear OTP inputs on resend
+                        otpInputs.forEach(input => input.value = '');
+                        otpInputs[0].focus();
+                        updateFullOtp();
+                    } else {
+                        resendMessageDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+                    }
+                } catch (error) {
+                    console.error('Error resending OTP:', error);
+                    resendMessageDiv.innerHTML = '<div class="alert alert-danger">An error occurred while trying to resend OTP.</div>';
+                }
+            });
+        });
+    </script>
+}
