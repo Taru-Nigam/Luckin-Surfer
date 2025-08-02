@@ -17,18 +17,18 @@ body {
     z-index: 1;
 }
 
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    filter: brightness(0.6) contrast(1.2) grayscale(0.2);
-    z-index: -1;
-}
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.6) contrast(1.2) grayscale(0.2);
+        z-index: -1;
+    }
 
 main {
     flex-grow: 1;
@@ -78,6 +78,25 @@ h2 {
 
         .hero .connect-account-button:hover {
             background-color: #0056b3; /* Darker blue on hover */
+        }
+
+    .hero .close-button {
+        position: absolute;
+        top: 10px; /* Adjust as needed */
+        right: 10px; /* Adjust as needed */
+        background: none;
+        border: none;
+        color: #00ffcc; /* Neon color for the 'X' */
+        font-size: 1.5em;
+        cursor: pointer;
+        padding: 5px;
+        line-height: 1;
+        transition: color 0.3s ease, transform 0.2s ease;
+    }
+
+        .hero .close-button:hover {
+            color: white; /* Change color on hover */
+            transform: rotate(90deg); /* Rotate on hover for a nice effect */
         }
 /* Section Headers */
 
@@ -325,16 +344,16 @@ h2 {
     text-align: center;
 }
 
-.register-section .container h2 {
-    color: white;
-    font-size: 2.5em;
-    margin-bottom: 20px;
-}
+    .register-section .container h2 {
+        color: white;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+    }
 
-.register-section .container .form-instruction {
-    color: #ddd;
-    margin-bottom: 30px;
-}
+    .register-section .container .form-instruction {
+        color: #ddd;
+        margin-bottom: 30px;
+    }
 
 .register-form .form-group {
     margin-bottom: 20px;
@@ -361,12 +380,12 @@ h2 {
     transition: border-bottom-color 0.3s;
 }
 
-.register-form input[type="text"]:focus,
-.register-form input[type="email"]:focus,
-.register-form input[type="password"]:focus {
-    border-bottom-color: #00ffcc;
-    outline: none;
-}
+    .register-form input[type="text"]:focus,
+    .register-form input[type="email"]:focus,
+    .register-form input[type="password"]:focus {
+        border-bottom-color: #00ffcc;
+        outline: none;
+    }
 
 .register-form input::placeholder {
     color: rgba(255, 255, 255, 0.6);
@@ -386,10 +405,10 @@ h2 {
     font-weight: bold;
 }
 
-.register-button:hover {
-    background-color: #006666;
-    transform: scale(1.02);
-}
+    .register-button:hover {
+        background-color: #006666;
+        transform: scale(1.02);
+    }
 
 .login-link {
     text-align: center;
@@ -397,20 +416,20 @@ h2 {
     color: rgba(255, 255, 255, 0.8);
 }
 
-.login-link p {
-    margin: 0;
-}
+    .login-link p {
+        margin: 0;
+    }
 
-.login-link a {
-    color: #00ffcc;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s;
-}
+    .login-link a {
+        color: #00ffcc;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
 
-.login-link a:hover {
-    color: white;
-}
+        .login-link a:hover {
+            color: white;
+        }
 
 /* Error/Success Messages */
 
@@ -446,9 +465,9 @@ h2 {
     box-sizing: border-box;
 }
 
-#changePasswordSection h3 {
-    color: #00ffcc;
-}
+    #changePasswordSection h3 {
+        color: #00ffcc;
+    }
 
 /* Messages */
 
@@ -478,14 +497,14 @@ h2 {
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
 
-.featured-prizes h2 {
-    border: solid;
-    display: block;
-    padding: 10px 0;
-    margin: 0 auto 25px auto;
-    border-radius: 5px;
-    color: #00ffcc;
-}
+    .featured-prizes h2 {
+        border: solid;
+        display: block;
+        padding: 10px 0;
+        margin: 0 auto 25px auto;
+        border-radius: 5px;
+        color: #00ffcc;
+    }
 
 .prize-list {
     display: flex;
@@ -506,53 +525,53 @@ h2 {
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.prize-item:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
-}
+    .prize-item:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+    }
 
-.prize-item .prize-image {
-    height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-}
+    .prize-item .prize-image {
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
 
-.prize-item .prize-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+        .prize-item .prize-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-.prize-item .prize-name {
-    font-size: 1.1em;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #00ffcc;
-}
+    .prize-item .prize-name {
+        font-size: 1.1em;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #00ffcc;
+    }
 
-.prize-item .ticket-cost {
-    display: block;
-    margin-bottom: 10px;
-    color: #00ffcc;
-    font-weight: bold;
-}
+    .prize-item .ticket-cost {
+        display: block;
+        margin-bottom: 10px;
+        color: #00ffcc;
+        font-weight: bold;
+    }
 
-.prize-item .quick-view-button {
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.3s;
-}
+    .prize-item .quick-view-button {
+        background-color: #333;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: background-color 0.3s;
+    }
 
-.prize-item .quick-view-button:hover {
-    background-color: #555;
-}
+        .prize-item .quick-view-button:hover {
+            background-color: #555;
+        }
 
 .prizes-grid {
     display: grid;
@@ -717,22 +736,22 @@ h2 {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-    .promo-card:hover {
+    .promo-card:hover:not(.disabled) { /* Added :not(.disabled) to prevent hover effect on disabled cards */
         transform: translateY(-5px);
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* Slight white glow on hover */
     }
 
     .promo-card img {
-        width: auto; /* CHANGE: Allow width to be determined by max-width */
-        max-width: 300px; /* CHANGE: Set a fixed max-width for the image itself */
+        width: auto; /* Allow width to be determined by max-width */
+        max-width: 300px; /* Set a fixed max-width for the image itself */
         height: 250px; /* Kept height for consistency, adjust if needed */
         object-fit: contain;
         border-radius: 4px;
         margin-bottom: 15px;
         background-color: #333;
         padding: 0;
-        display: block; /* CHANGE: Make it a block element to apply margin: auto */
-        margin: 0 auto 15px auto; /* CHANGE: Center the image horizontally within the card */
+        display: block; /* Make it a block element to apply margin: auto */
+        margin: 0 auto 15px auto; /* Center the image horizontally within the card */
     }
 
     .promo-card h3 {
@@ -833,12 +852,12 @@ h2 {
     }
 
     .carousel-slide .prize-card img {
-        max-width: 250px; /* CHANGE: Adjusted max-width for images on tablets */
+        max-width: 250px; /* Adjusted max-width for images on tablets */
         height: 180px;
     }
 
     .promo-card img {
-        max-width: 250px; /* CHANGE: Adjusted max-width for images on tablets */
+        max-width: 250px; /* Adjusted max-width for images on tablets */
         height: 180px;
     }
 }
@@ -857,12 +876,12 @@ h2 {
     }
 
     .carousel-slide .prize-card img {
-        max-width: 180px; /* CHANGE: Adjusted max-width for images on mobile */
+        max-width: 180px; /* Adjusted max-width for images on mobile */
         height: 120px;
     }
 
     .promo-card img {
-        max-width: 180px; /* CHANGE: Adjusted max-width for images on mobile */
+        max-width: 180px; /* Adjusted max-width for images on mobile */
         height: 120px;
     }
 
@@ -1033,9 +1052,9 @@ h2 {
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
 }
 
-.how-it-works h2 {
-    color: #00ffcc;
-}
+    .how-it-works h2 {
+        color: #00ffcc;
+    }
 
 .steps {
     display: flex;
@@ -1051,24 +1070,24 @@ h2 {
     margin-bottom: 20px;
 }
 
-.step .icon-image {
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-}
+    .step .icon-image {
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
 
-.step .icon-image img {
-    max-width: 88%;
-    max-height: 88%;
-    object-fit: contain;
-}
+        .step .icon-image img {
+            max-width: 50px;
+            max-height: 50px;
+            object-fit: contain;
+        }
 
-.step p {
-    font-size: 0.9em;
-    color: #e0e0e0;
-}
+    .step p {
+        font-size: 0.9em;
+        color: #e0e0e0;
+    }
 
 .profile-section {
     display: flex;
@@ -1093,17 +1112,17 @@ h2 {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    object-fit: cover ;
+    object-fit: cover;
     margin-bottom: 20px;
     border: 2px solid #00ffcc;
     cursor: pointer;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.profile-header-avatar:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px #00ffcc;
-}
+    .profile-header-avatar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px #00ffcc;
+    }
 
 /* Account Page Layout */
 
@@ -1125,37 +1144,37 @@ h2 {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
-.sidebar ul li {
-    margin-bottom: 10px;
-}
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
 
-.sidebar ul li a {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    text-decoration: none;
-    color: #e0e0e0;
-    font-weight: bold;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
-}
+            .sidebar ul li a {
+                display: flex;
+                align-items: center;
+                padding: 10px 15px;
+                text-decoration: none;
+                color: #e0e0e0;
+                font-weight: bold;
+                border-radius: 5px;
+                transition: background-color 0.3s, color 0.3s;
+            }
 
-.sidebar ul li a i {
-    margin-right: 10px;
-    font-size: 1.2em;
-}
+                .sidebar ul li a i {
+                    margin-right: 10px;
+                    font-size: 1.2em;
+                }
 
-.sidebar ul li a.active,
-.sidebar ul li a:hover {
-    background-color: #008080;
-    color: #fff;
-}
+                .sidebar ul li a.active,
+                .sidebar ul li a:hover {
+                    background-color: #008080;
+                    color: #fff;
+                }
 
 .account-content {
     flex-grow: 1;
@@ -1167,9 +1186,9 @@ h2 {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.account-content .section-title {
-    text-align: left;
-}
+    .account-content .section-title {
+        text-align: left;
+    }
 
 .form-group label {
     color: #00ffcc;
@@ -1276,12 +1295,12 @@ h2 {
     cursor: pointer;
 }
 
-.close-button:hover,
-.close-button:focus {
-    color: #00ffcc;
-    text-decoration: none;
-    cursor: pointer;
-}
+    .close-button:hover,
+    .close-button:focus {
+        color: #00ffcc;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
 #avatarSelectionOptions .avatar-radio {
     display: none;
@@ -1325,10 +1344,10 @@ h2 {
     margin: 10px; /* Add margin for spacing */
 }
 
-.dashboard-card h3 {
-    color: #00ffcc;
-    margin-bottom: 10px;
-}
+    .dashboard-card h3 {
+        color: #00ffcc;
+        margin-bottom: 10px;
+    }
 
 .dashboard-value {
     font-size: 2.5em;
@@ -1393,11 +1412,11 @@ h2 {
     margin-right: 10px;
 }
 
-.filter-group label,
-.search-group label {
-    color: #66ffcc;
-    font-weight: bold;
-}
+    .filter-group label,
+    .search-group label {
+        color: #66ffcc;
+        font-weight: bold;
+    }
 
 /* Prizes Grid */
 
@@ -1417,10 +1436,10 @@ h2 {
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.prize-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
-}
+    .prize-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+    }
 
 .prize-image-container {
     height: 120px;
@@ -1430,13 +1449,13 @@ h2 {
     margin-bottom: 10px;
 }
 
-.prize-image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(102, 255, 204, 0.5);
-}
+    .prize-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(102, 255, 204, 0.5);
+    }
 
 .prize-name {
     font-size: 1.2em;
@@ -1462,9 +1481,9 @@ h2 {
     transition: background-color 0.3s;
 }
 
-.quick-view-button:hover {
-    background-color: #5cd6b3;
-}
+    .quick-view-button:hover {
+        background-color: #5cd6b3;
+    }
 
 /* Cart message */
 
@@ -1496,13 +1515,13 @@ h2 {
     margin-bottom: 20px;
 }
 
-.product-image img {
-    width: 300px;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(102, 255, 204, 0.5);
-}
+    .product-image img {
+        width: 300px;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(102, 255, 204, 0.5);
+    }
 
 .product-info {
     text-align: center;
@@ -1539,18 +1558,18 @@ h2 {
     color: black;
 }
 
-.add-to-cart-button:hover {
-    background-color: #5cd6b3;
-}
+    .add-to-cart-button:hover {
+        background-color: #5cd6b3;
+    }
 
 .buy-now-button {
     background-color: #007bff;
     color: white;
 }
 
-.buy-now-button:hover {
-    background-color: #0056b3;
-}
+    .buy-now-button:hover {
+        background-color: #0056b3;
+    }
 
 /* Checkout Section */
 
@@ -1590,7 +1609,6 @@ h2.mb-4 {
 
 form {
     border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .form-label {
@@ -1619,19 +1637,19 @@ form {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-.table th,
-.table td {
-    padding: 1rem 1.5rem;
-    text-align: left;
-    border-bottom: 1px solid #333;
-    font-size: 1rem;
-}
+    .table th,
+    .table td {
+        padding: 1rem 1.5rem;
+        text-align: left;
+        border-bottom: 1px solid #333;
+        font-size: 1rem;
+    }
 
-.table th {
-    background-color: #222;
-    font-weight: 600;
-    color: #66ffcc;
-}
+    .table th {
+        background-color: #222;
+        font-weight: 600;
+        color: #66ffcc;
+    }
 
 /* Button Styles */
 .btn-action,
@@ -1679,15 +1697,15 @@ form {
     z-index: 10;
 }
 
-.site-footer .container-fluid {
-    padding-left: 15px;
-    padding-right: 15px;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    margin-top: auto;
-    flex-shrink: 0;
-}
+    .site-footer .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        margin-top: auto;
+        flex-shrink: 0;
+    }
 
 /* Alert styles */
 
@@ -2216,6 +2234,319 @@ form {
         border: none;
         cursor: not-allowed;
     }
+
+/* OTP input group styling */
+.otp-input-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Space between OTP boxes */
+    margin-bottom: 30px;
+}
+
+.otp-input {
+    width: 60px; /* Width for each OTP box */
+    height: 60px; /* Height for each OTP box */
+    font-size: 28px;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    -moz-appearance: textfield; /* Hide arrows for number input in Firefox */
+}
+
+    .otp-input:focus {
+        border-color: #6a5acd;
+        box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.3);
+    }
+
+    /* Hide number input arrows for Chrome, Safari, Edge */
+    .otp-input::-webkit-outer-spin-button,
+    .otp-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+.verify-button {
+    background-color: #6a5acd; /* Purple color from image */
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    max-width: 250px; /* Match button width in image */
+    margin-top: 20px;
+}
+
+    .verify-button:hover {
+        background-color: #5a4acb;
+        transform: translateY(-2px);
+    }
+
+.resend-otp-link {
+    margin-top: 30px;
+    font-size: 15px;
+    color: #666;
+}
+
+    .resend-otp-link a {
+        color: #6a5acd;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+        .resend-otp-link a:hover {
+            color: #5a4acb;
+            text-decoration: underline;
+        }
+
+.login-link {
+    margin-top: 20px;
+    font-size: 15px;
+    color: #666;
+}
+
+    .login-link a {
+        color: #6a5acd;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+        .login-link a:hover {
+            color: #5a4acb;
+            text-decoration: underline;
+        }
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .container {
+        padding: 30px 20px;
+    }
+
+    .section-title {
+        font-size: 24px;
+    }
+
+    .form-instruction {
+        font-size: 15px;
+    }
+
+    .otp-input {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+
+    .otp-input-group {
+        gap: 10px;
+    }
+
+    .verify-button {
+        padding: 12px 25px;
+        font-size: 16px;
+    }
+}
+
+/* Credit Card Entry Page Styles */
+
+.card-details-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px); /* Adjust based on header/footer height */
+    background-color: transparent; /* Allows global body background to show */
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+    animation: pulse-glow 4s infinite alternate ease-in-out; /* Inherit glow from get-card-section */
+}
+
+    .card-details-section .container {
+        background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background for the main card */
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        padding: 40px; /* Padding for the container */
+        width: 90%;
+        max-width: 600px; /* Adjusted max-width for the card details form */
+        text-align: center;
+        border: 2px solid #00ffcc; /* Neon border */
+        box-shadow: 0 0 25px rgba(0, 255, 204, 0.7); /* Increased neon glow */
+        transition: all 0.3s ease-in-out;
+    }
+
+        .card-details-section .container:hover {
+            transform: translateY(-5px); /* Subtle lift on hover */
+            box-shadow: 0 0 35px rgba(0, 255, 204, 0.9); /* Stronger glow on hover */
+        }
+
+    .card-details-section h2 {
+        color: #00ffcc;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        text-align: center;
+        text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
+    }
+
+    .card-details-section p {
+        color: #e0e0e0;
+        font-size: 1.1em;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+
+        .card-details-section p strong {
+            font-weight: bold;
+        }
+
+        .card-details-section p .text-blue-300 {
+            color: #66ccff; /* Light blue for promotion title */
+        }
+
+        .card-details-section p .text-green-400 {
+            color: #00ffcc; /* Neon green for price */
+        }
+
+    .card-details-section .login-form { /* Reusing login-form class for consistent input styling */
+        max-width: none; /* Override max-width from login-form */
+        margin: 0 auto; /* Center the form within its container */
+        padding: 0;
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        text-align: left;
+    }
+
+    .card-details-section .form-group {
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .card-details-section label {
+        display: block; /* Show labels for clarity in card details */
+        color: #00ffcc;
+        margin-bottom: 8px;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .card-details-section .form-control {
+        width: 100%;
+        padding: 12px 15px; /* Standard padding */
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        background-color: transparent;
+        color: white;
+        font-size: 1em;
+        box-sizing: border-box;
+        transition: border-bottom-color 0.3s;
+    }
+
+        .card-details-section .form-control:focus {
+            border-bottom-color: #00ffcc;
+            outline: none;
+        }
+
+        .card-details-section .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+    .card-details-section .text-danger {
+        color: #e74c3c;
+        font-size: 0.9em;
+        margin-top: 5px;
+        display: block; /* Ensure validation messages are on their own line */
+    }
+
+    .card-details-section .grid-cols-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px; /* Space between month and year inputs */
+        margin-bottom: 20px;
+    }
+
+    .card-details-section .submit-button {
+        background-color: #e6005c; /* Pinkish-red button */
+        color: white;
+        padding: 15px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.2em;
+        width: 100%;
+        margin-top: 20px;
+        transition: background-color 0.3s ease, transform 0.2s;
+        font-weight: bold;
+        box-shadow: 0 0 15px rgba(230, 0, 92, 0.5);
+    }
+
+        .card-details-section .submit-button:hover {
+            background-color: #cc004c;
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(230, 0, 92, 0.8);
+        }
+
+/* Responsive adjustments for Credit Card Entry Page */
+@media (max-width: 768px) {
+    .card-details-section .container {
+        padding: 30px;
+        max-width: 95%;
+    }
+
+    .card-details-section h2 {
+        font-size: 2em;
+    }
+
+    .card-details-section p {
+        font-size: 1em;
+        margin-bottom: 20px;
+    }
+
+    .card-details-section .form-control {
+        padding: 10px 12px;
+    }
+
+    .card-details-section .submit-button {
+        padding: 12px 18px;
+        font-size: 1.1em;
+    }
+
+    .card-details-section .grid-cols-2 {
+        grid-template-columns: 1fr; /* Stack month and year on smaller screens */
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card-details-section .container {
+        padding: 20px;
+    }
+
+    .card-details-section h2 {
+        font-size: 1.8em;
+    }
+
+    .card-details-section p {
+        font-size: 0.9em;
+        margin-bottom: 15px;
+    }
+
+    .card-details-section .form-group {
+        margin-bottom: 15px;
+    }
+
+    .card-details-section .submit-button {
+        padding: 10px 15px;
+        font-size: 1em;
+    }
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
