@@ -1,52 +1,58 @@
 ﻿@model GameCraft.ViewModels.DebitCardViewModel
 
 @{
-    ViewData["Title"] = "Card Payment - " + Model.Product.Name; // Set the title to the product name
+    ViewData["Title"] = "Card Payment - " + Model.Card.Name; // Set the title to the Card name
 }
 
 <div class="card-details-section content-section">
     <div class="container">
         <h2>Enter Debit Card Details</h2>
-        <p> <strong class="text-blue-300">@Model.Product.Name</strong> for <strong class="text-green-400">Price: $@Model.Product.Price.ToString("F2")</p>
+        <p> <strong class="text-blue-300">@Model.Card.Name</strong> for <strong class="text-green-400">Price: $@Model.Card.Price.ToString("F2")</p>
 
         <form asp-action="ProcessDebitCardDetails" asp-controller="Payment" method="post">
             @Html.AntiForgeryToken()
-            <input type="hidden" name="Product.ProductId" value="@Model.Product.ProductId" />
-            <input type="hidden" name="Product.Price" value="@Model.Product.Price" />
-            <input type="hidden" name="Product.Name" value="@Model.Product.Name" />
+            <input type="hidden" name="Card.CardId" value="@Model.Card.CardId" />
+            <input type="hidden" name="Card.Price" value="@Model.Card.Price" />
+            <input type="hidden" name="Card.Name" value="@Model.Card.Name" />
 
+            <div class="form-group">
+                <label asp-for="Email">Email:</label>
+                <input asp-for="Email" type="email" class="form-control" required placeholder="Enter your email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CardNumber">Card Number:</label>
+                <input asp-for="CardNumber" type="text" class="form-control" required placeholder="Enter card number" />
+                <span asp-validation-for="CardNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CardholderName">Cardholder Name:</label>
+                <input asp-for="CardholderName" class="form-control" required placeholder="Enter cardholder name" />
+                <span asp-validation-for="CardholderName" class="text-danger"></span>
+            </div>
+
+            <div class="grid-cols-2">
                 <div class="form-group">
-                    <label asp-for="CardNumber">Card Number:</label>
-                    <input asp-for="CardNumber" type="text" class="form-control" required placeholder="Enter card number" />
-                    <span asp-validation-for="CardNumber" class="text-danger"></span>
+                    <label asp-for="ExpiryMonth">Expiry Month (MM):</label>
+                    <input asp-for="ExpiryMonth" type="text" class="form-control" required placeholder="MM" maxlength="2" />
+                    <span asp-validation-for="ExpiryMonth" class="text-danger"></span>
                 </div>
-
                 <div class="form-group">
-                    <label asp-for="CardholderName">Cardholder Name:</label>
-                    <input asp-for="CardholderName" class="form-control" required placeholder="Enter cardholder name" />
-                    <span asp-validation-for="CardholderName" class="text-danger"></span>
+                    <label asp-for="ExpiryYear">Expiry Year (YYYY):</label>
+                    <input asp-for="ExpiryYear" type="text" class="form-control" required placeholder="YYYY" maxlength="4" />
+                    <span asp-validation-for="ExpiryYear" class="text-danger"></span>
                 </div>
+            </div>
 
-                <div class="grid-cols-2">
-                    <div class="form-group">
-                        <label asp-for="ExpiryMonth">Expiry Month (MM):</label>
-                        <input asp-for="ExpiryMonth" type="text" class="form-control" required placeholder="MM" maxlength="2" />
-                        <span asp-validation-for="ExpiryMonth" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="ExpiryYear">Expiry Year (YYYY):</label>
-                        <input asp-for="ExpiryYear" type="text" class="form-control" required placeholder="YYYY" maxlength="4" />
-                        <span asp-validation-for="ExpiryYear" class="text-danger"></span>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label asp-for="CVV">CVV:</label>
+                <input asp-for="CVV" type="text" class="form-control" required placeholder="CVV" maxlength="4" />
+                <span asp-validation-for="CVV" class="text-danger"></span>
+            </div>
 
-                <div class="form-group">
-                    <label asp-for="CVV">CVV:</label>
-                    <input asp-for="CVV" type="text" class="form-control" required placeholder="CVV" maxlength="4" />
-                    <span asp-validation-for="CVV" class="text-danger"></span>
-                </div>
-
-                <button type="submit" class="submit-button">Confirm</button>
+            <button type="submit" class="submit-button">Confirm</button>
         </form>
     </div>
 </div>

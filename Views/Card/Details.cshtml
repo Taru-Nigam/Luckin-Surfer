@@ -1,0 +1,37 @@
+﻿@model GameCraft.Models.Card
+
+@{
+    ViewData["Title"] = @Model.Name;
+    Layout = "_Layout"; // Ensures this view uses your main public layout
+}
+
+<section class="get-card-section content-section">
+    <div class="card-content-wrapper">
+        <img src="data:image/png;base64,@(Convert.ToBase64String(Model.ImageData))" alt="@Model.Name" class="gamecraft-card-image" onerror="this.onerror=null;this.src='https://placehold.co/300x200/333/fff?text=GameCraft+Card';" />
+        <h2>@Model.Name</h2>
+
+        @* Split the description by new line characters to create a dynamic list of benefits *@
+        @{
+            var benefits = Model.Description.Split('\n');
+        }
+        <div class="card-benefits-section">
+            <h3>Benefits of the @Model.Name:</h3>
+            <ul>
+                @foreach (var benefit in benefits)
+                {
+                    <li>@benefit</li>
+                }
+            </ul>
+        </div>
+
+        <p class="card-price">Card Price: <strong>$@Model.Price.ToString("F2")</strong></p>
+
+        @* Form to submit the product for checkout *@
+        @* This form is configured to send the CardId to a "StartCardCheckout" action in your PaymentController. *@
+        @* You will need to create this action in your PaymentController to handle the logic. *@
+        <form asp-action="StartCardCheckout" asp-controller="Payment" method="post">
+            <input type="hidden" name="cardId" value="@Model.CardId" />
+            <button type="submit" class="get-card-button">Buy now</button>
+        </form>
+    </div>
+</section>

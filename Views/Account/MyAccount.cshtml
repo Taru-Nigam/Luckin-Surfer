@@ -1,4 +1,4 @@
-﻿@model GameCraft.Models.Customer
+﻿@model Customer
 @{
     ViewBag.Title = "My Account";
     // Set the initial active section based on ViewBag.ActiveSection, default to 'dashboard'
@@ -106,22 +106,17 @@
             {
                 <div class="order-history-card">
                     <div class="order-history-header">
-                        <div class="header-col-id">Order ID</div>
                         <div class="header-col-date">Date</div>
                         <div class="header-col-items">Items</div>
                         <div class="header-col-total">Total Cost</div>
-                        @* Removed: <div class="header-col-actions">Actions</div> *@
                     </div>
 
                     <ul class="order-history-list">
                         @foreach (var order in Model.Order.OrderByDescending(o => o.OrderDate))
                         {
                             <li class="order-list-item">
-                                @* This <a> tag acts as a clickable overlay for the entire list item *@
-                                <a href="@Url.Action("OrderDetail", "Order", new { id = order.OrderId })" class="order-detail-link-overlay" title="View Order Details for Order #@order.OrderId"></a>
-
                                 <div class="order-row-content">
-                                    <span class="order-id-cell">#@order.OrderId</span>
+                                    <a href="@Url.Action("OrderDetail", "Order", new { id = order.OrderId })" class="order-detail-link-overlay" title="View Order Details for Order #@order.OrderId"></a>
                                     <span class="order-date-cell">@order.OrderDate.ToShortDateString()</span>
                                     <span class="order-items-cell">
                                         @* Display each item in a separate line within the cell *@
@@ -138,6 +133,19 @@
                                                 </div>
                                             }
                                         }
+                                        @if (order.CardOrderDetails != null && order.CardOrderDetails.Any())
+                                        {
+                                            foreach (var cardDetail in order.CardOrderDetails)
+                                            {
+                                                <div>
+                                                    @cardDetail.Card.Name
+                                                    @if (cardDetail.Quantity > 1)
+                                                    {
+                                                        @Html.Raw($" (x{cardDetail.Quantity})")
+                                                    }
+                                                </div>
+                                            }
+                                        }
                                         else
                                         {
                                             <div>No items listed</div>
@@ -145,7 +153,6 @@
                                     </span>
                                     <span class="order-total-cell">$@order.TotalAmount.ToString("F2")</span>
                                 </div>
-                                @* Action buttons are intentionally removed as per your request *@
                             </li>
                         }
                     </ul>

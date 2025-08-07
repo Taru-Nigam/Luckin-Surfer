@@ -1,7 +1,7 @@
 ﻿@model Order // Declare the model type
 
 @{
-    ViewData["Title"] = "Order Details";
+    ViewData["Title"] = "Card Order Details";
 }
 
 <div class="order-detail-page">
@@ -11,32 +11,23 @@
         <p><strong>Order ID:</strong> @Model.OrderId</p>
         <p><strong>Order Date:</strong> @Model.OrderDate.ToShortDateString()</p>
         <p><strong>Total Amount:</strong> @Model.TotalAmount.ToString("F2")</p>
-        @* If you decide to add Status back, you can show it here *@
-        @* <p><strong>Status:</strong> @Model.Status</p> *@
-    </div>
-
-    <h3>Shipping Information</h3>
-    <div class="shipping-info">
-        <p><strong>Name:</strong> @Model.ShippingName</p>
-        <p><strong>Email:</strong> @Model.ShippingEmail</p>
-        <p><strong>Phone:</strong> @Model.ShippingPhone</p>
-        <p><strong>Address:</strong> @Model.ShippingAddress, @Model.ShippingCity, @Model.ShippingPostCode</p>
     </div>
 
     <h3>Items Ordered</h3>
     <table class="items-table">
         <thead>
             <tr>
-                <th>Product Name</th> <th>Quantity</th>
+                <th>Card Name</th>
+                <th>Quantity</th>
                 <th>Price Each</th>
                 <th>Subtotal</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var detail in Model.OrderDetails)
+            @foreach (var detail in Model.CardOrderDetails)
             {
                 <tr>
-                    <td>@detail.Product.Name</td> 
+                    <td>@detail.Card.Name</td>
                     <td>@detail.Quantity</td>
                     <td>@detail.UnitPrice.ToString("F2")</td>
                     <td>@((detail.Quantity * detail.UnitPrice).ToString("F2"))</td>

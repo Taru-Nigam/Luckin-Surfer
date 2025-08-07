@@ -1,61 +1,34 @@
-﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-a.navbar-brand {
-    white-space: normal;
-    text-align: center;
-    word-break: break-all;
+﻿/* General Body and HTML Styles for Dark Mode and Neon Theme */
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', sans-serif; /* A clean, modern font */
+    background-color: #1a1a2e; /* Deep dark background */
+    color: #e0e0e0; /* Light grey for general text */
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    display: flex;
+    flex-direction: column;
 }
 
-a {
-    color: #0077cc;
+/* Neon Glow Effect Utility Class */
+.shadow-neon {
+    box-shadow: 0 0 5px #00f0ff, 0 0 10px #00f0ff, 0 0 15px #00f0ff, 0 0 20px #00f0ff; /* Subtle blue neon glow */
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+.text-neon-blue {
+    color: #00f0ff; /* Bright neon blue for highlights */
+    text-shadow: 0 0 5px #00f0ff;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.border-top {
-    border-top: 1px solid #e5e5e5;
-}
-
-.border-bottom {
-    border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-    font-size: 1rem;
-    line-height: inherit;
-}
-
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    white-space: nowrap;
-    line-height: 60px;
-}
-
-/* Header Styles (Moved from site.css) */
-header.main-header .gamecraft-navbar {
-    background-color: #1a1a1a;
-    border-bottom: 2px solid #00ffcc;
-    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+/* Header Styles */
+.main-header .gamecraft-navbar {
+    background-color: #0d0d1a; /* Even darker background for navbar */
+    border-bottom: 2px solid #00f0ff; /* Neon blue border */
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.7); /* Stronger neon glow */
     padding: 15px 20px;
     flex-wrap: nowrap;
     position: relative;
-    z-index: 10;
+    z-index: 1000; /* Ensure navbar is on top */
 }
 
 .top-header-content {
@@ -65,6 +38,19 @@ header.main-header .gamecraft-navbar {
     width: 100%;
 }
 
+.navbar-brand .brand-logo {
+    height: 40px; /* Adjust as needed */
+    filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.8)); /* Neon glow for logo */
+}
+
+.navbar-toggler {
+    border-color: #00f0ff !important; /* Neon border for toggler */
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 240, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
 .main-nav-links {
     list-style: none;
     padding: 0;
@@ -72,106 +58,322 @@ header.main-header .gamecraft-navbar {
     display: flex;
     flex-grow: 1;
     justify-content: center;
+    align-items: center;
 }
 
     .main-nav-links .nav-item {
-        margin: 0 40px;
+        margin: 0 25px; /* Adjusted spacing */
+        position: relative; /* For dropdown positioning */
     }
 
     .main-nav-links .nav-link {
-        color: #00ffcc;
+        color: #00f0ff; /* Neon blue text */
         text-decoration: none;
         padding: 10px 15px;
         display: block;
         font-weight: bold;
-        transition: background-color 0.3s, color 0.3s;
+        transition: all 0.3s ease-in-out;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 8px;
     }
 
-        .main-nav-links .nav-link:hover {
-            background-color: rgba(0, 255, 204, 0.2);
-            color: #00ffcc;
-            border-radius: 5px;
+        .main-nav-links .nav-link:hover,
+        .main-nav-links .nav-link.active {
+            background-color: rgba(0, 240, 255, 0.15); /* Subtle hover background */
+            color: #fff; /* White text on hover */
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7); /* White glow on hover */
+            transform: scale(1.05); /* Slight scale effect */
         }
 
+/* Dropdown Specific Styles */
+.nav-item.dropdown .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between avatar and username */
+}
+
+.nav-item.dropdown .nav-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #00f0ff; /* Neon border for avatar */
+    box-shadow: 0 0 5px #00f0ff;
+    transition: all 0.3s ease;
+}
+
+.nav-item.dropdown .dropdown-toggle:hover .nav-avatar {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+}
+
+.dropdown-menu {
+    background-color: #0d0d1a; /* Dark background for dropdown */
+    border: 1px solid #00f0ff; /* Neon border */
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+    padding: 10px 0;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    color: #e0e0e0; /* Light text for items */
+    padding: 10px 20px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+    .dropdown-item:hover {
+        background-color: rgba(0, 240, 255, 0.1); /* Subtle hover */
+        color: #00f0ff; /* Neon text on hover */
+    }
+
+.dropdown-divider {
+    border-top: 1px solid rgba(0, 240, 255, 0.3); /* Neon divider */
+}
+
+/* Auth Buttons */
 .auth-buttons {
     flex-shrink: 0;
+    display: flex;
+    gap: 10px; /* Space between buttons */
 }
 
     .auth-buttons button {
-        background-color: #007bff;
+        background-color: #007bff; /* Standard blue, can be neon-ified */
         color: white;
         border: none;
         padding: 10px 18px;
-        border-radius: 5px;
+        border-radius: 50px; /* Pill shape */
         cursor: pointer;
-        font-size: 1em;
+        font-size: 0.95em;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle blue glow */
+    }
+
+    .auth-buttons .login-button {
+        background-color: #4CAF50;
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    }
+    /* Green for login */
+    .auth-buttons .signup-button {
+        background-color: #FFC107;
+        color: #333;
+        box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+    }
+    /* Yellow for signup */
+    .auth-buttons .admin-login-button {
+        background-color: #dc3545;
+        box-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
+    }
+    /* Red for admin */
+
+    .auth-buttons button:hover {
+        transform: translateY(-2px); /* Lift effect */
+        opacity: 0.9;
+    }
+
+/* User Info (when logged in) */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #00f0ff; /* Neon blue for user info */
+    font-weight: bold;
+    text-shadow: 0 0 5px #00f0ff;
+}
+
+    .user-info .nav-avatar { /* Re-using nav-avatar style for consistency */
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid #00f0ff;
+        box-shadow: 0 0 5px #00f0ff;
+    }
+
+    .user-info .prize-points {
+        background-color: rgba(0, 240, 255, 0.2);
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        border: 1px solid #00f0ff;
+        box-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+    }
+
+    .user-info .auth-buttons { /* Logout button for logged-in user */
+        background-color: #6c757d; /* Grey for logout */
+        color: white;
+        padding: 8px 15px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 0.9em;
         transition: background-color 0.3s;
     }
 
-        .auth-buttons button:hover {
-            background-color: #0056b3;
+        .user-info .auth-buttons:hover {
+            background-color: #495057;
         }
 
-/* Cart icon container */
+/* Cart Icon */
 .cart-icon {
     position: relative;
-    margin-left: 20px;
+    margin-left: 30px; /* More space */
     cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
-/* Number badge on cart icon */
+    .cart-icon:hover {
+        transform: scale(1.1);
+    }
+
+    .cart-icon .cart-logo {
+        height: 40px; /* Adjust size */
+        filter: drop-shadow(0 0 8px rgba(255, 0, 255, 0.8)); /* Pink/purple neon glow for cart */
+    }
+
 .cart-count {
     position: absolute;
-    top: -5px; /* Adjust this value to position the badge */
-    right: -10px; /* Adjust this value to position the badge */
-    background: red;
+    top: -8px;
+    right: -8px;
+    background: #ff00ff; /* Neon pink */
     color: white;
     border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 12px;
+    padding: 3px 7px;
+    font-size: 11px;
     font-weight: bold;
-    display: none; /* Initially hidden */
+    display: none;
+    border: 1px solid #fff;
+    box-shadow: 0 0 8px rgba(255, 0, 255, 0.8);
 }
 
-/* Cart preview popup */
 .cart-preview {
     display: none;
     position: absolute;
     right: 0;
-    top: 35px;
-    width: 300px;
-    background: #222; /* Changed to match site.css */
-    border: 1px solid #00ffcc; /* Changed to match site.css */
-    box-shadow: 0 2px 5px rgba(0, 255, 204, 0.5); /* Changed to match site.css */
-    padding: 10px;
+    top: 50px; /* Position below icon */
+    width: 280px;
+    background: #0d0d1a; /* Dark background */
+    border: 1px solid #ff00ff; /* Neon pink border */
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+    padding: 15px;
     z-index: 1000;
-    color: #e0e0e0; /* Changed to match site.css */
-    border-radius: 5px;
+    color: #e0e0e0;
+    border-radius: 12px;
+    text-align: center;
 }
 
     .cart-preview p {
         margin: 0;
+        font-size: 0.9em;
+        color: #e0e0e0;
     }
 
-/* Responsive adjustments (Moved from site.css) */
-@media (max-width: 768px) {
+/* Main Content Wrapper */
+.content-wrapper {
+    flex: 1; /* Allows content to grow and push footer down */
+    width: 100%;
+    padding-top: 20px; /* Space below header */
+    padding-bottom: 20px; /* Space above footer */
+}
+
+/* Footer Styles */
+.site-footer {
+    background-color: #0d0d1a; /* Dark background */
+    border-top: 2px solid #00f0ff; /* Neon blue border */
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
+    padding: 20px 0;
+    text-align: center;
+    font-size: 0.9em;
+    color: #00f0ff; /* Neon blue text */
+    margin-top: auto; /* Pushes footer to the bottom */
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) { /* Adjust breakpoint for navbar collapse */
     .main-nav-links {
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start; /* Align dropdown to left */
+        margin-top: 15px;
     }
 
         .main-nav-links .nav-item {
-            margin: 10px 0;
+            margin: 8px 0;
+            width: 100%;
+        }
+
+        .main-nav-links .nav-link {
+            padding: 10px 20px;
         }
 
     .auth-buttons {
         margin-top: 15px;
-        display: flex;
         flex-direction: column;
         gap: 10px;
+        width: 100%;
     }
 
         .auth-buttons button {
             width: 100%;
         }
+
+    .user-info {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        margin-top: 15px;
+    }
+
+        .user-info .prize-points {
+            width: fit-content;
+        }
+
+    .cart-icon {
+        margin-left: 0;
+        margin-top: 15px;
+        align-self: flex-start;
+    }
 }
+
+/* Custom Modal Styling (for the message box) */
+#message-box {
+    /* Styles already applied via Tailwind in HTML */
+    /* Ensuring it's fixed and high z-index */
+    z-index: 9999;
+}
+
+    #message-box > div {
+        /* Styling for the modal content itself */
+        background-color: #0d0d1a; /* Dark background */
+        border: 2px solid #00f0ff; /* Neon blue border */
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.8); /* Stronger neon glow */
+        border-radius: 12px;
+        padding: 25px;
+    }
+
+#message-title {
+    color: #00f0ff; /* Neon blue title */
+    text-shadow: 0 0 8px #00f0ff;
+}
+
+#message-text {
+    color: #e0e0e0;
+}
+
+#message-close-button {
+    background-color: #007bff; /* Standard blue, can be neon-ified */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+    #message-close-button:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
