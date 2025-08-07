@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GameCraft.Models
 {
-    public class Product
+    public class Card
     {
         [Key]
-        public int ProductId { get; set; }
+        public int CardId { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -19,12 +18,8 @@ namespace GameCraft.Models
         [Range(0.01, 100000)]
         public decimal Price { get; set; }
 
-        [Required]
-        public int CategoryId { get; set; }
-
-        public int Quantity { get; set; }
-
         public byte[] ImageData { get; set; }
 
+        // Additional properties specific to cards can be added here
     }
 }

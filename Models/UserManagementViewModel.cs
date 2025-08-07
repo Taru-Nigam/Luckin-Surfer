@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using GameCraft.Models; // Ensure this is correctly referenced
 
-namespace GameCraft.ViewModels
+namespace GameCraft.Models
 {
     public class UserManagementViewModel
     {

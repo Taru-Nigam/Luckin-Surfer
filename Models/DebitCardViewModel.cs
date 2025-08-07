@@ -1,13 +1,12 @@
-﻿using GameCraft.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using GameCraft.Models;
 
-namespace GameCraft.ViewModels // Ensure this namespace matches your project structure
+namespace GameCraft.ViewModels
 {
     public class DebitCardViewModel
     {
-        // Properties to carry promotion details
         // Product details
-        public Product Product { get; set; }
+        public Card Card { get; set; }
 
         // Card details
         [Required(ErrorMessage = "Card Number is required.")]
@@ -16,7 +15,7 @@ namespace GameCraft.ViewModels // Ensure this namespace matches your project str
 
         [Required(ErrorMessage = "Cardholder Name is required.")]
         [Display(Name = "Cardholder Name")]
-        public string CardholderName { get; set; }
+        public string? CardholderName { get; set; }
 
         [Required(ErrorMessage = "Expiry Month is required.")]
         [Display(Name = "Expiry Month")]
@@ -29,5 +28,11 @@ namespace GameCraft.ViewModels // Ensure this namespace matches your project str
         [Required(ErrorMessage = "CVV is required.")]
         [Display(Name = "CVV")]
         public string CVV { get; set; }
+
+        // New property for email
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email address.")]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
     }
 }

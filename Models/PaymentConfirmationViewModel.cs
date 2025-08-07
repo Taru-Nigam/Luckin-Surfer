@@ -1,8 +1,7 @@
-﻿using GameCraft.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace GameCraft.ViewModels
+namespace GameCraft.Models
 {
     public class PaymentConfirmationViewModel
     {
@@ -12,6 +11,6 @@ namespace GameCraft.ViewModels
         public string CustomerName { get; set; }
         public string GameCardNumber { get; set; }
         public Promotion Promotion { get; set; }
-        public Product PurchasedProduct { get; set; }
+        public Card PurchasedProduct { get; set; }
     }
 }

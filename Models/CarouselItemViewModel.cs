@@ -1,4 +1,4 @@
-﻿namespace GameCraft.ViewModels
+﻿namespace GameCraft.Models
 {
     public class CarouselItemViewModel
     {
