@@ -114,6 +114,7 @@
                     <ul class="order-history-list">
                         @foreach (var order in Model.Order.OrderByDescending(o => o.OrderDate))
                         {
+                            var hasItems = false; // Flag to check if there are items
                             <li class="order-list-item">
                                 <div class="order-row-content">
                                     <a href="@Url.Action("OrderDetail", "Order", new { id = order.OrderId })" class="order-detail-link-overlay" title="View Order Details for Order #@order.OrderId"></a>
@@ -122,6 +123,7 @@
                                         @* Display each item in a separate line within the cell *@
                                         @if (order.OrderDetails != null && order.OrderDetails.Any())
                                         {
+                                            hasItems = true; // Set flag to true if there are order details
                                             foreach (var item in order.OrderDetails)
                                             {
                                                 <div>
@@ -146,7 +148,7 @@
                                                 </div>
                                             }
                                         }
-                                        else
+                                        else if (!hasItems)
                                         {
                                             <div>No items listed</div>
                                         }
