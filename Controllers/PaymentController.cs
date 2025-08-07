@@ -194,6 +194,9 @@ namespace GameCraft.Controllers
                 customer.PrizePoints += prizePoints; // Add prize points to the customer
                 _context.Customers.Update(customer);
                 await _context.SaveChangesAsync();
+
+                // Update the session prize points
+        HttpContext.Session.SetString("PrizePoints", customer.PrizePoints.ToString());
             }
 
             // Create an order after successful payment simulation
