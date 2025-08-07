@@ -911,13 +911,13 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 100px); /* Adjust based on header/footer height */
-    background-color: transparent; /* Allows global body background to show */
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 2;
-    /* CHANGE: Added subtle background glow animation */
+    min-height: calc(100vh - 100px); /* Adjust based on header/footer height /
+background-color: transparent; / Allows global body background to show /
+padding: 20px;
+box-sizing: border-box;
+position: relative;
+z-index: 2;
+/ CHANGE: Added subtle background glow animation */
     animation: pulse-glow 4s infinite alternate ease-in-out;
 }
 
@@ -987,7 +987,6 @@ h2 {
             transform: translateY(-3px) scale(1.02); /* More pronounced lift and slight scale */
             box-shadow: 0 0 25px rgba(230, 0, 92, 0.8); /* Stronger glow on hover */
         }
-
 /* Responsive adjustments for Get Your Card page */
 @media (max-width: 768px) {
     .get-card-section .card-content-wrapper {
@@ -1041,6 +1040,188 @@ h2 {
         font-size: 1.1em;
     }
 }
+
+/* Card Catalog */
+.cards-catalog-section {
+    padding: 4rem 0;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #00ffcc; /* Changed to neon green */
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.8); /* Added neon text shadow */
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    justify-items: center;
+}
+
+.card-item {
+    background: rgba(0, 0, 0, 0.5); /* Slightly darker background for contrast */
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    max-width: 350px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: pulse-glow 4s infinite alternate ease-in-out; /* Added glow animation */
+}
+
+    .card-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+.card-image-container {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-image {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+    object-fit: contain;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); /* Stronger shadow for the image */
+    transition: transform 0.3s ease-in-out;
+}
+
+    .card-image:hover {
+        transform: scale(1.05); /* Slight zoom on image hover */
+    }
+
+.card-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #00ffcc; /* Changed to neon green */
+    margin-bottom: 0.5rem;
+}
+
+.card-benefits {
+    text-align: left;
+    margin-bottom: 1rem;
+    flex-grow: 1; /* Allows the benefits section to take up available space */
+}
+
+    .card-benefits ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .card-benefits li {
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+        color: #e0e0e0; /* Slightly lighter color for better contrast */
+    }
+
+.card-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #00ffcc; /* Changed to neon green */
+    margin-top: auto; /* Pushes the price to the bottom */
+    margin-bottom: 1.5rem;
+}
+
+.buy-now-button {
+    background-color: #e6005c; /* Pinkish-red button color */
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
+    box-shadow: 0 0 15px rgba(230, 0, 92, 0.5); /* Pinkish-red glow for the button */
+}
+
+    .buy-now-button:hover {
+        background-color: #cc004c; /* Darker pinkish-red on hover */
+        transform: scale(1.05);
+    }
+
+/* Keyframes for subtle background glow animation */
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 10px rgba(0, 255, 204, 0.2), 0 0 20px rgba(0, 255, 204, 0.1);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(0, 255, 204, 0.4), 0 0 40px rgba(0, 255, 204, 0.2);
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba(0, 255, 204, 0.2), 0 0 20px rgba(0, 255, 204, 0.1);
+    }
+}
+
+/* Responsive adjustments for Card Catalog page */
+@media (max-width: 768px) {
+    .cards-catalog-section {
+        padding: 2rem 0; /* Adjust padding for smaller screens */
+    }
+
+    .section-title {
+        font-size: 2rem; /* Smaller title font size */
+    }
+
+    .card-item {
+        padding: 1rem; /* Reduced padding for smaller screens */
+    }
+
+    .card-name {
+        font-size: 1.3rem; /* Smaller card name font size */
+    }
+
+    .card-price {
+        font-size: 1.1rem; /* Smaller price font size */
+    }
+
+    .buy-now-button {
+        padding: 0.5rem 1rem; /* Smaller button padding */
+        font-size: 0.9rem; /* Smaller button font size */
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title {
+        font-size: 1.5rem; /* Even smaller title font size */
+    }
+
+    .card-item {
+        max-width: 100%; /* Full width for card items */
+    }
+
+    .card-name {
+        font-size: 1.2rem; /* Smaller card name font size */
+    }
+
+    .card-price {
+        font-size: 1rem; /* Smaller price font size */
+    }
+
+    .buy-now-button {
+        padding: 0.4rem 0.8rem; /* Smaller button padding */
+        font-size: 0.8rem; /* Smaller button font size */
+    }
+}
+
 
 /* How It Works Section */
 
@@ -2122,119 +2303,6 @@ form {
         }
 }
 
-/* Styles for the new Payment Selection Page (Payment/Index.cshtml) */
-.payment-selection-section {
-    background-color: #1a1a1a;
-    border-radius: 10px;
-    box-shadow: 0 0 25px rgba(0, 255, 204, 0.7); /* Strong neon glow */
-    padding: 40px;
-    max-width: 900px;
-    margin: 40px auto;
-    text-align: center;
-    border: 2px solid #00ffcc;
-    color: #e0e0e0;
-}
-
-    .payment-selection-section .section-title {
-        color: #00ffcc;
-        font-size: 2.5em;
-        margin-bottom: 15px;
-        text-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
-    }
-
-    .payment-selection-section .section-subtitle {
-        font-size: 1.1em;
-        color: #ccc;
-        margin-bottom: 40px;
-    }
-
-        .payment-selection-section .section-subtitle strong {
-            color: #00ffcc;
-        }
-
-.payment-options-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    justify-content: center;
-}
-
-.payment-option-card {
-    background-color: #222222;
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 2px solid #00ccff; /* Blue accent border */
-}
-
-    .payment-option-card:hover:not(.disabled) {
-        transform: translateY(-8px);
-        box-shadow: 0 10px 30px rgba(0, 204, 255, 0.6); /* Stronger blue glow on hover */
-    }
-
-    .payment-option-card.disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        border-color: #555;
-    }
-
-    .payment-option-card h3 {
-        color: #00ffcc;
-        font-size: 2em;
-        margin-bottom: 15px;
-    }
-
-        .payment-option-card h3 i {
-            margin-right: 10px;
-            color: #00ccff; /* Blue for icons */
-        }
-
-    .payment-option-card p {
-        color: #e0e0e0;
-        font-size: 1em;
-        line-height: 1.6;
-        margin-bottom: 20px;
-    }
-
-    .payment-option-card .current-points {
-        font-weight: bold;
-        color: #FFD700; /* Gold for points */
-        font-size: 1.1em;
-        margin-bottom: 25px;
-    }
-
-    .payment-option-card .payment-button {
-        padding: 12px 25px;
-        font-size: 1.1em;
-        font-weight: bold;
-        border-radius: 8px;
-        transition: background-color 0.3s ease, transform 0.2s;
-        text-decoration: none; /* For anchor tags */
-        display: inline-block; /* For anchor tags */
-    }
-
-    .payment-option-card .btn-primary {
-        background-color: #e6005c; /* Pinkish-red for primary button */
-        color: white;
-        border: none;
-        box-shadow: 0 0 10px rgba(230, 0, 92, 0.5);
-    }
-
-        .payment-option-card .btn-primary:hover {
-            background-color: #cc004c;
-            transform: translateY(-2px);
-            box-shadow: 0 0 15px rgba(230, 0, 92, 0.8);
-        }
-
-    .payment-option-card .btn-secondary {
-        background-color: #555;
-        color: white;
-        border: none;
-        cursor: not-allowed;
-    }
-
 /* OTP input group styling */
 .otp-input-group {
     display: flex;
@@ -2544,6 +2612,204 @@ form {
     .card-details-section .submit-button {
         padding: 10px 15px;
         font-size: 1em;
+    }
+}
+
+/* Dark Theme with Neon Glow */
+.payment-confirmation-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 100px);
+    background-color: #000; /* Black background */
+    padding: 40px;
+    color: #e0e0e0; /* Light gray text for contrast */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.confirmation-icon {
+    font-size: 6rem;
+    color: #00ffcc; /* Neon green/cyan */
+    margin-bottom: 20px;
+    text-shadow: 0 0 15px rgba(0, 255, 204, 0.7);
+    animation: pulse 2s infinite alternate;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.8;
+        transform: scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.confirmation-title {
+    font-size: 2.5rem;
+    color: #00ffcc;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+.confirmation-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: #e0e0e0;
+}
+
+/* Neon Glow Containers */
+.order-summary {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    border: 1px solid #00ffcc;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+    padding: 25px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
+}
+
+    .order-summary:hover {
+        box-shadow: 0 0 30px rgba(0, 255, 204, 0.5);
+        transform: translateY(-3px);
+    }
+
+    .order-summary h3 {
+        font-size: 1.5rem;
+        color: #00ffcc;
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+        padding-bottom: 10px;
+    }
+
+    .order-summary p {
+        font-size: 1.1rem;
+        margin: 12px 0;
+        color: #e0e0e0;
+    }
+
+    .order-summary strong {
+        color: #ffffff;
+    }
+
+.gamecard-details {
+    background-color: rgba(0, 20, 15, 0.5);
+    border: 1px solid #00ffcc;
+    border-radius: 8px;
+    padding: 25px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.3);
+}
+
+    .gamecard-details h3 {
+        font-size: 1.5rem;
+        color: #00ffcc;
+        margin-bottom: 15px;
+    }
+
+.gamecard-number {
+    font-size: 1.8rem;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #00ffcc;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px dashed #00ffcc;
+    border-radius: 4px;
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.7);
+    animation: flicker 3s infinite alternate;
+}
+
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow: 0 0 8px rgba(0, 255, 204, 0.7);
+    }
+
+    20%, 24%, 55% {
+        text-shadow: 0 0 15px rgba(0, 255, 204, 0.9);
+    }
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 15px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background-color: #e6005c;
+    color: white;
+    border: 1px solid #ff3399;
+    box-shadow: 0 0 15px rgba(230, 0, 92, 0.5);
+}
+
+    .btn-primary:hover {
+        background-color: #cc004c;
+        box-shadow: 0 0 25px rgba(230, 0, 92, 0.8);
+        transform: translateY(-2px);
+    }
+
+.btn-secondary {
+    background-color: transparent;
+    color: #00ffcc;
+    border: 1px solid #00ffcc;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+}
+
+    .btn-secondary:hover {
+        background-color: rgba(0, 255, 204, 0.1);
+        box-shadow: 0 0 25px rgba(0, 255, 204, 0.5);
+        transform: translateY(-2px);
+    }
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .payment-confirmation-container {
+        padding: 20px;
+    }
+
+    .confirmation-icon {
+        font-size: 4rem;
+    }
+
+    .confirmation-title {
+        font-size: 2rem;
+    }
+
+    .order-summary, .gamecard-details {
+        padding: 20px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
     }
 }
 
