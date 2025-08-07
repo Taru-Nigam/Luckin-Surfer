@@ -1,12 +1,17 @@
 ﻿using GameCraft.Data;
 using GameCraft.Helpers;
 using GameCraft.Models;
-using GameCraft.ViewModels;
+using GameCraft.Services;
+using GameCraft.ViewModels; // Added using directive for ViewModels
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http; // For HttpContext.Session
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GameCraft.Controllers
 {
@@ -14,31 +19,45 @@ namespace GameCraft.Controllers
     {
         private readonly GameCraftDbContext _context;
         private readonly ILogger<PaymentController> _logger;
+        private readonly IEmailService _emailService;
 
-        public PaymentController(GameCraftDbContext context, ILogger<PaymentController> logger)
+        public PaymentController(GameCraftDbContext context, ILogger<PaymentController> logger, IEmailService emailService)
         {
             _context = context;
             _logger = logger;
+            _emailService = emailService;
         }
 
         // POST action to start the product checkout.
         [HttpPost]
-        public async Task<IActionResult> StartProductCheckout(int productId)
+        public async Task<IActionResult> StartCardCheckout(int cardId)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
-            if (product == null)
+            var card = await _context.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
+            if (card == null)
             {
-                TempData["ErrorMessage"] = "Product not found. Please try again.";
-                return RedirectToAction("GetCard", "Home");
+                TempData["ErrorMessage"] = "Card not found. Please try again.";
+                return RedirectToAction("Catalog", "Card");
             }
 
-            // Set TempData with product details.
-            TempData["PurchaseProductId"] = product.ProductId;
-            TempData["PurchaseProductPrice"] = product.Price.ToString(); // Convert to string
-            TempData["PurchaseProductTitle"] = product.Name;
+            // Assuming the user is logged in, you would get their email from the session
+            var customerEmail = HttpContext.Session.GetString("Email");
 
-            _logger.LogInformation($"Starting checkout for product ID {product.ProductId}. Redirecting to CardPayment.");
+            if (string.IsNullOrEmpty(customerEmail))
+            {
+                // Store the current URL to redirect the user back here after login
+                TempData["ReturnUrl"] = Url.Action("Details", "Card", new { id = cardId });
+                return RedirectToAction("Login", "Account");
+            }
 
+            // Set TempData with the card ID to be used in the CardPayment action.
+            // This is the corrected flow, as the view model cannot be passed directly
+            // across a redirect.
+            TempData["PurchaseCardId"] = cardId;
+            TempData["PurchaseCardPrice"] = card.Price.ToString();
+            TempData["PurchaseCardName"] = card.Name;
+
+
+            // Redirect to the debit card payment page
             return RedirectToAction("CardPayment");
         }
 
@@ -46,60 +65,95 @@ namespace GameCraft.Controllers
         [HttpGet]
         public async Task<IActionResult> CardPayment()
         {
-            if (TempData["PurchaseProductId"] is int productId && TempData["PurchaseProductPrice"] is string productPriceString)
+            // Retrieve card information from TempData
+            if (TempData["PurchaseCardId"] is int cardId && TempData["PurchaseCardPrice"] is string cardPriceString)
             {
-                if (!decimal.TryParse(productPriceString, out decimal productPrice))
+                if (!decimal.TryParse(cardPriceString, out decimal cardPrice))
                 {
-                    _logger.LogWarning("Failed to parse product price from TempData.");
-                    TempData["ErrorMessage"] = "Invalid product data. Please try again.";
-                    return RedirectToAction("GetCard", "Home");
+                    _logger.LogWarning("Failed to parse card price from TempData.");
+                    TempData["ErrorMessage"] = "Invalid card data. Please try again.";
+                    return RedirectToAction("Catalog", "Card");
                 }
 
-                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
-                if (product == null)
+                var card = await _context.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
+                if (card == null)
                 {
-                    _logger.LogWarning($"Product with ID {productId} not found for payment selection.");
-                    TempData["ErrorMessage"] = "Product not found for payment. Please try again.";
-                    return RedirectToAction("GetCard", "Home");
+                    _logger.LogWarning($"Card with ID {cardId} not found for payment selection.");
+                    TempData["ErrorMessage"] = "Card not found for payment. Please try again.";
+                    return RedirectToAction("Catalog", "Card");
                 }
 
                 // Keep TempData for the next action.
-                TempData.Keep("PurchaseProductId");
-                TempData.Keep("PurchaseProductPrice");
-                TempData.Keep("PurchaseProductTitle");
+                TempData.Keep("PurchaseCardId");
+                TempData.Keep("PurchaseCardPrice");
+                TempData.Keep("PurchaseCardName");
 
-                // Create a DebitCardViewModel and set the product
+
+                // Create a DebitCardViewModel and set the card
                 var viewModel = new DebitCardViewModel
                 {
-                    Product = product // Set the product in the view model
+                    Card = card, // Set the card in the view model
+                    Email = HttpContext.Session.GetString("Email") // Pre-fill email from session
                 };
 
                 return View(viewModel); // Return the view with the DebitCardViewModel
             }
             else
             {
-                _logger.LogWarning("No product ID or price found in TempData for CardPayment. Redirecting to GetCard.");
-                TempData["ErrorMessage"] = "No product selected for payment. Please start from the GameCard page.";
-                return RedirectToAction("GetCard", "Home");
+                _logger.LogWarning("No card ID or price found in TempData for CardPayment. Redirecting to Catalog.");
+                TempData["ErrorMessage"] = "No card selected for payment. Please start from the Cards Catalog page.";
+                return RedirectToAction("Catalog", "Card");
             }
         }
 
-        // POST action to handle debit card payment submission.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessDebitCardDetails(DebitCardViewModel model)
         {
-            if (!ModelState.IsValid)
+            // Manual validation
+            var errors = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(model.Email))
             {
-                _logger.LogWarning("Model state invalid for ProcessDebitCardDetails.");
+                errors.Add("Email is required.");
+            }
+            if (string.IsNullOrWhiteSpace(model.CardNumber))
+            {
+                errors.Add("Card Number is required.");
+            }
+            if (string.IsNullOrWhiteSpace(model.CardholderName))
+            {
+                errors.Add("Cardholder Name is required.");
+            }
+            if (model.ExpiryMonth < 1 || model.ExpiryMonth > 12)
+            {
+                errors.Add("Valid Expiry Month (MM) is required.");
+            }
+            if (model.ExpiryYear < DateTime.UtcNow.Year)
+            {
+                errors.Add("Valid Expiry Year (YYYY) is required.");
+            }
+            if (string.IsNullOrWhiteSpace(model.CVV) || !int.TryParse(model.CVV, out _))
+            {
+                errors.Add("CVV is required.");
+            }
+
+            // If there are validation errors, return to the CardPayment view with the model and errors
+            if (errors.Count > 0)
+            {
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
                 return View("CardPayment", model); // Return to CardPayment view with the model
             }
 
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == model.Product.ProductId);
-            if (product == null || product.Price != model.Product.Price)
+            // Fetch the card from the database to verify the price
+            var card = await _context.Cards.FirstOrDefaultAsync(c => c.CardId == model.Card.CardId);
+            if (card == null || card.Price != model.Card.Price)
             {
-                _logger.LogError($"Product details mismatch or not found for product ID: {model.Product.ProductId}.");
-                ModelState.AddModelError("", "Product details mismatch or not found. Please try again.");
+                _logger.LogError($"Card details mismatch or not found for card ID: {model.Card.CardId}.");
+                ModelState.AddModelError("", "Card details mismatch or not found. Please try again.");
                 return View("CardPayment", model); // Return to CardPayment view with the model
             }
 
@@ -113,23 +167,99 @@ namespace GameCraft.Controllers
             }
             // --- END SIMULATION ---
 
-            _logger.LogInformation($"Debit card payment simulated successfully for product ID: {model.Product.ProductId}.");
+            // Generate a unique game card number based on the card type
+            string gameCardNumber;
+            int prizePoints = 0;
+            if (card.Name == "Silver GameCraft Card")
+            {
+                prizePoints = 300;
+                gameCardNumber = "SV" + new Random().Next(100000000, 999999999).ToString(); // SV followed by 9 digits
+            }
+            else if (card.Name == "Gold GameCraft Card")
+            {
+                prizePoints = 800;
+                gameCardNumber = "GD" + new Random().Next(100000000, 999999999).ToString(); // GD followed by 9 digits
+            }
+            else
+            {
+                gameCardNumber = new string(Enumerable.Range(0, 9).Select(_ => (char)('0' + new Random().Next(0, 10))).ToArray());
+            }
 
-            // Redirect to the DebitCardCheckoutController to handle order creation
-            return RedirectToAction("ConfirmPayment", "DebitCardCheckout", new { productId = model.Product.ProductId });
+            // Save the game card number to the customer
+            var customerEmail = model.Email; // Get the email from the model
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == customerEmail);
+            if (customer != null)
+            {
+                customer.GameCraftCardNumber = gameCardNumber;
+                customer.PrizePoints += prizePoints; // Add prize points to the customer
+                _context.Customers.Update(customer);
+                await _context.SaveChangesAsync();
+            }
+
+            // Create an order after successful payment simulation
+            var order = new Order
+            {
+                CustomerId = customer.CustomerId,
+                TotalAmount = card.Price,
+                OrderDate = DateTime.UtcNow,
+                CardOrderDetails = new List<CardOrderDetail>
+                {
+                    new CardOrderDetail
+                    {
+                        CardId = card.CardId, // Assuming CardId is also the ProductId
+                        Quantity = 1, // Assuming quantity is 1 for a single product purchase
+                        UnitPrice = card.Price
+                    }
+                }
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync(); // Save the order to the database
+
+            // Send confirmation email
+            await _emailService.SendEmailAsync(customerEmail, "Thank you for your GameCraft Card purchase!",
+                $"Thank you for purchasing your GameCraft Card! Your game card number is: {gameCardNumber}");
+
+            // Log the purchase activity
+            var auditLog = new AuditLog
+            {
+                UserId = customer.CustomerId.ToString(),
+                UserName = customer.Name,
+                Action = "Purchased Game Card",
+                Details = $"User purchased a game card with number: {gameCardNumber}.",
+                Timestamp = DateTime.UtcNow,
+                UserRole = "Customer"
+            };
+            _context.AuditLogs.Add(auditLog);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Debit card payment simulated successfully for card ID: {model.Card.CardId}.");
+
+            // Redirect to the PaymentConfirmation page with the new order ID
+            return RedirectToAction("PaymentConfirmation", "Payment", new { orderId = order.OrderId });
         }
+
 
         [HttpGet]
         public async Task<IActionResult> PaymentConfirmation(int orderId)
         {
             var order = await _context.Orders
-                .Include(o => o.OrderDetails) // Include OrderDetails
+                .Include(o => o.CardOrderDetails) // Include CardOrderDetails
+                .ThenInclude(cod => cod.Card) // Include Card details
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
             if (order == null)
             {
                 TempData["ErrorMessage"] = "Order not found.";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Catalog", "Card");
+            }
+
+            // Get the card details from the order details
+            var purchasedCard = order.CardOrderDetails.FirstOrDefault()?.Card; // Use Card instead of Product
+            if (purchasedCard == null)
+            {
+                TempData["ErrorMessage"] = "Purchased card details not found.";
+                return RedirectToAction("Catalog", "Card");
             }
 
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == order.CustomerId);
@@ -139,14 +269,6 @@ namespace GameCraft.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // Assuming you want to show the first product in the order details
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == order.OrderDetails.First().ProductId);
-            if (product == null)
-            {
-                _logger.LogWarning($"Product not found for order {orderId}.");
-                product = new Product { Name = "Purchased Product" }; // Fallback
-            }
-
             var viewModel = new PaymentConfirmationViewModel
             {
                 OrderId = order.OrderId,
@@ -154,11 +276,12 @@ namespace GameCraft.Controllers
                 TotalAmount = order.TotalAmount,
                 CustomerName = customer.Name,
                 GameCardNumber = customer.GameCraftCardNumber,
-                PurchasedProduct = product // Use product instead of promotion
+                PurchasedProduct = purchasedCard // Use purchasedCard instead of a new product object
             };
 
             return View(viewModel);
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -33,6 +33,5 @@ namespace GameCraft.Controllers
             return View(order); // Pass the order object to your OrderDetail.cshtml view
         }
 
-        // ... potentially other actions for OrderHistory, etc.
     }
 }

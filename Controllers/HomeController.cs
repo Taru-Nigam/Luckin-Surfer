@@ -1,6 +1,5 @@
 using GameCraft.Data;
 using GameCraft.Models;
-using GameCraft.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -67,7 +66,6 @@ namespace GameCraft.Controllers
             // Add Promotions to carousel
             var promotions = await _context.Promotions
                                            .OrderBy(pr => pr.PromotionId) // Or by a specific display order field
-                                           .Take(2) // Example: take top 2 promotions
                                            .ToListAsync();
             foreach (var promotion in promotions)
             {
@@ -119,6 +117,12 @@ namespace GameCraft.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return View(gameCraftCard); // Pass the product to the view
+        }
+
+        public async Task<IActionResult> CardCatalog()
+        {
+            var cards = await _context.Cards.ToListAsync(); // Fetch cards from the database
+            return View(cards); // Return the view with the list of cards
         }
 
         public IActionResult ConnectAccount() 

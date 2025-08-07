@@ -474,7 +474,14 @@ namespace GameCraft.Controllers
                 return RedirectToAction("Login");
             }
 
-            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+            var customer = await _context.Customers
+                .Include(c => c.Order) // Include orders
+                .ThenInclude(o => o.OrderDetails) // Include order details
+                .ThenInclude(od => od.Product) // Include product details
+                .Include(c => c.Order) // Include orders again for cards
+                .ThenInclude(o => o.CardOrderDetails) // Include order details again
+                .ThenInclude(cod => cod.Card) // Include card details
+                .FirstOrDefaultAsync(c => c.Email == email);
             if (customer == null)
             {
                 return RedirectToAction("Login");
@@ -648,7 +655,7 @@ namespace GameCraft.Controllers
                 return Json(new { success = false, message = "User not found." });
             }
 
-            byte[] newAvatarData = null;
+            byte[]? newAvatarData = null;
 
             if (avatarFile != null && avatarFile.Length > 0)
             {
@@ -730,5 +737,29 @@ namespace GameCraft.Controllers
 
             return Json(new { success = true, message = "Password changed successfully." });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateOrder(Order order)
+        {
+            var userId = HttpContext.Session.GetString("Email");
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == userId);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            order.CustomerId = customer.CustomerId;
+            order.OrderDate = DateTime.UtcNow;
+
+            // Calculate total amount and populate order details
+            order.TotalAmount = order.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("MyAccount");
+        }
+
     }
 }

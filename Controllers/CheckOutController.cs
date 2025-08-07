@@ -1,6 +1,6 @@
 ﻿using GameCraft.Data;
 using GameCraft.Helpers;
-using GameCraft.Models; // Ensure you have the AuditLog model
+using GameCraft.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; // Needed for FirstOrDefaultAsync, FindAsync

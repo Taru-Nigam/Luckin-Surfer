@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using GameCraft.Models;
 using System.Collections.Generic;
 using System.IO;
 using GameCraft.Helpers;
+using GameCraft.Models;
 
 namespace GameCraft.Data
 {
@@ -29,6 +29,7 @@ namespace GameCraft.Data
 
         public DbSet<Icon> Icons { get; set; }
         public DbSet<Logo> Logos { get; set; }
+        public DbSet<Card> Cards { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -51,6 +52,34 @@ namespace GameCraft.Data
                     Description = "Shopping cart icon",
                     ImageData = LoadImageData("wwwroot/images/cart icon.png") // Load image data
                 }
+            );
+
+            // Seed initial data for Cards
+            modelBuilder.Entity<Card>().HasData(
+            new Card
+            {
+                CardId = 1,
+                Name = "GameCraft Card",
+                Price = 10.00m,
+                Description = "- Seamless Ticket Tracking: All your game tickets are digitally stored on your card.\n- Exclusive Member Perks: Access special discounts and offers available only to cardholders.\n- Earn & Redeem Points: Accumulate prize points with every game and redeem them for awesome rewards.\n- Early Access & Invites: Get priority access to new games, events, and exclusive tournaments.\n- Level Up Your Fun: The more you play, the more rewards and status you unlock!",
+                ImageData = LoadImageData("wwwroot/images/GameCard card.png") // Load image data
+            },
+                new Card
+                {
+                    CardId = 2,
+                    Name = "Silver GameCraft Card",
+                    Price = 20.00m,
+                    Description = "- 300 Prize Points: Start your journey with 300 prize points.\n- Special Discounts: Enjoy exclusive discounts on selected games and products.\n- Early Access: Get early access to new games and events.",
+                    ImageData = LoadImageData("wwwroot/images/GameCard card.png") // Load image data
+                },
+                 new Card
+                 {
+                     CardId = 3,
+                     Name = "Gold GameCraft Card",
+                     Price = 40.00m,
+                     Description = "- 800 Prize Points: Start your journey with 800 prize points.\n- Premium Discounts: Enjoy premium discounts on all games and products.\n- VIP Access: Get VIP access to exclusive events and tournaments.\n- Priority Support: Receive priority customer support for all your inquiries.",
+                     ImageData = LoadImageData("wwwroot/images/GameCard plat.png") // Load image data
+                 }
             );
 
             // Seed initial data for Icons (example)
@@ -82,9 +111,31 @@ namespace GameCraft.Data
                     Description = "Get your official GameCraft card for seamless ticket tracking and exclusive perks!",
                     ImageData = File.ReadAllBytes("wwwroot/images/GameCard card.png"),
                     ButtonText = "Get Your Card",
-                    ButtonUrl = "Home/GetCard",
+                    ButtonUrl = "Card/Details/1",
                     BackgroundColor = "#00BFFF", // Deep Sky Blue
                     TextColor = "#FFFFFF",
+                },
+                new Promotion
+                {
+                    PromotionId = 3,
+                    Title = "Purchase Your Silver GameCraft Card!",
+                    Description = "Get your Silver GameCraft card for exclusive perks!",
+                    ImageData = File.ReadAllBytes("wwwroot/images/GameCard card.png"),
+                    ButtonText = "Get Your Silver Card",
+                    ButtonUrl = "Card/Details/2",
+                    BackgroundColor = "#C0C0C0", // Silver
+                    TextColor = "#000000",
+                },
+                new Promotion
+                {
+                    PromotionId = 4,
+                    Title = "Purchase Your Gold GameCraft Card!",
+                    Description = "Get your Gold GameCraft card for the ultimate experience!",
+                    ImageData = File.ReadAllBytes("wwwroot/images/GameCard plat.png"),
+                    ButtonText = "Get Your Gold Card",
+                    ButtonUrl = "Card/Details/3",
+                    BackgroundColor = "#FFD700", // Gold
+                    TextColor = "#000000",
                 }
             );
 
@@ -165,15 +216,6 @@ namespace GameCraft.Data
                     Price = 1000.00m,
                     CategoryId = 4,
                     ImageData = LoadImageData("wwwroot/images/prizes/PS5 console.jpg") // Load image data
-                },
-                new Product
-                {
-                    ProductId = 7,
-                    Name = "GameCraft Card",
-                    Price = 10.00m,
-                    Description = "Purchase your official GameCraft card for seamless ticket tracking and exclusive perks!",
-                    CategoryId = 5,
-                    ImageData = LoadImageData("wwwroot/images/GameCard card.png") // Load image data
                 }
             );
 

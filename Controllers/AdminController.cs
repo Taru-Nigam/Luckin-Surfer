@@ -1,7 +1,5 @@
 ﻿using GameCraft.Data;
 using GameCraft.Helpers;
-using GameCraft.Models;
-using GameCraft.ViewModels; // Add this using directive
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,6 +11,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using GameCraft.Services;
 using System.Text;
+using GameCraft.Models;
 
 namespace GameCraft.Controllers
 {
