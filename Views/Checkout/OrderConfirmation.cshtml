@@ -4,33 +4,25 @@
     ViewData["Title"] = "Payment Success";
 }
 
-<div class="container text-center mt-5">
-    <h2> Payment Successful!</h2>
-    <p>Thank you for your purchase.</p>
+<div class="payment-confirmation-container">
+    <div class="confirmation-icon">✓</div>
+    <h1 class="confirmation-title">Thank You for Your Order!</h1>
+    <p class="confirmation-subtitle">Your order has been successfully placed.</p>
 
-    <div class="card mx-auto" style="max-width: 500px;">
-        <div class="card-body">
-            <h5 class="card-title">Order Details</h5>
-            <ul class="list-group">
-                <li class="list-group-item">Order ID: @Model.OrderId</li>
-                <li class="list-group-item">Name: @Model.ShippingName</li>
-                <li class="list-group-item">Email: @Model.ShippingEmail</li>
-                <li class="list-group-item">Phone: @Model.ShippingPhone</li>
-                <li class="list-group-item">Address: @Model.ShippingAddress</li>
-                <li class="list-group-item">City: @Model.ShippingCity</li>
-                <li class="list-group-item">Postcode: @Model.ShippingPostCode</li>
-                <li class="list-group-item">Amount: $@Model.TotalAmount</li>
-            </ul>
-        </div>
+    <div class="order-summary">
+        <h3>Order Summary</h3>
+        <p><strong>Order ID:</strong> @Model.OrderId</p>
+        <p><strong>Total Amount:</strong> $@Model.TotalAmount.ToString("F2")</p>
+        <p><strong>Billed To:</strong> @Model.ShippingName</p>
+        <p><strong>Email:</strong> @Model.ShippingEmail</p>
+        <p><strong>Phone:</strong> @Model.ShippingPhone</p>
+        <p><strong>Address:</strong> @Model.ShippingAddress</p>
+        <p><strong>City:</strong> @Model.ShippingCity</p>
+        <p><strong>Postcode:</strong> @Model.ShippingPostCode</p>
     </div>
 
-    <a class="btn btn-primary mt-3" href="/">Continue Shopping</a>
-    @section Scripts {
-        <script>
-            $(document).ready(function () {
-                
-                fetchCartCount();
-            });
-        </script>
-    }
+    <div class="action-buttons">
+        <a href="@Url.Action("MyAccount", "Account")" class="btn-primary">Go to My Account</a>
+        <a href="@Url.Action("Prizes", "Home")" class="btn-secondary">Continue Browsing Cards</a>
+    </div>
 </div>
