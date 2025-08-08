@@ -12,21 +12,23 @@ namespace GameCraft.DbInitializers
         public static async Task Initialize(GameCraftDbContext context)
         {
             // Ensure the database is created and migrations are applied
-            // This is good practice to ensure the schema is ready before seeding
             await context.Database.MigrateAsync();
-
             // Seed AuditLogs
             if (!await context.AuditLogs.AnyAsync()) // Only seed if no audit logs exist
             {
                 Console.WriteLine("Seeding initial AuditLogs...");
-                context.AuditLogs.AddRange(
-                    new AuditLog { Action = "System Initialization", EmployeeName = "System", Timestamp = DateTime.UtcNow.AddDays(-3) },
-                    new AuditLog { Action = "First employee login (seed)", EmployeeName = "Employee User", Timestamp = DateTime.UtcNow.AddDays(-2).AddHours(-5) },
-                    new AuditLog { Action = "Prize stock updated (seed)", EmployeeName = "Employee User", Timestamp = DateTime.UtcNow.AddDays(-2).AddHours(-1) },
-                    new AuditLog { Action = "Admin logged in (initial seed)", EmployeeName = "Admin", Timestamp = DateTime.UtcNow.AddDays(-1).AddHours(-3) }
-                );
-                await context.SaveChangesAsync();
-                Console.WriteLine("AuditLogs seeded.");
+                var customer = await context.Customers.FirstOrDefaultAsync(); // Get a customer for seeding
+                if (customer != null)
+                {
+                    context.AuditLogs.AddRange(
+                    );
+                    await context.SaveChangesAsync();
+                    Console.WriteLine("AuditLogs seeded.");
+                }
+                else
+                {
+                    Console.WriteLine("No customers found for seeding AuditLogs.");
+                }
             }
             else
             {

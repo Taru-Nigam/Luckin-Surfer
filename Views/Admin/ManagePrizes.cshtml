@@ -1,4 +1,4 @@
-﻿@model List<GameCraft.Models.Product>
+﻿@model List<Product>
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Manage Prizes";
@@ -22,11 +22,11 @@ else
     <table class="table-admin-list">
         <thead>
             <tr>
+                <th>Image</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Price</th>
                 <th>Category</th>
-                <th>Image</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -47,7 +47,7 @@ else
                     <td>@product.Name</td>
                     <td>@product.Description</td>
                     <td>@product.Price</td>
-                    <td>@product.CategoryId</td> @* This will show CategoryId, ideally you'd join to get Category Name *@
+                    <td>@product.Category?.Name</td> <!-- Display the category name -->
 
                     <td>
                         <a href="@Url.Action("AddOrEditPrize", "Admin", new { id = product.ProductId })" class="btn-action btn-edit">Edit</a>

@@ -1,0 +1,54 @@
+﻿@model IEnumerable<GameCraft.Models.Card>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Manage Cards";
+}
+
+<h2>Manage Cards</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<a asp-action="CreateOrEditCard" class="btn btn-primary mb-4">Add New Card</a>
+
+<table class="table-admin-list">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var card in Model)
+        {
+            <tr>
+                <td>
+                    @if (card.ImageData != null && card.ImageData.Length > 0)
+                    {
+                        <img src="@Url.Action("GetImage", "Card", new { id = card.CardId })" alt="@card.Name"/>
+                    }
+                    else
+                    {
+                        <span>No Image</span>
+                    }
+                <td>@card.Name</td>
+                <td>@card.Description</td>
+                <td>@card.Price.ToString("C")</td>
+                <td>
+                    <a asp-action="CreateOrEditCard" asp-route-id="@card.CardId" class="btn-action btn-edit">Edit</a>
+                    <form asp-action="DeleteCard" asp-route-id="@card.CardId" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this card?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

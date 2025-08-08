@@ -12,7 +12,7 @@ namespace GameCraft.Models
         [StringLength(100)]
         public string Name { get; set; }
 
-        [StringLength(500)]
+        [StringLength(1000)]
         public string Description { get; set; }
 
         [Required]
@@ -24,7 +24,10 @@ namespace GameCraft.Models
 
         public int Quantity { get; set; }
 
-        public byte[] ImageData { get; set; } // Change from ImageUrl to ImageData
+        public byte[] ImageData { get; set; }
 
+        // Navigation property to the Category
+        [ForeignKey("CategoryId")]
+        public virtual Category Category { get; set; } // This will allow you to access the category directly
     }
 }

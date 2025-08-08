@@ -1,0 +1,39 @@
+﻿@model GameCraft.Models.Card
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = Model.CardId == 0 ? "Add Card" : "Edit Card";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="CreateOrEditCard" enctype="multipart/form-data" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Price"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Image Upload</label>
+        <input type="file" name="imageUpload" class="form-control" />
+        <span asp-validation-for="ImageData" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="ManageCards" class="btn btn-secondary">Cancel</a>
+</form>

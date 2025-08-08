@@ -13,12 +13,14 @@
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="@Url.Action("Dashboard", "Admin")">GameCraft Admin</a>
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Home")" target="_blank">Website Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Admin")" target="_blank">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Home")">Website Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Admin")">Dashboard</a></li>
                 <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageUsers", "Admin")">Manage Users</a></li>
                 <li class="nav-item"><a class="nav-link" href="@Url.Action("ManagePrizes", "Admin")">Manage Prizes</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageCards", "Admin")">Manage Cards</a></li>
                 <li class="nav-item"><a class="nav-link" href="@Url.Action("ManageCategories", "Admin")">Manage Categories</a></li>
-                <form asp-controller="Employee" asp-action="Logout" method="post" id="logoutForm">
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("AuditLog", "Admin")">Audit Log</a></li>
+                <form asp-controller="Admin" asp-action="Logout" method="post" id="logoutForm">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn btn-link nav-link">Logout</button>
                 </form>

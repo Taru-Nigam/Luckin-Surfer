@@ -40,5 +40,17 @@ namespace GameCraft.Controllers
 
             return View(card); // Pass the single card to the view
         }
+
+        [HttpGet]
+        public IActionResult GetImage(int id)
+        {
+            var card = _context.Cards.Find(id);
+            if (card != null && card.ImageData != null)
+            {
+                return File(card.ImageData, "image/png"); // Adjust content type if necessary
+            }
+            return NotFound(); // Return 404 if image not found
+        }
+
     }
 }

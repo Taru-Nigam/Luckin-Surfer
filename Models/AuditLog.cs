@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Example AuditLog.cs
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace GameCraft.Models
@@ -6,16 +7,23 @@ namespace GameCraft.Models
     public class AuditLog
     {
         [Key]
-        public int Id { get; set; } // Primary Key for the log record
+        public int Id { get; set; }
 
         [Required]
-        [StringLength(500)]
-        public string Action { get; set; } // Description of the action (e.g., "Logged in", "Updated stock for X")
+        public string UserId { get; set; } // Or int if your User ID is int
 
         [Required]
-        [StringLength(100)]
-        public string EmployeeName { get; set; } // Name of the employee performing the action
+        public string UserName { get; set; } // To easily display who performed the action
 
-        public DateTime Timestamp { get; set; } = DateTime.Now; // When the action occurred
+        [Required]
+        public string Action { get; set; } // e.g., "Change Password", "Add User", "Logged In"
+
+        public string Details { get; set; } // Additional details, e.g., "Old value: X, New value: Y"
+
+        [Required]
+        public DateTime Timestamp { get; set; }
+
+        [Required]
+        public string UserRole { get; set; } // To distinguish between customer and admin activities
     }
 }

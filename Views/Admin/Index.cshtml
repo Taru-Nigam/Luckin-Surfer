@@ -1,4 +1,4 @@
-﻿@model Tuple<List<GameCraft.Models.Customer>, List<GameCraft.Models.Product>>
+﻿@model Tuple<List<Customer>, List<Product>>
 @{
     ViewBag.Title = "Admin Dashboard - Manage Users and Prizes";
     Layout = "_AdminLayout";
@@ -7,7 +7,6 @@
 <section class="hero content-section">
     <h1>Welcome to the Admin Dashboard</h1>
     <p>Manage users and prizes efficiently!</p>
-    <a href="@Url.Action("Dashboard", "Employee")" class="btn btn-primary">Go to Employee Portal</a> <!-- Employee Portal Button -->
 </section>
 
 <section class="user-management content-section"> 
