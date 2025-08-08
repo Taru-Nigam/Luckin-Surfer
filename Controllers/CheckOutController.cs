@@ -35,7 +35,7 @@ namespace GameCraft.Controllers
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == customerEmail);
             if (customer == null)
             {
-                TempData["ErrorMessage"] = "User  account not found. Please log in again.";
+                TempData["ErrorMessage"] = "User account not found. Please log in again.";
                 HttpContext.Session.Clear();
                 return RedirectToAction("Login", "Account");
             }
@@ -71,19 +71,6 @@ namespace GameCraft.Controllers
                     };
                     _context.CartItems.Add(newCartItem);
                 }
-                await _context.SaveChangesAsync();
-
-                // Log the addition to cart activity
-                var auditLog = new AuditLog
-                {
-                    UserId = customer.CustomerId.ToString(),
-                    UserName = customer.Name,
-                    Action = "Add to Cart",
-                    Details = $"User  added {quantity} of {product.Name} to cart.",
-                    Timestamp = DateTime.UtcNow,
-                    UserRole = "Customer"
-                };
-                _context.AuditLogs.Add(auditLog);
                 await _context.SaveChangesAsync();
 
                 // Update session cart as well
@@ -167,7 +154,7 @@ namespace GameCraft.Controllers
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Email == customerEmail);
             if (customer == null)
             {
-                TempData["ErrorMessage"] = "User  account not found.";
+                TempData["ErrorMessage"] = "User account not found.";
                 return RedirectToAction("Login", "Account");
             }
 
@@ -227,18 +214,6 @@ namespace GameCraft.Controllers
             HttpContext.Session.SetString("PrizePoints", customer.PrizePoints.ToString());
             await _context.SaveChangesAsync();
 
-            // Log the order placement activity
-            var auditLog = new AuditLog
-            {
-                UserId = customer.CustomerId.ToString(),
-                UserName = customer.Name,
-                Action = "Place Order",
-                Details = $"User  placed an order with total amount: {totalAmount}.",
-                Timestamp = DateTime.UtcNow,
-                UserRole = "Customer"
-            };
-            _context.AuditLogs.Add(auditLog);
-            await _context.SaveChangesAsync();
 
             HttpContext.Session.Remove("Cart");
             var dbCartItems = _context.CartItems.Where(ci => ci.CustomerId == customer.CustomerId).ToList();
@@ -269,19 +244,6 @@ namespace GameCraft.Controllers
                 ShippingCity = order.ShippingCity,
                 TotalAmount = order.TotalAmount
             };
-
-            // Log the order confirmation activity
-            var auditLog = new AuditLog
-            {
-                UserId = order.CustomerId.ToString(),
-                UserName = order.ShippingName,
-                Action = "Order Confirmation",
-                Details = $"User  confirmed order with ID: {order.OrderId}.",
-                Timestamp = DateTime.UtcNow,
-                UserRole = "Customer"
-            };
-            _context.AuditLogs.Add(auditLog);
-            _context.SaveChanges();
 
             return View(viewModel);
         }

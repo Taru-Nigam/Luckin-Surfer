@@ -13,7 +13,6 @@ namespace GameCraft.Models
 
         [Required]
         public int ProductId { get; set; }
-        public Product Product { get; set; }
 
         [Required]
         [Range(1, int.MaxValue)]

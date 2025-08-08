@@ -15,9 +15,15 @@
     <header class="main-header">
         <nav class="navbar navbar-expand-lg navbar-dark gamecraft-navbar">
             <div class="container-fluid top-header-content">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
 
                 <a class="navbar-brand header-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="@Url.Action("GetLogo", "Home", new { id = 1 })" alt="GameCraft Logo" class="brand-logo" />
+                    <img src="~/Images/GameCraft logo.png" alt="GameCraft Logo" class="brand-logo" />
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -36,9 +42,6 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Prizes">Prizes</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="CardCatalog">Cards</a>
-                        </li>
                         @using Microsoft.AspNetCore.Http
                         @inject IHttpContextAccessor HttpContextAccessor
 
@@ -46,7 +49,6 @@
                             var prizepoints = HttpContextAccessor.HttpContext?.Session.GetString("PrizePoints");
                             var username = HttpContextAccessor.HttpContext?.Session.GetString("UserName");
                             var avatarUrl = HttpContextAccessor.HttpContext?.Session.GetString("AvatarUrl") ?? "/images/default-avatar.png";
-                            var isAdmin = HttpContextAccessor.HttpContext?.Session.GetString("IsAdmin") == "true"; // Check if user is admin
                         }
                         @if (!string.IsNullOrEmpty(username))
                         {
@@ -67,7 +69,7 @@
                         <div class="auth-buttons">
                             <button class="login-button" onclick="location.href='/Account/Login'">Login</button>
                             <button class="signup-button" onclick="location.href='/Account/Register'">Sign Up</button>
-                            <button onclick="location.href='@Url.Action("Login", "Admin")'">Admin Login</button>
+                            <button onclick="location.href='@Url.Action("Login", "Employee")'">Employee Login</button>
                         </div>
                     }
                     else
@@ -79,18 +81,11 @@
                             <span class="prize-points">@prizepoints</span> <!-- Display prize points -->
                         </div>
                     }
-
-                    @if (isAdmin) // Show admin button if user is an admin
-                    {
-                        <div class="admin-buttons">
-                            <button class="btn btn-warning" onclick="location.href='/Admin/Index'">Admin Portal</button>
-                        </div>
-                    }
                 </div>
 
                 <div class="cart-icon" id="cart-icon">
                     <a class="nav-link" href="/Cart/Cart">
-                        <img src="@Url.Action("GetLogo", "Home", new { id = 2 })" alt="Cart Icon" style="width: 50px; height: 50px;" />
+                        <img src="~/Images/cart icon.png" alt="Cart Icon" style="width: 50px; height: 50px;" />
                         <span class="cart-count" id="cartCount">0</span>
                     </a>
                     <div class="cart-preview" id="cartPreviewBox" style="display: none;">
@@ -106,113 +101,113 @@
         <main role="main">
             @RenderBody()
         </main>
+    
 
+    <footer class="site-footer">
+        <div class="container-fluid">
+            Copyright &copy; 2025 - GameCraft
+        </div>
+    </footer>
 
-        <footer class="site-footer">
-            <div class="container-fluid">
-                Copyright &copy; 2025 - GameCraft
-            </div>
-        </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Get references to the cart preview elements
+        const cartIcon = document.querySelector('.cart-icon');
+        const cartPreviewBox = document.getElementById('cartPreviewBox'); // Using the new ID
+        const cartPreviewMessage = document.getElementById('cartPreviewMessage'); // Using the new ID
 
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        <script>
-            // Get references to the cart preview elements
-            const cartIcon = document.querySelector('.cart-icon');
-            const cartPreviewBox = document.getElementById('cartPreviewBox'); // Using the new ID
-            const cartPreviewMessage = document.getElementById('cartPreviewMessage'); // Using the new ID
+        // Cart preview hover logic
+        if (cartIcon && cartPreviewBox) {
+            cartIcon.addEventListener('mouseenter', function() {
+                cartPreviewBox.style.display = 'block';
+            });
+            cartIcon.addEventListener('mouseleave', function() {
+                cartPreviewBox.style.display = 'none';
+            });
+        }
 
-            // Cart preview hover logic
-            if (cartIcon && cartPreviewBox) {
-                cartIcon.addEventListener('mouseenter', function() {
-                    cartPreviewBox.style.display = 'block';
-                });
-                cartIcon.addEventListener('mouseleave', function() {
-                    cartPreviewBox.style.display = 'none';
-                });
+        // Function to update cart count display AND the preview message
+        function updateCartCount(count) {
+            const cartCountSpan = document.getElementById('cartCount');
+            if (cartCountSpan) {
+                cartCountSpan.innerText = count;
+                cartCountSpan.style.display = count > 0 ? 'inline-block' : 'none'; // Show or hide based on count
             }
 
-            // Function to update cart count display AND the preview message
-            function updateCartCount(count) {
-                const cartCountSpan = document.getElementById('cartCount');
-                if (cartCountSpan) {
-                    cartCountSpan.innerText = count;
-                    cartCountSpan.style.display = count > 0 ? 'inline-block' : 'none'; // Show or hide based on count
+            // --- NEW LOGIC FOR CART PREVIEW MESSAGE ---
+            if (cartPreviewMessage) {
+                if (count > 0) {
+                    cartPreviewMessage.innerText = `You have ${count} item(s) in your cart.`; // More dynamic message
+                    // Or, if you want to hide the whole preview box if not empty, you'd adjust display property of cartPreviewBox
+                } else {
+                    cartPreviewMessage.innerText = "Your cart is empty.";
+                }
+            }
+            // --- END NEW LOGIC ---
+        }
+
+        // Function to fetch and update cart count on page load
+        function fetchCartCount() {
+            $.get("/Cart/GetCartCount", function(data) {
+                if (data && typeof data.cartCount !== 'undefined') {
+                    updateCartCount(data.cartCount);
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                 console.error("Failed to fetch initial cart count:", textStatus, errorThrown);
+            });
+        }
+
+        // jQuery document ready function
+        $(document).ready(function() {
+            // Fetch initial cart count when the page loads
+            fetchCartCount();
+
+            // Handle Add to Cart button click using event delegation
+            $(document).on('click', '.add-to-cart-btn', function(e) {
+                e.preventDefault(); // Prevent default button behavior (e.g., form submission)
+
+                var productId = $(this).data('product-id');
+                var productName = $(this).data('product-name');
+
+                if (!productId) {
+                    console.error("Product ID not found for Add to Cart button.");
+                    return;
                 }
 
-                // --- NEW LOGIC FOR CART PREVIEW MESSAGE ---
-                if (cartPreviewMessage) {
-                    if (count > 0) {
-                        cartPreviewMessage.innerText = `You have ${count} item(s) in your cart.`; // More dynamic message
-                        // Or, if you want to hide the whole preview box if not empty, you'd adjust display property of cartPreviewBox
+                // AJAX POST request to add item to cart
+                $.post("/Cart/AddToCart", { productId: productId, quantity: 1 }, function(data) {
+                    if (data.success) {
+                        updateCartCount(data.cartCount); // Update the number next to the cart icon AND the preview message
+                    } else if (data.redirectToLogin) {
+                        // Retrieve ReturnUrl from a data attribute or a global JS variable set by Razor
+                        // This is the correct way to pass server-side data to client-side JS
+                        var returnUrl = $('#returnUrlForLogin').data('return-url');
+                        if (returnUrl) {
+                            window.location.href = '@Url.Action("Login", "Account")?ReturnUrl=' + encodeURIComponent(returnUrl);
+                        } else {
+                            window.location.href = '@Url.Action("Login", "Account")'; // Fallback
+                        }
                     } else {
-                        cartPreviewMessage.innerText = "Your cart is empty.";
-                    }
-                }
-                // --- END NEW LOGIC ---
-            }
-
-            // Function to fetch and update cart count on page load
-            function fetchCartCount() {
-                $.get("/Cart/GetCartCount", function(data) {
-                    if (data && typeof data.cartCount !== 'undefined') {
-                        updateCartCount(data.cartCount);
+                        // Handle server-side errors
+                        alert("Error adding item to cart: " + data.message);
                     }
                 }).fail(function(jqXHR, textStatus, errorThrown) {
-                     console.error("Failed to fetch initial cart count:", textStatus, errorThrown);
-                });
-            }
-
-            // jQuery document ready function
-            $(document).ready(function() {
-                // Fetch initial cart count when the page loads
-                fetchCartCount();
-
-                // Handle Add to Cart button click using event delegation
-                $(document).on('click', '.add-to-cart-btn', function(e) {
-                    e.preventDefault(); // Prevent default button behavior (e.g., form submission)
-
-                    var productId = $(this).data('product-id');
-                    var productName = $(this).data('product-name');
-
-                    if (!productId) {
-                        console.error("Product ID not found for Add to Cart button.");
-                        return;
-                    }
-
-                    // AJAX POST request to add item to cart
-                    $.post("/Cart/AddToCart", { productId: productId, quantity: 1 }, function(data) {
-                        if (data.success) {
-                            updateCartCount(data.cartCount); // Update the number next to the cart icon AND the preview message
-                        } else if (data.redirectToLogin) {
-                            // Retrieve ReturnUrl from a data attribute or a global JS variable set by Razor
-                            // This is the correct way to pass server-side data to client-side JS
-                            var returnUrl = $('#returnUrlForLogin').data('return-url');
-                            if (returnUrl) {
-                                window.location.href = '@Url.Action("Login", "Account")?ReturnUrl=' + encodeURIComponent(returnUrl);
-                            } else {
-                                window.location.href = '@Url.Action("Login", "Account")'; // Fallback
-                            }
-                        } else {
-                            // Handle server-side errors
-                            alert("Error adding item to cart: " + data.message);
-                        }
-                    }).fail(function(jqXHR, textStatus, errorThrown) {
-                        // Handle AJAX request failure
-                        console.error("AJAX Error:", textStatus, errorThrown);
-                        alert("An error occurred while adding to cart. Please try again.");
-                    });
+                    // Handle AJAX request failure
+                    console.error("AJAX Error:", textStatus, errorThrown);
+                    alert("An error occurred while adding to cart. Please try again.");
                 });
             });
-        </script>
+        });
+    </script>
 
-        @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
 
-        <!-- Hidden element to pass ReturnUrl from server to client-side JS -->
-        <!-- This element should be placed after the main content, but before the closing </body> tag -->
-        <!-- It will be populated by the controller action that sets TempData["ReturnUrl"] -->
-        <div id="returnUrlForLogin" data-return-url="@(TempData["ReturnUrl"]?.ToString())" style="display:none;"></div>
+    <!-- Hidden element to pass ReturnUrl from server to client-side JS -->
+    <!-- This element should be placed after the main content, but before the closing </body> tag -->
+    <!-- It will be populated by the controller action that sets TempData["ReturnUrl"] -->
+    <div id="returnUrlForLogin" data-return-url="@(TempData["ReturnUrl"]?.ToString())" style="display:none;"></div>
 
 </body>
 </html>

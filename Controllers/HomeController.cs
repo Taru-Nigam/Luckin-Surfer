@@ -1,8 +1,8 @@
 using GameCraft.Data;
 using GameCraft.Models;
+using GameCraft.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -22,70 +22,18 @@ namespace GameCraft.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
-            Debug.WriteLine("HomeController.Index() started.");
-
             // Check if the user is an admin
             var isAdmin = HttpContext.Session.GetString("IsAdmin");
             if (isAdmin != null)
             {
                 ViewBag.IsAdmin = true; // Indicate that the user is an admin
             }
-
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId != null)
             {
-                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == int.Parse(userId));
+                var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == int.Parse(userId));
                 ViewBag.PrizePoints = customer?.PrizePoints ?? 0; // Pass prize points to the view
-                Debug.WriteLine($"User  ID: {userId}, Prize Points: {ViewBag.PrizePoints}");
             }
-
-            // Fetch logos from the database
-            var logos = await _context.Logos.ToListAsync();
-            ViewBag.Logos = logos;
-
-            // Fetch "How it works" icons from the database
-            var howItWorksIcons = await _context.Icons
-                                                .OrderBy(i => i.Order)
-                                                .ToListAsync();
-
-            // Convert ImageData to Base64 string for each icon
-            var iconViewModels = howItWorksIcons.Select(icon => new
-            {
-                icon.IconId,
-                icon.Name,
-                icon.Description,
-                ImageData = Convert.ToBase64String(icon.ImageData) // Convert binary data to Base64 string
-            }).ToList();
-
-            ViewBag.HowItWorksIcons = iconViewModels;
-
-
-            // Fetch carousel items from the database
-            var carouselItems = new List<CarouselItemViewModel>();
-
-            // Add Promotions to carousel
-            var promotions = await _context.Promotions
-                                           .OrderBy(pr => pr.PromotionId) // Or by a specific display order field
-                                           .ToListAsync();
-            foreach (var promotion in promotions)
-            {
-                    carouselItems.Add(new CarouselItemViewModel
-                    {
-                        Type = "Promotion",
-                        Title = promotion.Title,
-                        Description = promotion.Description,
-                        ImageUrl = Convert.ToBase64String(promotion.ImageData), // Convert binary data to Base64 string
-                        ButtonText = promotion.ButtonText,
-                        ButtonUrl = promotion.ButtonUrl,
-                        BackgroundColor = promotion.BackgroundColor,
-                        TextColor = promotion.TextColor
-                    });
-
-            }
-
-
-            // Pass carousel items to the view
-            ViewBag.CarouselItems = carouselItems;
 
             // Retrieve 3 random products
             var randomProducts = await _context.Products
@@ -95,34 +43,6 @@ namespace GameCraft.Controllers
             ViewBag.RandomProducts = randomProducts; // Pass the random products to the view
 
             return View();
-        }
-
-        public async Task<IActionResult> GetLogo(int id)
-        {
-            var logo = await _context.Logos.FindAsync(id);
-            if (logo != null && logo.ImageData != null)
-            {
-                return File(logo.ImageData, "image/png"); // Adjust content type if necessary
-            }
-            return NotFound(); // Return 404 if logo not found
-        }
-
-        public async Task<IActionResult> GetCard()
-        {
-            // Retrieve the GameCraft card product from the database
-            var gameCraftCard = await _context.Products.FirstOrDefaultAsync(p => p.Name == "GameCraft Card");
-            if (gameCraftCard == null)
-            {
-                TempData["ErrorMessage"] = "GameCraft Card not found.";
-                return RedirectToAction("Index", "Home");
-            }
-            return View(gameCraftCard); // Pass the product to the view
-        }
-
-        public async Task<IActionResult> CardCatalog()
-        {
-            var cards = await _context.Cards.ToListAsync(); // Fetch cards from the database
-            return View(cards); // Return the view with the list of cards
         }
 
         public IActionResult ConnectAccount() 
@@ -155,12 +75,7 @@ namespace GameCraft.Controllers
             return View(); // You'll create MyAccount.cshtml
         }
 
-        // New action for the special registration page
-        [HttpGet]
-        public IActionResult SpecialRegister()
-        {
-            return View("~/Views/Account/SpecialRegister.cshtml", new RegisterViewModel());
-        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

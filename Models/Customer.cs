@@ -44,15 +44,5 @@ namespace GameCraft.Models
 
         // New property for Admin Key
         public string? AdminKey { get; set; }
-
-        public List<Order> Order { get; set; }
-
-        // New properties for OTP system
-        [StringLength(10)]
-        public string? Otp { get; set; }
-
-        public DateTime? OtpGeneratedTime { get; set; }
-
-        public bool IsEmailVerified { get; set; } = false; // Default to false
     }
 }

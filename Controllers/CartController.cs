@@ -1,11 +1,11 @@
 ﻿using GameCraft.Data;
+using GameCraft.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore; // Needed for Include
-using Newtonsoft.Json;
-using GameCraft.Models; // For JSON serialization
+using Newtonsoft.Json; // For JSON serialization
 
 namespace GameCraft.Controllers
 {
@@ -109,7 +109,6 @@ namespace GameCraft.Controllers
             SaveCart(cart); // Save updated cart to session
 
             return Json(new { success = true, cartCount = _context.CartItems.Count(ci => ci.CustomerId == customer.CustomerId) });
-
         }
 
         // GET: /Cart/Cart

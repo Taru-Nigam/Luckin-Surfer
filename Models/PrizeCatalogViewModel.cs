@@ -1,4 +1,6 @@
-﻿namespace GameCraft.Models
+﻿using GameCraft.Models;
+
+namespace GameCraft.ViewModels
 {
     public class PrizeCatalogViewModel
     {

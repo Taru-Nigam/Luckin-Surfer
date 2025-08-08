@@ -32,7 +32,5 @@ namespace GameCraft.Models
         [StringLength(100)]
         public string ShippingCity { get; set; } = "";
 
-        public List<OrderDetail> OrderDetails { get; set; }
-        public List<CardOrderDetail> CardOrderDetails { get; set; }
     }
 }

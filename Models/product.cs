@@ -12,7 +12,7 @@ namespace GameCraft.Models
         [StringLength(100)]
         public string Name { get; set; }
 
-        [StringLength(1000)]
+        [StringLength(500)]
         public string Description { get; set; }
 
         [Required]
@@ -24,7 +24,7 @@ namespace GameCraft.Models
 
         public int Quantity { get; set; }
 
-        public byte[] ImageData { get; set; }
+        public byte[] ImageData { get; set; } // Change from ImageUrl to ImageData
 
     }
 }

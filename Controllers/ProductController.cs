@@ -1,5 +1,6 @@
 ﻿using GameCraft.Data;
 using GameCraft.Models;
+using GameCraft.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
