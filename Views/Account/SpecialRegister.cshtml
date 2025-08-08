@@ -1,4 +1,4 @@
-﻿@model RegisterViewModel
+@model RegisterViewModel
 @{
     ViewBag.Title = "Special Register";
 }
@@ -28,47 +28,86 @@
             </div>
         }
 
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
         <form asp-action="SpecialRegister" method="post" class="register-form" id="specialRegistrationForm">
             <div class="form-group">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" class="form-control" required placeholder="Choose a username" value="@Model.Username" />
+                <span asp-validation-for="Username" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" class="form-control" required placeholder="Enter your email" value="@Model.Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" class="form-control" required placeholder="Create a password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label for="confirmPassword">Confirm Password:</label>
                 <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required placeholder="Confirm your password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="register-button">Register and Get Points!</button>
+            <button type="submit" class="register-button">Register and Get 500 Points!</button>
         </form>
 
         <div class="login-link">
             <p>Already have an account? <a asp-action="Login">Login here</a></p>
         </div>
+
+        @* Show OTP verification prompt if email needs verification *@
+        @if (TempData["EmailForOtp"] != null)
+        {
+            <div class="otp-prompt alert alert-info mt-3">
+                <h4>Email Verification Required</h4>
+                <p>An account with this email already exists but is not verified. Please verify your email to complete registration.</p>
+                <a href="@Url.Action("VerifyOtp", new { email = TempData["EmailForOtp"] })" class="btn btn-primary">Verify Email</a>
+            </div>
+        }
     </div>
 </section>
 
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // This script is primarily for demonstrating the flow.
-            // The actual OTP verification will happen on the VerifyOtp page.
-            // However, if the server returns to this page with an email for OTP,
-            // we can provide a hint or redirect.
+            // Handle form submission feedback
+            const form = document.getElementById('specialRegistrationForm');
             const emailForOtp = "@TempData["EmailForOtp"]";
+
             if (emailForOtp && emailForOtp !== "") {
                 console.log("Email needs OTP verification: " + emailForOtp);
+                // You could add additional UI feedback here if needed
             }
+
+            // Add client-side password confirmation validation
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+
+            function validatePassword() {
+                if (password.value !== confirmPassword.value) {
+                    confirmPassword.setCustomValidity("Passwords don't match");
+                } else {
+                    confirmPassword.setCustomValidity('');
+                }
+            }
+
+            password.addEventListener('change', validatePassword);
+            confirmPassword.addEventListener('keyup', validatePassword);
         });
     </script>
+
+    @* Include client-side validation *@
+    <partial name="_ValidationScriptsPartial" />
 }
