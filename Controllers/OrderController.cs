@@ -38,6 +38,34 @@ namespace GameCraft.Controllers
             return View(order); // Pass the order object to your OrderDetail.cshtml view
         }
 
+        // GET: /Order/CardOrderDetail/{id}
+        public async Task<IActionResult> CardOrderDetail(int id)
+        {
+            // Fetch the specific order with both card and product details
+            var order = await _context.Orders
+                .Include(o => o.CardOrderDetails) // Include related card order details
+                .ThenInclude(cod => cod.Card) // Include card info
+                .Include(o => o.OrderDetails) // Also include regular order details
+                .ThenInclude(od => od.Product) // Include product info
+                .FirstOrDefaultAsync(o => o.OrderId == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            // Check if this order has any card details
+            if (order.CardOrderDetails == null || !order.CardOrderDetails.Any())
+            {
+                // If no card order details, redirect to regular order detail
+                TempData["InfoMessage"] = "This order contains no card items.";
+                return RedirectToAction("OrderDetail", new { id = id });
+            }
+
+            return View(order);
+        }
+
+
         // POST: /Order/CreateOrder
         [HttpPost]
         public async Task<IActionResult> CreateOrder(Order order)

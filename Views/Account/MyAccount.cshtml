@@ -115,13 +115,25 @@
                         @foreach (var order in Model.Order.OrderByDescending(o => o.OrderDate))
                         {
                             var hasItems = false; // Flag to check if there are items
+                            var isCardOrder = order.CardOrderDetails != null && order.CardOrderDetails.Any();
+                            var hasProductItems = order.OrderDetails != null && order.OrderDetails.Any();
+
                             <li class="order-list-item">
                                 <div class="order-row-content">
-                                    <a href="@Url.Action("OrderDetail", "Order", new { id = order.OrderId })" class="order-detail-link-overlay" title="View Order Details for Order #@order.OrderId"></a>
+                                    @* Determine which detail page to link to based on order type *@
+                                    @if (isCardOrder)
+                                    {
+                                        <a href="@Url.Action("CardOrderDetail", "Order", new { id = order.OrderId })" class="order-detail-link-overlay" title="View Card Order Details for Order #@order.OrderId"></a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("OrderDetail", "Order", new { id = order.OrderId })" class="order-detail-link-overlay" title="View Order Details for Order #@order.OrderId"></a>
+                                    }
+
                                     <span class="order-date-cell">@order.OrderDate.ToShortDateString()</span>
                                     <span class="order-items-cell">
                                         @* Display each item in a separate line within the cell *@
-                                        @if (order.OrderDetails != null && order.OrderDetails.Any())
+                                        @if (hasProductItems)
                                         {
                                             hasItems = true; // Set flag to true if there are order details
                                             foreach (var item in order.OrderDetails)
@@ -135,8 +147,9 @@
                                                 </div>
                                             }
                                         }
-                                        @if (order.CardOrderDetails != null && order.CardOrderDetails.Any())
+                                        @if (isCardOrder)
                                         {
+                                            hasItems = true; // Set flag to true if there are card order details
                                             foreach (var cardDetail in order.CardOrderDetails)
                                             {
                                                 <div>
@@ -148,7 +161,7 @@
                                                 </div>
                                             }
                                         }
-                                        else if (!hasItems)
+                                        @if (!hasItems)
                                         {
                                             <div>No items listed</div>
                                         }
@@ -165,6 +178,7 @@
                 <p class="no-orders-message">You have no order history yet.</p>
             }
         </div>
+
 
 
         @* Change Password Section *@
