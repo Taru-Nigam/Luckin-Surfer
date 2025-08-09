@@ -225,6 +225,7 @@ namespace GameCraft.Controllers
                     if (string.IsNullOrEmpty(user.AdminKey))
                     {
                         user.AdminKey = GenerateRandomAdminKey();
+                        _context.SaveChanges(); // Save immediately so it's available
                     }
                 }
 
@@ -853,39 +854,80 @@ namespace GameCraft.Controllers
         // NEW: Action for bulk deleting users
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BulkDeleteUsers([FromBody] List<int> userIds)
+        public async Task<IActionResult> BulkDeleteUsers(string userIds)
         {
-            if (userIds == null || !userIds.Any())
+            try
             {
-                return Json(new { success = false, message = "No users selected for deletion." });
+                if (string.IsNullOrEmpty(userIds))
+                {
+                    return Json(new { success = false, message = "No users selected for deletion." });
+                }
+
+                // Parse comma-separated IDs
+                var userIdList = userIds.Split(',')
+                    .Where(id => int.TryParse(id.Trim(), out _))
+                    .Select(id => int.Parse(id.Trim()))
+                    .ToList();
+
+                if (!userIdList.Any())
+                {
+                    return Json(new { success = false, message = "Invalid user IDs provided." });
+                }
+
+                var usersToDelete = await _context.Customers
+                    .Where(u => userIdList.Contains(u.CustomerId))
+                    .ToListAsync();
+
+                if (!usersToDelete.Any())
+                {
+                    return Json(new { success = false, message = "No matching users found for deletion." });
+                }
+
+                // Handle foreign key constraints - delete related audit logs first
+                var userIdsToDelete = usersToDelete.Select(u => u.CustomerId).ToList();
+
+                // Better handling to avoid parsing errors
+                var relatedAuditLogs = await _context.AuditLogs
+                    .Where(al => userIdsToDelete.Any(id => al.UserId == id.ToString()))
+                    .ToListAsync();
+
+                if (relatedAuditLogs.Any())
+                {
+                    _context.AuditLogs.RemoveRange(relatedAuditLogs);
+                }
+
+                // Remove users
+                _context.Customers.RemoveRange(usersToDelete);
+
+                // Log the bulk deletion activity
+                var deletedUserNames = string.Join(", ", usersToDelete.Select(u => u.Name));
+                var auditLog = new AuditLog
+                {
+                    UserId = "Admin",
+                    UserName = HttpContext.Session.GetString("UserName") ?? "Admin",
+                    Action = "Bulk Delete Users",
+                    Details = $"Admin bulk deleted users: {deletedUserNames} (IDs: {string.Join(", ", userIdList)}).",
+                    Timestamp = DateTime.UtcNow,
+                    UserRole = "Admin"
+                };
+                _context.AuditLogs.Add(auditLog);
+
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = $"{usersToDelete.Count} user(s) deleted successfully." });
             }
-
-            var usersToDelete = await _context.Customers.Where(u => userIds.Contains(u.CustomerId)).ToListAsync();
-
-            if (!usersToDelete.Any())
+            catch (DbUpdateException dbEx)
             {
-                return Json(new { success = false, message = "No matching users found for deletion." });
+                var innerMessage = dbEx.InnerException?.Message ?? dbEx.Message;
+                return Json(new { success = false, message = $"Database error: {innerMessage}" });
             }
-
-            _context.Customers.RemoveRange(usersToDelete);
-            await _context.SaveChangesAsync();
-
-            // Log the bulk deletion activity
-            var deletedUserNames = string.Join(", ", usersToDelete.Select(u => u.Name));
-            var auditLog = new AuditLog
+            catch (Exception ex)
             {
-                UserId = "Admin", // Assuming admin is performing this action
-                UserName = HttpContext.Session.GetString("UserName") ?? "Admin",
-                Action = "Bulk Delete Users",
-                Details = $"Admin bulk deleted users: {deletedUserNames} (IDs: {string.Join(", ", userIds)}).",
-                Timestamp = DateTime.UtcNow,
-                UserRole = "Admin"
-            };
-            _context.AuditLogs.Add(auditLog);
-            await _context.SaveChangesAsync();
-
-            return Json(new { success = true, message = $"{usersToDelete.Count} user(s) deleted successfully." });
+                return Json(new { success = false, message = $"An unexpected error occurred: {ex.Message}" });
+            }
         }
+
+
 
         // GET: /Admin/ManageCards
         public IActionResult ManageCards()

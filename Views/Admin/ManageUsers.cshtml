@@ -4,6 +4,10 @@
     ViewData["Title"] = "Manage Users";
 }
 
+<form style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
 <h1 class="mb-6">Manage Users</h1>
 
 @if (TempData["Message"] != null)
@@ -191,7 +195,7 @@
             });
         });
 
-        document.getElementById('bulkDeleteBtn').addEventListener('click', async function() {
+                document.getElementById('bulkDeleteBtn').addEventListener('click', async function() {
             const selectedUserIds = Array.from(document.querySelectorAll('.user-checkbox:checked'))
                                        .map(cb => parseInt(cb.value));
 
@@ -202,26 +206,35 @@
 
             if (confirm(`Are you sure you want to delete ${selectedUserIds.length} selected user(s)? This action cannot be undone.`)) {
                 try {
+                    const formData = new FormData();
+                    formData.append('userIds', selectedUserIds.join(','));
+
+                    // Get the anti-forgery token
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                    formData.append('__RequestVerificationToken', token);
+
                     const response = await fetch('@Url.Action("BulkDeleteUsers", "Admin")', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                        },
-                        body: JSON.stringify(selectedUserIds)
+                        body: formData
                     });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
                     const result = await response.json();
                     if (result.success) {
                         alert(result.message);
-                        location.reload(); // Reload page to reflect changes
+                        location.reload();
                     } else {
                         alert('Error: ' + result.message);
                     }
                 } catch (error) {
                     console.error('Error during bulk delete:', error);
-                    alert('An error occurred during bulk deletion.');
+                    alert('An error occurred during bulk deletion: ' + error.message);
                 }
             }
         });
+
     </script>
 }
