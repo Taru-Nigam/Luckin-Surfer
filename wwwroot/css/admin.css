@@ -1,24 +1,42 @@
-﻿/* --- General Styles --- */
+﻿/* --- CSS Custom Properties for a Consistent Theme --- */
+/*
+  By using CSS variables, you can easily change the color scheme
+  of your entire site by modifying a few values in this section.
+*/
+:root {
+    --color-bg-dark: #0e0e0e;
+    --color-bg-dark-2: #1a1a1a;
+    --color-bg-dark-3: #222;
+    --color-text-light: #e0e0e0;
+    --color-neon-primary: #66ffcc;
+    --color-neon-primary-hover: #5cd6b3;
+    --color-neon-danger: #ff4d4d;
+    --color-neon-danger-hover: #e60000;
+    --color-border-dark: #333;
+    --shadow-base: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --shadow-neon: 0 0 15px rgba(102, 255, 204, 0.7);
+    --radius-base: 0.75rem;
+    --font-stack: 'Orbitron', sans-serif;
+}
+
+/* --- General & Layout Styles --- */
+/*
+  This section sets up the core visual structure and typography
+  for the entire admin panel.
+*/
 body {
-    background: #0e0e0e; /* Dark background for a gaming feel */
-    font-family: 'Orbitron', sans-serif; /* Futuristic font */
-    color: #e0e0e0; /* Light text color for contrast */
+    background: var(--color-bg-dark);
+    font-family: var(--font-stack);
+    color: var(--color-text-light);
     min-height: 100vh;
     margin: 0;
+    line-height: 1.6;
 }
 
 .admin-main {
-    max-width: 1100px;
-    margin: auto; /* Center the main content */
+    max-width: 1200px; /* Increased max-width for a spacious feel */
+    margin: 0 auto;
     padding: 2rem;
-}
-
-h1 {
-    font-size: 3rem; /* Larger font size for headings */
-    font-weight: 700;
-    color: #66ffcc; /* Softer neon color for headings */
-    margin-bottom: 2rem;
-    text-shadow: 0 0 5px rgba(102, 255, 204, 0.5); /* Reduced glow effect */
 }
 
 .content-section {
@@ -27,55 +45,129 @@ h1 {
     width: 100%;
 }
 
-/* Table Styles */
+/* Admin Card/Widget Style */
+.admin-card {
+    background: var(--color-bg-dark-2);
+    border: 1px solid var(--color-border-dark);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-base);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* --- Typography --- */
+h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-neon-primary);
+    margin-bottom: 2rem;
+    text-shadow: 0 0 5px rgba(102, 255, 204, 0.5);
+    text-align: center;
+}
+
+h2, h3, h4 {
+    color: var(--color-neon-primary);
+    margin-top: 0;
+}
+
+/* --- Navigation Styles --- */
+.admin-navbar {
+    background: rgba(10, 10, 26, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-neon-primary);
+    box-shadow: 0 0 20px rgba(102, 255, 204, 0.5);
+}
+
+.navbar-brand {
+    color: var(--color-neon-primary);
+    text-shadow: 0 0 5px rgba(102, 255, 204, 0.5);
+    transition: color 0.3s ease;
+}
+
+    .navbar-brand:hover {
+        color: var(--color-neon-primary-hover);
+    }
+
+.nav-link {
+    color: var(--color-text-light);
+    transition: color 0.3s ease;
+}
+
+    .nav-link:hover {
+        color: var(--color-neon-primary);
+    }
+
+/* --- Table Styles --- */
+/*
+  This section enhances the table readability and visual appeal.
+  Added a subtle hover effect to table rows.
+*/
 .table-admin-list {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background: #1a1a1a; /* Dark table background */
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Deeper shadow for depth */
+    background: var(--color-bg-dark-2);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-base);
 }
 
     .table-admin-list th,
     .table-admin-list td {
         padding: 1rem 1.5rem;
         text-align: left;
-        border-bottom: 1px solid #333; /* Darker border for table */
+        border-bottom: 1px solid var(--color-border-dark);
         font-size: 1rem;
     }
 
     .table-admin-list th {
-        background-color: #222; /* Darker header background */
+        background-color: var(--color-bg-dark-3);
         font-weight: 600;
-        color: #66ffcc; /* Softer neon color for table headers */
+        color: var(--color-neon-primary);
+        text-transform: uppercase;
     }
 
-    /* Styles for images in the prize management table */
-    .table-admin-list img {
-        width: 100px; /* Set a fixed width for images */
-        height: auto; /* Maintain aspect ratio */
-        border-radius: 5px; /* Slightly rounded corners for images */
-        box-shadow: 0 0 10px rgba(102, 255, 204, 0.5); /* Neon glow effect */
+    /* Added a hover effect for table rows */
+    .table-admin-list tbody tr:hover {
+        background-color: rgba(102, 255, 204, 0.05);
+        transition: background-color 0.2s ease-in-out;
     }
+
+    .table-admin-list img {
+        width: 200px;
+        height: auto;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(102, 255, 204, 0.5);
+        transition: transform 0.2s ease-in-out;
+    }
+
+        .table-admin-list img:hover {
+            transform: scale(1.05);
+        }
 
         .table-admin-list img.no-image {
-            width: 50px; /* Fixed width for "No Image" placeholder */
-            height: auto; /* Maintain aspect ratio */
-            background-color: #444; /* Dark background for no image placeholder */
-            color: #e0e0e0; /* Light text color */
+            width: 50px;
+            height: 50px; /* Fixed height for consistency */
+            background-color: #444;
+            color: var(--color-text-light);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 5px; /* Slightly rounded corners */
+            border-radius: 5px;
+            box-shadow: none;
+            font-style: italic;
         }
 
+/* --- Form Styles --- */
+/*
+  Clean and organized form elements for a better user experience.
+*/
 .form-container {
-    background: #1a1a1a; /* Dark background for forms */
+    background: var(--color-bg-dark-2);
     max-width: 600px;
     padding: 2.5rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-base);
+    margin: 0 auto;
 }
 
 .form-group {
@@ -84,7 +176,7 @@ h1 {
 
     .form-group label {
         display: block;
-        color: #66ffcc; /* Softer neon color for labels */
+        color: var(--color-neon-primary);
         font-weight: 600;
         margin-bottom: 0.5rem;
     }
@@ -93,12 +185,12 @@ h1 {
 .form-select,
 .form-textarea {
     width: 100%;
-    padding: 0.6rem 1rem;
+    padding: 0.8rem 1rem; /* Slightly larger padding for better touch targets */
     font-size: 1.1rem;
-    border: 1px solid #444; /* Dark border */
+    border: 1px solid var(--color-border-dark);
     border-radius: 0.5rem;
-    color: #e0e0e0; /* Light text color */
-    background: #222; /* Dark background for inputs */
+    color: var(--color-text-light);
+    background: var(--color-bg-dark-3);
     box-sizing: border-box;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -106,9 +198,9 @@ h1 {
     .form-input:focus,
     .form-select:focus,
     .form-textarea:focus {
-        border-color: #66ffcc; /* Softer neon border on focus */
+        border-color: var(--color-neon-primary);
         outline: none;
-        box-shadow: 0 0 0 3px rgba(102, 255, 204, 0.3); /* Reduced glow effect */
+        box-shadow: 0 0 0 3px rgba(102, 255, 204, 0.3);
     }
 
 .form-textarea {
@@ -116,75 +208,80 @@ h1 {
     resize: vertical;
 }
 
-.admin-navbar {
-    background: rgba(10, 10, 26, 0.85); /* Dark background for navbar */
-    backdrop-filter: blur(8px); /* Blur effect */
-    border-bottom: 1px solid #66ffcc; /* Softer neon border */
-    box-shadow: 0 0 20px rgba(102, 255, 204, 0.5); /* Reduced glow effect */
-}
-
-.navbar-brand {
-    color: #66ffcc; /* Softer neon color for brand */
-    text-shadow: 0 0 5px rgba(102, 255, 204, 0.5); /* Reduced glow effect */
-}
-
-.nav-link {
-    color: #e0e0e0; /* Light text color for links */
-    transition: color 0.3s ease;
-}
-
-    .nav-link:hover {
-        color: #66ffcc; /* Softer neon color on hover */
-    }
-
-.btn-primary {
-    background-color: #66ffcc; /* Softer neon button color */
-    color: black; /* Dark text for contrast */
+/* --- Button Styles --- */
+/*
+  Reorganized and consistent button styles.
+*/
+.btn-base {
     font-weight: 700;
     padding: 0.8rem 2rem;
     border: none;
     border-radius: 0.6rem;
     cursor: pointer;
     font-size: 1.2rem;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    user-select: none;
+}
+
+.btn-primary {
+    background-color: var(--color-neon-primary);
+    color: black;
 }
 
     .btn-primary:hover {
-        background-color: #5cd6b3; /* Slightly darker on hover */
+        background-color: var(--color-neon-primary-hover);
+        transform: translateY(-2px);
     }
 
 .btn-secondary {
     background-color: transparent;
-    color: #66ffcc; /* Softer neon color for secondary buttons */
-    border: 1.5px solid #66ffcc; /* Softer neon border */
+    color: var(--color-neon-primary);
+    border: 1.5px solid var(--color-neon-primary);
     padding: 0.6rem 1.5rem;
-    border-radius: 0.6rem;
-    text-decoration: none;
     font-weight: 600;
     font-size: 1.05rem;
-    transition: background-color 0.3s;
 }
 
     .btn-secondary:hover {
-        background-color: rgba(102, 255, 204, 0.1); /* Light neon background on hover */
-        color: #5cd6b3; /* Slightly darker text on hover */
-        border-color: #5cd6b3; /* Darker border on hover */
+        background-color: rgba(102, 255, 204, 0.1);
+        color: var(--color-neon-primary-hover);
+        border-color: var(--color-neon-primary-hover);
     }
 
 .btn-action {
     font-size: 0.95rem;
-    padding: 0.35rem 0.75rem;
-    margin-right: 0.25rem;
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
     text-decoration: none;
     font-weight: 600;
     user-select: none;
+    display: inline-block; /* Ensures anchor tags and buttons have same style */
+    transition: background-color 0.3s ease;
 }
 
+.btn-edit {
+    background-color: var(--color-neon-primary);
+    color: black;
+}
+
+    .btn-edit:hover {
+        background-color: var(--color-neon-primary-hover);
+    }
+
+.btn-delete {
+    background-color: var(--color-neon-danger);
+    color: white;
+}
+
+    .btn-delete:hover {
+        background-color: var(--color-neon-danger-hover);
+    }
+
 .submit-button {
-    background-color: #e6005c;
+    background-color: var(--color-neon-danger); /* Used for a prominent action, like delete/submit */
     color: white;
     padding: 15px 20px;
     border: none;
@@ -198,54 +295,36 @@ h1 {
 }
 
     .submit-button:hover {
-        background-color: #cc004c;
+        background-color: var(--color-neon-danger-hover);
         transform: scale(1.02);
     }
 
-.btn-edit {
-    background-color: #66ffcc; /* Softer neon edit button */
-    color: black;
-}
-
-    .btn-edit:hover {
-        background-color: #5cd6b3; /* Darker on hover */
-    }
-
-.btn-delete {
-    background-color: #ff4d4d; /* Neon red for delete button */
-    color: white;
-}
-
-    .btn-delete:hover {
-        background-color: #e60000; /* Darker red on hover */
-    }
-
-.inline-form {
-    display: inline;
-}
-
+/* --- Status & Alerts --- */
 .text-error {
-    color: #ff4d4d; /* Red for error messages */
-    font-size: 0.85rem;
+    color: var(--color-neon-danger);
+    font-size: 0.9rem; /* Slightly larger for readability */
 }
 
 .alert-success {
     margin-bottom: 1.5rem;
     padding: 1rem 1.5rem;
-    background-color: #1a1a1a; /* Dark background for alerts */
-    color: #66ffcc; /* Softer neon text color */
+    background-color: rgba(102, 255, 204, 0.1);
+    color: var(--color-neon-primary);
     border-radius: 0.5rem;
-    border: 1px solid #66ffcc; /* Softer neon border */
+    border: 1px solid var(--color-neon-primary);
 }
 
-/* Admin Avatar Selection Styles */
+/* --- Avatar Selection Styles --- */
+/*
+  Improved and organized styles for the avatar selection component.
+*/
 .avatar-selection-options {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
     margin-top: 10px;
     margin-bottom: 20px;
-    justify-content: center; /* Center the avatars */
+    justify-content: center;
 }
 
 .avatar-option-label {
@@ -257,42 +336,75 @@ h1 {
 }
 
 .avatar-radio-admin {
-    display: none; /* Hide the actual radio button */
+    display: none;
 }
 
 .avatar-image-admin {
-    width: 60px; /* Larger size for admin view */
+    width: 60px;
     height: 60px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid transparent; /* Thicker border for selection */
+    border: 3px solid transparent;
     transition: border-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .avatar-radio-admin:checked + .avatar-image-admin {
-    border-color: #66ffcc; /* Neon border when selected */
-    transform: scale(1.1); /* Slightly enlarge when selected */
-    box-shadow: 0 0 15px rgba(102, 255, 204, 0.7); /* Stronger neon glow */
+    border-color: var(--color-neon-primary);
+    transform: scale(1.1);
+    box-shadow: var(--shadow-neon);
 }
 
 .avatar-image-admin:hover {
-    transform: scale(1.05); /* Slight enlarge on hover */
-    box-shadow: 0 0 10px rgba(102, 255, 204, 0.5); /* Neon glow on hover */
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(102, 255, 204, 0.5);
 }
 
-/* Adjustments for existing form-group to accommodate new avatar elements */
-.form-container .form-group img {
-    display: block; /* Ensure image takes its own line */
-    margin: 0 auto 10px auto; /* Center and add bottom margin */
+.form-container .form-group img.profile-image-preview {
+    display: block;
+    margin: 0 auto 10px auto;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-neon-primary);
 }
 
 .user-list-container {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center horizontally */
-    justify-content: center; /* Center vertically */
-    margin: 0 auto; /* Center the container */
-    max-width: 1200px; /* Set a max width for the container */
-    border-radius: 10px; /* Optional: Rounded corners */
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 1200px;
 }
+
+/* --- Responsive Design --- */
+/*
+  Ensures the layout is mobile-friendly.
+*/
+@media (max-width: 768px) {
+    .admin-main {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .table-admin-list th,
+    .table-admin-list td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .btn-action {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        width: fit-content;
+    }
+}
+
+
